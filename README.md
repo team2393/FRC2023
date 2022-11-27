@@ -18,6 +18,6 @@ Next steps:
     * While actual robot is being designed, program swerve bot with latest WPILib?
     * Prepare test robot for each key component of new robot as design materializes
 
-Events:
+Events, https://frc-events.firstinspires.org/2023/Events/EventList:
  * Week 1, March 1, 2023: ??
  * Week 5, March 29, 2023: Knoxville  

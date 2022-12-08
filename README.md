@@ -7,7 +7,7 @@ FRC Software manual: https://docs.wpilib.org/en/latest/index.html
  
 Next steps:
   * Kickoff: January 7, 2023
-  * Study game manual
+  * Study game manual, https://www.firstinspires.org/resource-library/frc/competition-manual-qa-system
   * Install 2023 WPILib
   * Prepare robot skeleton
     * Try new RoboRIO

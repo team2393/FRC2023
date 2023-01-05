@@ -1,20 +1,19 @@
-// Copyright (c) FIRST and other WPILib contributors.
+// Copyright (c) FIRST Team 2393 and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.parts.SparkMini;
 
 /** Motor Test robot
  */
 public class MotorTestRobot extends TimedRobot
 {
-  XboxController joystick = new XboxController(0);
-  WPI_TalonFX motor = new WPI_TalonFX(1);
+  private final XboxController joystick = new XboxController(0);
+  private final SparkMini motor = new SparkMini(0);
 
   @Override
   public void robotInit()

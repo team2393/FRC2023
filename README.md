@@ -1,5 +1,5 @@
-Tem 2393 FRC Season 2023
-========================
+Team 2393 FRC Season 2023
+=========================
 
 FRC Software manual: https://docs.wpilib.org/en/latest/index.html
   * Browse through all
@@ -11,6 +11,7 @@ Next steps:
   * Install 2023 WPILib
   * Prepare robot skeleton
     * Try new RoboRIO
+    * Get 3rd party libraries for CTRE, Vec, ...
     * Update firmware of power distribution module, pneumatic hub etc.
   * Prepare 'test' robots
     * Manual control of all the motor types (Falcon, ??) we might have in the robot

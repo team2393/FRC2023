@@ -14,7 +14,11 @@ Next steps:
     * Get 3rd party libraries for CTRE, Vec, ... (https://www.chiefdelphi.com/t/wpilib-blog-2023-kickoff-release-of-wpilib/420683/30)
     * Update firmware of power distribution module, pneumatic hub etc.
   * Prepare 'test' robots
-    * Manual control of all the motor types (Falcon, ??) we might have in the robot
+    * Manual control of all the motor types (Falcon, Spark, ??) we might have in the robot
+      * https://www.andymark.com
+      * https://wcproducts.com/
+      * https://store.ctr-electronics.com/software/
+      * https://docs.revrobotics.com 
       * https://www.chiefdelphi.com/t/2023-falcon-updates-and-availability/420604/15
     * PID control of each motor type for position as well as speed
     * While actual robot is being designed, program swerve bot with latest WPILib?
@@ -25,5 +29,5 @@ Next steps:
       * https://github.com/Tigerbotics7125/AprilTag16h5
 
 Events, https://frc-events.firstinspires.org/2023/Events/EventList:
- * Week 1, March 1, 2023: Searcy, AR
- * Week 5, March 29, 2023: Knoxville, TN  
+ * Week 1, March 1, 2023: [Searcy, AR](https://maps.google.com/maps?ll=35.249098,-91.726211&z=16&t=m&hl=en-US&gl=US&mapclient=embed&q=Searcy%2C%20AR%2072149)
+ * Week 5, March 29, 2023: [Knoxville, TN](https://maps.google.com/maps?ll=35.971789,-83.900286&z=13&t=m&hl=en-US&gl=US&mapclient=embed&q=Knoxville%2C%20TN%2037915)  

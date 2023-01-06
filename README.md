@@ -15,6 +15,7 @@ Next steps:
     * Update firmware of power distribution module, pneumatic hub etc.
   * Prepare 'test' robots
     * Manual control of all the motor types (Falcon, ??) we might have in the robot
+      * https://www.chiefdelphi.com/t/2023-falcon-updates-and-availability/420604/15
     * PID control of each motor type for position as well as speed
     * While actual robot is being designed, program swerve bot with latest WPILib?
     * Prepare test robot for each key component of new robot as design materializes

@@ -12,6 +12,6 @@ public final class Main
     /** Start one of the 'XXXRobot' robots */
     public static void main(String... args)
     {
-        RobotBase.startRobot(RotatorTestRobot::new);
+        RobotBase.startRobot(DriverTestRobot::new);
     }
 }

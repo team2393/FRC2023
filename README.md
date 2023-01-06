@@ -20,5 +20,5 @@ Next steps:
     * Prepare test robot for each key component of new robot as design materializes
 
 Events, https://frc-events.firstinspires.org/2023/Events/EventList:
- * Week 1, March 1, 2023: ??
- * Week 5, March 29, 2023: Knoxville  
+ * Week 1, March 1, 2023: Searcy, AR
+ * Week 5, March 29, 2023: Knoxville, TN  

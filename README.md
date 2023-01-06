@@ -16,13 +16,14 @@ Next steps:
   * Prepare 'test' robots
     * Manual control of all the motor types (Falcon, Spark, ??) we might have in the robot
       * https://www.andymark.com
-      * https://wcproducts.com/
-      * https://store.ctr-electronics.com/software/
+      * https://wcproducts.com
+      * https://store.ctr-electronics.com/software
       * https://docs.revrobotics.com 
-      * https://www.chiefdelphi.com/t/2023-falcon-updates-and-availability/420604/15
+      * https://www.chiefdelphi.com/t/2023-falcon-updates-and-availability
     * PID control of each motor type for position as well as speed
     * While actual robot is being designed, program swerve bot with latest WPILib?
     * Prepare test robot for each key component of new robot as design materializes
+      * https://www.projectb.net.au/resources/robot-mechanisms
     * Vision
       * https://docs.wpilib.org/en/latest/docs/software/vision-processing/apriltag/apriltag-intro.html
       * https://docs.photonvision.org/en/latest/docs/getting-started/description.html

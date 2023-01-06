@@ -6,7 +6,7 @@ FRC Software manual: https://docs.wpilib.org/en/latest/index.html
   * Note expecially "Changelog", "Known Issues"
  
 Next steps:
-  * Kickoff: January 7, 2023
+  * Kickoff: January 7, 2023, https://efcms.engr.utk.edu/efp/first-kickoff/2023/welcome.php
   * Study game manual, https://www.firstinspires.org/resource-library/frc/competition-manual-qa-system
   * Install 2023 WPILib
   * Prepare robot skeleton

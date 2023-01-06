@@ -11,8 +11,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.parts.SparkMini;
 
-/** Motor Test robot
- */
+/** Motor Test robot */
 public class MotorTestRobot extends TimedRobot
 {
   private final XboxController joystick = new XboxController(0);

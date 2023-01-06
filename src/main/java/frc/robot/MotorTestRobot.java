@@ -21,13 +21,15 @@ public class MotorTestRobot extends TimedRobot
   // for C:\Users\Public\Documents\FRC\2023 Firmware\PhoenixPro\TalonFX-Application-23.4.0.3-Pro-season2023.crf
   // which complains at runtime with
   // "Device is not licensed. Cannot get any data from it."
-
+  // unless one purchases a per-device license.
   // private final TalonFX motor= new TalonFX(3+1);
   
-  // .. and the older "Phoenix 5"
+  // The "Phoenix 5" API with 
   // com.ctre.phoenix.motorcontrol.can.TalonFX with wrapper WPI_TalonFX
   // that runs with 
   // C:\Users\Public\Documents\FRC\2023 Firmware\Phoenix\TalonFX-Application-22.1.1.0-season2023.crf
+  // is basically the same as the older versions,
+  // and remains free to use.
   private final WPI_TalonFX motor = new WPI_TalonFX(3+1);
 
   // Simple PWM controller:

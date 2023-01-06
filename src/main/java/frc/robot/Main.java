@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.drivetrain.swerve.SimpleSwerveTestRobot;
 
 /** Java 'main' */
 public final class Main

@@ -2,20 +2,23 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot;
+package frc.robot.drivetrain.swerve;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.drivetrain.swerve.Driver;
-import frc.robot.drivetrain.swerve.Rotator;
 
-/** Driver Test robot */
-public class DriverTestRobot extends TimedRobot
+/** Rotator Test robot */
+public class RotatorTestRobot extends TimedRobot
 {
   private final XboxController joystick = new XboxController(0);
 
-  private final Driver driver = new Driver(1);
+  // Module   Offset    Position
+  // 0       -18        Front left
+  // 1        90        Front right
+  // 2      -161        Back right
+  // 3      -104        Back left
+  private final Rotator rotator = new Rotator(3, 0.0);
 
   @Override
   public void robotInit()
@@ -30,13 +33,15 @@ public class DriverTestRobot extends TimedRobot
   @Override
   public void teleopPeriodic()
   {
-    // Stick "Forward" to run motor forward
-    driver.run(-joystick.getRightY());
+    // Moving stick to the right rotates
+    // clockwise, i.e., towards negative angles
+    final double angle = -180.0 * joystick.getRightX();
+    rotator.setAngle(angle);
   }
 
   @Override
   public void autonomousPeriodic()
   {
-    driver.setSpeed(SmartDashboard.getNumber("Setpoint", 0.0));
+    rotator.setAngle(SmartDashboard.getNumber("Setpoint", 0.0));
   }
 }

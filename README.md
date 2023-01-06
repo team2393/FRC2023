@@ -11,7 +11,9 @@ Next steps:
   * Install 2023 WPILib
   * Prepare robot skeleton
     * Try new RoboRIO
-    * Get 3rd party libraries for CTRE, Vec, ... (https://www.chiefdelphi.com/t/wpilib-blog-2023-kickoff-release-of-wpilib/420683/30)
+    * Get 3rd party libraries for CTRE, Vec, ...
+      * https://github.com/CrossTheRoadElec/Phoenix-Releases/releases
+      * https://www.chiefdelphi.com/t/wpilib-blog-2023-kickoff-release-of-wpilib
     * Update firmware of power distribution module, pneumatic hub etc.
   * Prepare 'test' robots
     * Manual control of all the motor types (Falcon, Spark, ??) we might have in the robot

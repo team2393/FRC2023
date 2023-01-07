@@ -5,15 +5,16 @@ package frc.robot.drivetrain.swerve;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class GyroHelper extends SubsystemBase
 {
   private final PigeonIMU pigeon = new PigeonIMU(0);
+  private final NetworkTableEntry nt_gyro = SmartDashboard.getEntry("Gyro");
   private double zero_offset = 0.0;
 
   public GyroHelper()
@@ -73,6 +74,6 @@ public class GyroHelper extends SubsystemBase
   @Override
   public void periodic()
   {
-    SmartDashboard.putNumber("Gyro", getAngle());
+    nt_gyro.setDouble(getAngle());
   }
 }

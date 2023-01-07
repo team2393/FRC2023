@@ -322,6 +322,58 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "6,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Desired Speed1",
+              "_title": "Desired Speed1",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Desired Speed2",
+              "_title": "Desired Speed2",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "8,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Desired Speed3",
+              "_title": "Desired Speed3",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "9,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Desired Speed4",
+              "_title": "Desired Speed4",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
@@ -531,7 +583,7 @@
                 "0,1": {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/ResetGyro",
-                  "_title": "",
+                  "_title": " ",
                   "_glyph": 148,
                   "_showGlyph": false
                 }

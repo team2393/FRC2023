@@ -5,6 +5,7 @@ package frc.robot.drivetrain.swerve;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Forward/backwards part of swerve module */
@@ -17,16 +18,25 @@ public class Driver
   final static double COUNTS_PER_INCH = 949;
   final static double INCHES_PER_METER = 39.37;
 
-  private int channel;
+  private final NetworkTableEntry nt_F;
+  private final NetworkTableEntry nt_speed;
+  private final NetworkTableEntry nt_desired;
+  private final NetworkTableEntry nt_position;
+
   private WPI_TalonFX driver;
   
   /** @param channel CAN bus ID 1-4 */
   public Driver (int channel)
   {
-    this.channel = channel;
     driver = new WPI_TalonFX(channel);
     driver.setSelectedSensorPosition(0);
-    SmartDashboard.setDefaultNumber("F", 2.8);
+
+    nt_F = SmartDashboard.getEntry("F");
+    nt_F.setDefaultDouble(2.8);
+
+    nt_speed = SmartDashboard.getEntry("Speed" + channel);
+    nt_desired = SmartDashboard.getEntry("Desired Speed" + channel);
+    nt_position = SmartDashboard.getEntry("Position" + channel);
   }
 
   /** @return Get position in meters */
@@ -46,15 +56,15 @@ public class Driver
   public void run(double speed)
   {
     driver.set(speed);
-    SmartDashboard.putNumber("Position" + channel, getPosition());
-    SmartDashboard.putNumber("Speed" + channel, getSpeed());
+    nt_position.setDouble(getPosition());
+    nt_speed.setDouble(getSpeed());
   }
 
   /** @param speed Speed in m/s */
   public void setSpeed(double desired_speed)
   {
-    driver.setVoltage(desired_speed * SmartDashboard.getNumber("F", 0));
-    SmartDashboard.putNumber("Speed" + channel, getSpeed());
-    SmartDashboard.putNumber("Desired speed" + channel, desired_speed);
+    driver.setVoltage(desired_speed * nt_F.getDouble(0));
+    nt_speed.setDouble(getSpeed());
+    nt_desired.setDouble(desired_speed);
   }
 }

@@ -14,6 +14,8 @@ Next steps:
     * Get 3rd party libraries for CTRE, Vec, ...
       * https://github.com/CrossTheRoadElec/Phoenix-Releases/releases
       * https://www.chiefdelphi.com/t/wpilib-blog-2023-kickoff-release-of-wpilib
+      * https://www.revrobotics.com/software
+      * https://software-metadata.revrobotics.com/REVLib-2023.json
     * Update firmware of power distribution module, pneumatic hub etc.
   * Prepare 'test' robots
     * Manual control of all the motor types (Falcon, Spark, ??) we might have in the robot

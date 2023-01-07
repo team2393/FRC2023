@@ -5,6 +5,7 @@ package frc.robot.drivetrain.swerve;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -44,10 +45,12 @@ public class GyroHelper extends SubsystemBase
     //     return true;
     //   }
     // };
-    CommandBase reset = Commands.runOnce(this::reset)
+    CommandBase do_reset = Commands.runOnce(this::reset)
                                 .ignoringDisable(true);
-    reset.setName("ResetGyro");
-    SmartDashboard.putData(reset);
+    do_reset.setName("ResetGyro");
+    SmartDashboard.putData(do_reset);
+
+    reset();
   }
 
   /** Reset heading to zero degrees */
@@ -71,9 +74,16 @@ public class GyroHelper extends SubsystemBase
     return pigeon.getFusedHeading() - zero_offset;
   }
 
+  /** @return Heading as Rotation2d */
+  public Rotation2d getRotation()
+  {
+    return Rotation2d.fromDegrees(getAngle());
+  }
+
   @Override
   public void periodic()
   {
+    // Publish heading
     nt_gyro.setDouble(getAngle());
   }
 }

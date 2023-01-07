@@ -374,6 +374,58 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "10,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/X",
+              "_title": "X",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "11,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Y",
+              "_title": "Y",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "12,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Heading",
+              "_title": "Heading",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "13,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/ResetPosition",
+              "_title": "ResetPosition",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
@@ -576,13 +628,58 @@
                 "0,0": {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Gyro",
-                  "_title": "Heading",
+                  "_title": "Angle",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
                 "0,1": {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/ResetGyro",
+                  "_title": " ",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                }
+              }
+            }
+          },
+          "10,0": {
+            "size": [
+              4,
+              3
+            ],
+            "content": {
+              "_type": "Grid Layout",
+              "_title": "Position",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Number of columns": 2,
+              "Layout/Number of rows": 2,
+              "Layout/Label position": "TOP",
+              "_children": {
+                "0,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/X",
+                  "_title": "X",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "1,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Y",
+                  "_title": "Y",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "0,1": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Heading",
+                  "_title": "Heading",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "1,1": {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ResetPosition",
                   "_title": " ",
                   "_glyph": 148,
                   "_showGlyph": false

@@ -24,6 +24,8 @@ public class Driver
   private final NetworkTableEntry nt_position;
 
   private WPI_TalonFX driver;
+
+  private double zero_position = 0.0;
   
   /** @param channel CAN bus ID 1-4 */
   public Driver (int channel)
@@ -38,12 +40,18 @@ public class Driver
     nt_desired = SmartDashboard.getEntry("Desired Speed" + channel);
     nt_position = SmartDashboard.getEntry("Position" + channel);
   }
+  
+  /** Reset position to zero */
+  public void resetPosition()
+  {
+    zero_position = driver.getSelectedSensorPosition();
+  }
 
   /** @return Get position in meters */
   public double getPosition()
   {
     // return Units.inchesToMeters(driver.getSelectedSensorPosition() / COUNTS_PER_INCH);
-    return driver.getSelectedSensorPosition() / COUNTS_PER_INCH / INCHES_PER_METER;
+    return (driver.getSelectedSensorPosition() - zero_position) / COUNTS_PER_INCH / INCHES_PER_METER;
   }
     
   /** @return Get speed in meters/sec */

@@ -4,7 +4,7 @@
 package frc.robot.drivetrain.swerve;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 /** One serve module that can rotate and drive */
 public class SwerveModule 
@@ -46,10 +46,22 @@ public class SwerveModule
   {
     return rotator.getAngle();
   }
-
-  public SwerveModuleState getState()
+  
+  /** Reset position to zero */
+  public void resetPosition()
   {
-    return new SwerveModuleState(driver.getSpeed(), rotator.getAngle()); 
+    driver.resetPosition();
+  }
+
+  // Older odometry used SwerveModuleState, now using SwerveModulePosition
+  // public SwerveModuleState getState()
+  // {
+  //   return new SwerveModuleState(driver.getSpeed(), rotator.getAngle()); 
+  // }
+
+  public SwerveModulePosition getPosition()
+  {
+    return new SwerveModulePosition(driver.getPosition(), rotator.getAngle());
   }
 }
 

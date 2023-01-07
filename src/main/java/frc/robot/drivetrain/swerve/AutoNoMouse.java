@@ -71,9 +71,29 @@ public class AutoNoMouse
                                             1.0, 0.0, 0.0,
                                             0.0, 0.0, 0.0);
       auto.addCommands(drivetrain.createTrajectoryCommand(back, 0.0));
-      auto.addCommands(new PrintCommand("Done"));
       auto.addCommands(new StayPutCommand(drivetrain, 180.0));
       auto.setName("Fw 1 and back");
+      autos.add(auto);
+    }
+
+    {
+      // Little forward and to right, then back
+      SequentialCommandGroup auto = new SequentialCommandGroup();
+      Trajectory forward = createTrajectory(true,
+                                            0.0, 0.0, 0.0,
+                                            0.7, -0.7, -45.0,
+                                            0.9, -2.7, -90);
+      auto.addCommands(drivetrain.createTrajectoryCommand(forward, -90.0));
+      Trajectory back = createTrajectory(false,
+                                            0.9, -2.7, -90.0,
+                                            0.9,  0.0, -90.0);
+      auto.addCommands(drivetrain.createTrajectoryCommand(back, 0.0));
+      Trajectory back2 = createTrajectory(false,
+                                            0.9,  0.0, 0.0,
+                                            0.0,  0.0, 0.0);
+      auto.addCommands(drivetrain.createTrajectoryCommand(back2, 0.0));
+      auto.addCommands(new StayPutCommand(drivetrain, 0.0));
+      auto.setName("|----");
       autos.add(auto);
     }
 

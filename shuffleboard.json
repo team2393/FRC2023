@@ -439,6 +439,45 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "20,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/P_XY",
+              "_title": "P_XY",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "15,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/P_Angle",
+              "_title": "P_Angle",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "16,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Auto Options",
+              "_title": "Auto Options",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
@@ -702,8 +741,8 @@
           },
           "14,0": {
             "size": [
-              2,
-              1
+              4,
+              2
             ],
             "content": {
               "_type": "ComboBox Chooser",

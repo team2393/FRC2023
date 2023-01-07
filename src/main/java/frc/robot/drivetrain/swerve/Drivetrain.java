@@ -177,8 +177,11 @@ public class Drivetrain extends SubsystemBase
     Consumer<SwerveModuleState[]> module_setter = states ->
     {
         for (int i=0; i<modules.length; ++i)
-            modules[i].setSwerveModule(states[i].angle.getDegrees(),
-                                       states[i].speedMetersPerSecond);
+        {
+          SwerveModuleState optimized = SwerveModuleState.optimize(states[i], modules[i].getCurrentAngle());
+          modules[i].setSwerveModule(optimized.angle.getDegrees(),
+                                     optimized.speedMetersPerSecond);
+        }
     };
     // Called by SwerveControllerCommand to check at what angle we want to be
     Supplier<Rotation2d> desiredRotation = () -> Rotation2d.fromDegrees(end_angle);

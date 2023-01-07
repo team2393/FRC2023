@@ -426,6 +426,19 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "19,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Auto Options/selected",
+              "_title": "Auto Options/selected",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
@@ -685,6 +698,19 @@
                   "_showGlyph": false
                 }
               }
+            }
+          },
+          "14,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Auto Options",
+              "_title": "Auto Options",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           }
         }

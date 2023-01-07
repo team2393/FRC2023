@@ -4,13 +4,8 @@
 
 package frc.robot.drivetrain.swerve;
 
-import java.util.List;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.CommandBaseRobot;
@@ -22,6 +17,18 @@ public class SwerveTestRobot extends CommandBaseRobot
 
   private Command drive = new DriveCommand(drivetrain);
   private Command swerve = new SwerveCommand(drivetrain);
+  private SendableChooser<Command> autos = new SendableChooser<>();
+
+  @Override
+  public void robotInit()
+  {
+    super.robotInit();
+
+    autos.setDefaultOption("Nothing", new PrintCommand("Doing nothing"));
+    for (Command auto : AutoNoMouse.createAutoCommands(drivetrain))
+      autos.addOption(auto.getName(), auto);
+    SmartDashboard.putData("Auto Options", autos);
+  }
   
   @Override
   public void teleopInit()
@@ -42,17 +49,12 @@ public class SwerveTestRobot extends CommandBaseRobot
   public void autonomousInit()
   {
     drivetrain.reset();
+    autos.getSelected().schedule();
+  }
 
-    TrajectoryConfig config = new TrajectoryConfig(0.5, 0.5);
-    List<Pose2d> path = List.of(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      new Pose2d(2.0, 0, Rotation2d.fromDegrees(0))
-    );
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(path, config);
-    Command auto = drivetrain.createTrajectoryCommand(trajectory, 45.0)
-                             .andThen(new PrintCommand("Done"))
-                             .andThen(new StayPutCommand(drivetrain, 45.0));
-
-    auto.schedule();
+  @Override
+  public void autonomousPeriodic()
+  {
+    // Let auto command run...  
   }
 }

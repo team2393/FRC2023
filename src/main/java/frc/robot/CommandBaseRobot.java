@@ -4,45 +4,39 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-/** Test robot
- *  Shows state of 'USER' button on dashboard
- */
-public class TestRobot extends TimedRobot
+/** Base class for a robot that uses Commands */
+public class CommandBaseRobot extends TimedRobot
 {
-  private Command show_user_button = new CommandBase()
-  {
-    @Override
-    public void execute()
-    {
-      SmartDashboard.putBoolean("UserButton", RobotController.getUserButton());
-    }
-  };
-
+  /** Initialize robot.
+   * 
+   *  <p>Overriding code should call `super.robotInit()`
+   *  to show the class name.
+   * 
+   *  <p>{@inheritDoc}}
+   */
   @Override
   public void robotInit()
   {
+    // Display the actual class name of the derived class
+    // so we can see what's on the RoboRIO in the drive station console
     System.out.println("************************************");
     System.out.println("**  " + getClass().getName());
     System.out.println("************************************");
   }
 
+  /** Run command scheduler.
+   * 
+   *  <p>Overriding code should call `super.robotPeriodic()`.
+   * 
+   *  <p>{@inheritDoc}}
+   */
   @Override
   public void robotPeriodic()
   {
     // Support commmand framework
     CommandScheduler.getInstance().run();
-  }
-
-  @Override
-  public void teleopInit()
-  {
-    show_user_button.schedule();
   }
 }

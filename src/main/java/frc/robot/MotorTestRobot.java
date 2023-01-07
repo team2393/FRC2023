@@ -7,12 +7,11 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenixpro.hardware.TalonFX;
 
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.parts.SparkMini;
 
 /** Motor Test robot */
-public class MotorTestRobot extends TimedRobot
+public class MotorTestRobot extends CommandBaseRobot
 {
   private final XboxController joystick = new XboxController(0);
 
@@ -34,14 +33,6 @@ public class MotorTestRobot extends TimedRobot
 
   // Simple PWM controller:
   // private final SparkMini motor = new SparkMini(0);
-
-  @Override
-  public void robotInit()
-  {
-    System.out.println("************************************");
-    System.out.println("**  " + getClass().getName());
-    System.out.println("************************************");
-  }
 
   @Override
   public void teleopPeriodic()

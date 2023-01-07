@@ -4,32 +4,17 @@
 
 package frc.robot.drivetrain.swerve;
 
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.CommandBaseRobot;
 
 /** Simple Swerve Test robot */
-public class SimpleSwerveTestRobot extends TimedRobot
+public class SimpleSwerveTestRobot extends CommandBaseRobot
 {
   private final Drivetrain drivetrain = new Drivetrain();
 
   private Command drive = new DriveCommand(drivetrain);
   private Command swerve = new SwerveCommand(drivetrain);
   
-  @Override
-  public void robotInit()
-  {
-    System.out.println("************************************");
-    System.out.println("**  " + getClass().getName());
-    System.out.println("************************************");
-  }
-
-  @Override
-  public void robotPeriodic()
-  {
-    CommandScheduler.getInstance().run();
-  }
-
   @Override
   public void teleopInit()
   {

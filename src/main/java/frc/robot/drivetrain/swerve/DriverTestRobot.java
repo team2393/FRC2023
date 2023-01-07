@@ -4,12 +4,12 @@
 
 package frc.robot.drivetrain.swerve;
 
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.CommandBaseRobot;
 
 /** Driver Test robot */
-public class DriverTestRobot extends TimedRobot
+public class DriverTestRobot extends CommandBaseRobot
 {
   private final XboxController joystick = new XboxController(0);
 
@@ -18,10 +18,7 @@ public class DriverTestRobot extends TimedRobot
   @Override
   public void robotInit()
   {
-    System.out.println("************************************");
-    System.out.println("**  " + getClass().getName());
-    System.out.println("************************************");
-
+    super.robotInit();
     SmartDashboard.setDefaultNumber("Setpoint", 0.0);
   }
 

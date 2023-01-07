@@ -5,21 +5,17 @@
 package frc.robot.drivetrain.swerve;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /** Simple Swerve Test robot */
 public class SimpleSwerveTestRobot extends TimedRobot
 {
-  private final XboxController joystick = new XboxController(0);
+  private final Drivetrain drivetrain = new Drivetrain();
 
-  private final SwerveModule[] modules = new SwerveModule[]
-  {
-    new SwerveModule(0, SwerveModule.OFFSETS[0]),
-    new SwerveModule(1, SwerveModule.OFFSETS[1]),
-    new SwerveModule(2, SwerveModule.OFFSETS[2]),
-    new SwerveModule(3, SwerveModule.OFFSETS[3])
-  };
- 
+  private Command drive = new DriveCommand(drivetrain);
+  private Command swerve = new SwerveCommand(drivetrain);
+  
   @Override
   public void robotInit()
   {
@@ -29,25 +25,23 @@ public class SimpleSwerveTestRobot extends TimedRobot
   }
 
   @Override
+  public void robotPeriodic()
+  {
+    CommandScheduler.getInstance().run();
+  }
+
+  @Override
+  public void teleopInit()
+  {
+    swerve.schedule();
+  }
+
+  @Override
   public void teleopPeriodic()
   {
-    // x = "forward"
-    // y = "left"
-    final double x = -joystick.getRightY();
-    final double y = -joystick.getRightX();
-
-    // Speed: -1 back .. +1 m/s forward
-    final double speed = Math.abs(x*x+y*y);
-
-    // Angle: 0 = forward, 90 = left
-    final double angle;
-    if (speed < 0.1)
-      angle = 0;
-    else
-      angle = Math.toDegrees(Math.atan2(y, x));
-
-    // Run all modules at the same angle and speed
-    for (SwerveModule module : modules)
-      module.setSwerveModule(angle, speed);
+    if (OI.joystick.getLeftBumperPressed())
+      drive.schedule();
+    if (OI.joystick.getRightBumperPressed())
+      swerve.schedule();
   }
 }

@@ -3,6 +3,11 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.drivetrain.swerve;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -11,9 +16,13 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 /** Swerve module drive train */
 public class Drivetrain extends SubsystemBase
@@ -21,6 +30,9 @@ public class Drivetrain extends SubsystemBase
   private final NetworkTableEntry nt_x = SmartDashboard.getEntry("X");
   private final NetworkTableEntry nt_y = SmartDashboard.getEntry("Y");
   private final NetworkTableEntry nt_heading = SmartDashboard.getEntry("Heading");
+
+  NetworkTableEntry nt_xy_p = SmartDashboard.getEntry("P_XY");
+  NetworkTableEntry nt_angle_p = SmartDashboard.getEntry("P_Angle");
 
   private final SwerveModule[] modules = new SwerveModule[]
   {
@@ -63,6 +75,9 @@ public class Drivetrain extends SubsystemBase
   {
     // Publish command to reset position
     SmartDashboard.putData(new ResetPositionCommand(this));
+
+    nt_xy_p.setDefaultDouble(1.0);
+    nt_angle_p.setDefaultDouble(5.0);
   }
 
   /** Reset position tracker */
@@ -136,5 +151,39 @@ public class Drivetrain extends SubsystemBase
     nt_x.setDouble(pose.getX());
     nt_y.setDouble(pose.getY());
     nt_heading.setDouble(pose.getRotation().getDegrees());
+  }
+
+  /** @param trajectory Trajectory to follow
+   *  @param end_angle Final heading angle
+   *  @return Command that follows the trajectory
+   */
+  public Command createTrajectoryCommand(Trajectory trajectory, double end_angle)
+  {
+    // SwerveControllerCommand will basically send the speed at each point of the
+    // trajectory to the serve modules, using many little helpers:
+    // Controllers that correct for the x, y and angle to match the trajectory
+    PIDController x_pid = new PIDController(nt_xy_p.getDouble(0), 0, 0);
+    PIDController y_pid = new PIDController(nt_xy_p.getDouble(0), 0, 0);
+    // Angle controller is 'profiled', allowing up to 30 deg/sec (and 30 deg/sec/sec acceleration) 
+    ProfiledPIDController angle_pid = new ProfiledPIDController(
+      nt_angle_p.getDouble(0), 0, 0,
+      new TrapezoidProfile.Constraints(Math.toRadians(30), Math.toRadians(30)));
+    // ..and 'continuous' because angle wraps around
+    angle_pid.enableContinuousInput(-Math.PI, Math.PI);
+
+    // Called by SwerveControllerCommand to check where we are
+    Supplier<Pose2d> pose_getter = () -> odometry.getPoseMeters();
+    // Called by SwerveControllerCommand to tell us what modules should do
+    Consumer<SwerveModuleState[]> module_setter = states ->
+    {
+        for (int i=0; i<modules.length; ++i)
+            modules[i].setSwerveModule(states[i].angle.getDegrees(),
+                                       states[i].speedMetersPerSecond);
+    };
+    // Called by SwerveControllerCommand to check at what angle we want to be
+    Supplier<Rotation2d> desiredRotation = () -> Rotation2d.fromDegrees(end_angle);
+    return new SwerveControllerCommand(trajectory, pose_getter, kinematics,
+                                        x_pid, y_pid, angle_pid,
+                                        desiredRotation, module_setter, this);
   }
 }

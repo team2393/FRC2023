@@ -7,12 +7,16 @@ package frc.robot.drivetrain.swerve;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-/** Command for interactive swerve moves */
-public class SwerveCommand extends CommandBase
+/** Command for human to drive robot in direction in which it's currently pointed
+ *
+ *  'Forward' means go whereever the nose of the robot points
+ */
+public class RelativeSwerveCommand extends CommandBase
 {
   private final Drivetrain drivetrain;
+  private final SelectCenter center = new SelectCenter();
 
-  public SwerveCommand(Drivetrain drivetrain)
+  public RelativeSwerveCommand(Drivetrain drivetrain)
   {
     this.drivetrain = drivetrain;
     addRequirements(drivetrain);
@@ -23,6 +27,6 @@ public class SwerveCommand extends CommandBase
     drivetrain.swerve(OI.getForwardSpeed(),
                       OI.getLeftSpeed(),
                       OI.getRotationSpeed(),
-                      new Translation2d(0, 0));
+                      center.determineCenter());
   }
 }

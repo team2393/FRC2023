@@ -16,7 +16,8 @@ public class SwerveTestRobot extends CommandBaseRobot
   private final Drivetrain drivetrain = new Drivetrain();
 
   private Command drive = new DriveCommand(drivetrain);
-  private Command swerve = new SwerveCommand(drivetrain);
+  private Command relative_swerve = new RelativeSwerveCommand(drivetrain);
+  private Command absolute_swerve = new AbsoluteSwerveCommand(drivetrain);
   private SendableChooser<Command> autos = new SendableChooser<>();
 
   @Override
@@ -33,16 +34,23 @@ public class SwerveTestRobot extends CommandBaseRobot
   @Override
   public void teleopInit()
   {
-    swerve.schedule();
+    OI.reset();
+    relative_swerve.schedule();
   }
 
   @Override
   public void teleopPeriodic()
   {
-    if (OI.joystick.getLeftBumperPressed())
-      drive.schedule();
-    if (OI.joystick.getRightBumperPressed())
-      swerve.schedule();
+    if (OI.selectAbsoluteMode())
+    {
+      System.out.println("ABSOLUTE");
+      absolute_swerve.schedule();
+    }
+    else if (OI.selectRelativeMode())
+    {
+      System.out.println("RELATIVE");
+      relative_swerve.schedule();
+    }
   }
 
   @Override

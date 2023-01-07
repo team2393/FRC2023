@@ -89,6 +89,13 @@ public class Drivetrain extends SubsystemBase
     odometry.resetPosition(Rotation2d.fromDegrees(0), getPositions(), new Pose2d());
   }
 
+  /** @return Heading of robot on field (relative to last "reset") */
+  public double getHeading()
+  {
+    // Use odometry.getPoseMeters().getRotation()?
+    return gyro.getRotation().getDegrees();
+  }
+
   /** @return Positions of the swerve modules */
   private SwerveModulePosition[] getPositions()
   {

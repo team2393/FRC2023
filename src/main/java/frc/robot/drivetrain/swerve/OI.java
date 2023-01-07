@@ -15,6 +15,13 @@ public class OI
 
   public static final XboxController joystick = new XboxController(0);
 
+  public static void reset()
+  {
+    // Clear memory of past button presses
+    for (int i=1; i<=joystick.getButtonCount(); ++i)
+      joystick.getRawButtonPressed(i);
+  }
+
   /** @return Forward/backwards speed [m/s] */
   public static double getForwardSpeed()
   {
@@ -31,5 +38,40 @@ public class OI
   public static double getRotationSpeed()
   {
     return -MAX_RAD_PER_SEC * joystick.getLeftX();
+  }
+
+  public static boolean selectAbsoluteMode()
+  {
+    return joystick.getLeftBumperPressed();
+  }
+
+  public static boolean selectRelativeMode()
+  {
+    return joystick.getRightBumperPressed();
+  }
+
+  public static boolean resetCenter()
+  { // Small button next to POV
+    return joystick.getBackButtonPressed();
+  }
+
+  public static boolean frontCenter()
+  {
+    return joystick.getYButtonPressed();
+  }
+
+  public static boolean rightCenter()
+  {
+    return joystick.getBButtonPressed();
+  }
+
+  public static boolean leftCenter()
+  {
+    return joystick.getXButtonPressed();
+  }
+
+  public static boolean backCenter()
+  {
+    return joystick.getAButtonPressed();
   }
 }

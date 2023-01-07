@@ -39,4 +39,11 @@ public class CommandBaseRobot extends TimedRobot
     // Support commmand framework
     CommandScheduler.getInstance().run();
   }
+
+  @Override
+  public void disabledPeriodic()
+  {
+    // Define as empty to avoid
+    // "Default disabledPeriodic() method... Override me!"
+  }
 }

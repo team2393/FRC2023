@@ -41,6 +41,9 @@ public class Drivetrain extends SubsystemBase
     new Translation2d(-LENGTH / 2, -WIDTH / 2),
     new Translation2d(-LENGTH / 2,  WIDTH / 2) );
 
+  /** Gyro to measure robot's heading */
+  private GyroHelper gyro = new GyroHelper();
+
   /** Drive all modules with same angle and speed */
   public void drive(double angle, double speed)
   {

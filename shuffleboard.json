@@ -478,6 +478,32 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "17,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/CenterX",
+              "_title": "CenterX",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "18,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/CenterY",
+              "_title": "CenterY",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }

@@ -50,6 +50,11 @@ public class OI
     return joystick.getRightBumperPressed();
   }
 
+  public static boolean resetOrigin()
+  { // Small right button
+    return joystick.getStartButtonPressed();
+  }
+
   public static boolean resetCenter()
   { // Small button next to POV
     return joystick.getBackButtonPressed();

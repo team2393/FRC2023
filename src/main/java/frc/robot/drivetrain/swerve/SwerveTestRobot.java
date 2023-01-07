@@ -41,7 +41,9 @@ public class SwerveTestRobot extends CommandBaseRobot
   @Override
   public void teleopPeriodic()
   {
-    if (OI.selectAbsoluteMode())
+    if (OI.resetOrigin())
+      drivetrain.reset();
+    else if (OI.selectAbsoluteMode())
     {
       System.out.println("ABSOLUTE");
       absolute_swerve.schedule();

@@ -18,6 +18,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.vision.VisionPipeline;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Vision pipeline that detects April tags */
 public class AprilTagPipeline implements VisionPipeline
@@ -61,12 +62,16 @@ public class AprilTagPipeline implements VisionPipeline
     // Set up Pose Estimator
     // TODO Configure focal lengths
     AprilTagPoseEstimator.Config pose_config = new AprilTagPoseEstimator.Config(
-        0.144, // in meters (14.4 cm)
-        50,    // camera horizontal focal length, in pixels
-        50,    // camera vertical focal length, in pixels
+        0.144,   // tag size in meters (14.4 cm. Actual field uses 15.24cm?)
+        320,     // camera horizontal focal length, in pixels
+        320,     // camera vertical focal length, in pixels
         width/2, // camera horizontal focal center, in pixels
         height/2  //camera vertical focal center, in pixels
     );
+    SmartDashboard.setDefaultNumber("CameraF",  pose_config.fx);
+    SmartDashboard.setDefaultNumber("CameraCX", pose_config.cx);
+    SmartDashboard.setDefaultNumber("CameraCY", pose_config.cy);
+
     estimator = new AprilTagPoseEstimator(pose_config);
   }
 
@@ -86,7 +91,7 @@ public class AprilTagPipeline implements VisionPipeline
       }
         
       // Detector needs grayscale image
-      Imgproc.cvtColor(image, gray, Imgproc.COLOR_BGR2GRAY);        
+      Imgproc.cvtColor(image, gray, Imgproc.COLOR_BGR2GRAY);
       AprilTagDetection[] tags = detector.detect(gray);
       for (AprilTagDetection tag : tags)
       {
@@ -109,6 +114,18 @@ public class AprilTagPipeline implements VisionPipeline
         Imgproc.line(image, p4, p1, mark, 1);
 
         // Pose estimator
+        var cfg = estimator.getConfig();
+        // TODO Pose coordinates:
+        // Z = distance from camera,
+        // X = "right",
+        // Y = "down"?
+        // First adjust fx and fy to get correct "Z", distance from camera?
+        cfg.fx = cfg.fy = SmartDashboard.getNumber("CameraF", 320);
+        // Are cx and cy the zero for pose "X" and "Y",
+        // can be set to center of image?
+        cfg.cx = SmartDashboard.getNumber("CameraCX", width/2);
+        cfg.cy = SmartDashboard.getNumber("CameraCY", height/2);
+        estimator.setConfig(cfg);
         Transform3d pose = estimator.estimate(tag);
         // TODO Lookup tag's position, then transform pose into absolute field position of robot
 

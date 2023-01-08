@@ -4,6 +4,8 @@
 
 package frc.robot.vision;
 
+import java.util.Objects;
+
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -11,8 +13,10 @@ import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.first.apriltag.AprilTagDetection;
 import edu.wpi.first.apriltag.AprilTagDetector;
+import edu.wpi.first.apriltag.AprilTagPoseEstimator;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.vision.VisionPipeline;
 
 /** Vision pipeline that detects April tags */
@@ -32,6 +36,7 @@ public class AprilTagPipeline implements VisionPipeline
   final private Mat gray;
 
   final private AprilTagDetector detector;
+  final private AprilTagPoseEstimator estimator;
 
   // Stats
   int image_count = 0;
@@ -53,9 +58,16 @@ public class AprilTagPipeline implements VisionPipeline
     detector.setConfig(config);
     detector.addFamily("tag16h5");
 
-    // TODO Set up Pose Estimator
-    // AprilTagPoseEstimator.Config poseEstConfig = new AprilTagPoseEstimator.Config(...);
-    // AprilTagPoseEstimator estimator = new AprilTagPoseEstimator(poseEstConfig);
+    // Set up Pose Estimator
+    // TODO Configure focal lengths
+    AprilTagPoseEstimator.Config pose_config = new AprilTagPoseEstimator.Config(
+        0.144, // in meters (14.4 cm)
+        50,    // camera horizontal focal length, in pixels
+        50,    // camera vertical focal length, in pixels
+        width/2, // camera horizontal focal center, in pixels
+        height/2  //camera vertical focal center, in pixels
+    );
+    estimator = new AprilTagPoseEstimator(pose_config);
   }
 
   @Override
@@ -86,8 +98,7 @@ public class AprilTagPipeline implements VisionPipeline
         if (tag.getDecisionMargin() < 50.0f)
           continue;
         
-        // Is p1, p2, p3, p4 always left bottom, right bottom,
-        // right top, left top?
+        // left bottom, right bottom, right top, left top?
         Point p1 = new Point(tag.getCornerX(0), tag.getCornerY(0));
         Point p2 = new Point(tag.getCornerX(1), tag.getCornerY(1));
         Point p3 = new Point(tag.getCornerX(2), tag.getCornerY(2));
@@ -97,9 +108,10 @@ public class AprilTagPipeline implements VisionPipeline
         Imgproc.line(image, p3, p4, mark, 1);
         Imgproc.line(image, p4, p1, mark, 1);
 
-        // Pose estimator?
-        //    Transform3d pose = poseEstimator.estimate(tag);
-        
+        // Pose estimator
+        Transform3d pose = estimator.estimate(tag);
+        // TODO Lookup tag's position, then transform pose into absolute field position of robot
+
         String info = String.format("%d", tag.getId());
         Imgproc.putText(image, info,
                         p4,
@@ -108,9 +120,10 @@ public class AprilTagPipeline implements VisionPipeline
                         p4,
                         Imgproc.FONT_HERSHEY_SIMPLEX, 0.4, white, 1);
         if (snapshot)
-          System.out.format("ID %02d, Margin %4.1f\n",
+          System.out.format("ID %02d, Margin %4.1f: %s\n",
                             tag.getId(),
-                            tag.getDecisionMargin());
+                            tag.getDecisionMargin(),
+                            Objects.toString(pose.getTranslation()));
       }
 
       String info = String.format("%3.1f f/s", fps);

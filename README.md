@@ -30,6 +30,10 @@ Next steps:
       * https://docs.wpilib.org/en/latest/docs/software/vision-processing/apriltag/apriltag-intro.html
       * https://docs.photonvision.org/en/latest/docs/getting-started/description.html
       * https://github.com/Tigerbotics7125/AprilTag16h5
+      * https://www.chiefdelphi.com/t/wpilib-apriltagdetector-sample-code
+    * Auto
+      * https://www.chiefdelphi.com/t/team-3476-introduces-autobuilder/412844/3
+
 
 Events, https://frc-events.firstinspires.org/2023/Events/EventList:
  * Week 1, March 1, 2023: [Searcy, AR](https://maps.google.com/maps?ll=35.249098,-91.726211&z=16&t=m&hl=en-US&gl=US&mapclient=embed&q=Searcy%2C%20AR%2072149)
@@ -75,46 +79,3 @@ To connect to the program running on the robot:
  * A new entry with a 'pid' should appear under the 'Remote' list.
    Double-click, then check 'Monitor', 'Sample.. CPU' etc.
 
-
-
-https://www.chiefdelphi.com/t/team-3476-introduces-autobuilder/412844/3
-
-
-https://www.chiefdelphi.com/t/wpilib-apriltagdetector-sample-code/421411/7
-
-// set up USB camera capture
-CameraServer.startAutomaticCapture();
-CvSink cvSink = CameraServer.getVideo();
-
-// set up AprilTag detector
-AprilTagDetector detector = new AprilTagDetector();
-AprilTagDetector.Config config = new AprilTagDetector.Config();
-// set config parameters, e.g. config.blah = 5;
-detector.setConfig(config);
-detector.addFamily("tag16h5");
-
-// Set up Pose Estimator
-AprilTagPoseEstimator.Config poseEstConfig = new AprilTagPoseEstimator.Config(...);
-AprilTagPoseEstimator estimator = new AprilTagPoseEstimator(poseEstConfig);
-
-Mat mat = new Mat();
-Mat graymat = new Mat();
-
-while (!Thread.interrupted()) {
-  // grab image from camera
-  long time = cvSink.getFrame(mat);
-  if (time == 0) {
-    continue;  // error getting image
-  }
-
-  // convert image to grayscale
-  Imgproc.cvtColor(mat, graymat, Imgproc.COLOR_BGR2GRAY);
-  
-  // run detection
-  for (AprilTagDetection detection : detector.detect(graymat)) {
-    // filter by property
-
-    // run pose estimator
-    Transform3d pose = poseEstimator.estimate(detection);
-  }
-}

@@ -17,6 +17,7 @@ import edu.wpi.first.apriltag.AprilTagPoseEstimator;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.vision.VisionPipeline;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -75,22 +76,45 @@ public class AprilTagPipeline implements VisionPipeline
     estimator = new AprilTagPoseEstimator(pose_config);
   }
 
+  // TODO Demo of converting april tag poses to robot/field cooords
+  // Use rotation?
+  public static void main(String[] args)
+  {
+    // Apriltag pose coordinates:
+    // Z = distance from camera,
+    // X = "right",
+    // Y = "down"
+    Translation3d tag = new Translation3d(-2, -3, 1);
+    System.out.println(tag);
+
+    // Robot coordinates:
+    // X = "forward"
+    // Y = "left"
+    // Z = "up"
+    Translation3d fieldpos = new Translation3d(tag.getZ(), -tag.getX(), -tag.getY());
+    // Expect 1, 2, 3
+    System.out.println(fieldpos);
+  }
+
   @Override
   public void process(Mat image)
   {
       // Update stats
       ++image_count;
+      // Take snapshot every ~ second
       long now = System.currentTimeMillis();
       boolean snapshot = now > start + 1000;
       if (snapshot)
-      {
+      { // Frames per second for last ~1000 ms
         double recent_fps = image_count * 1000.0 / (now - start);
+        // Smoothing: 50% of last fps, 50% of this reading
         fps = 0.5*fps + 0.5*recent_fps;
+        // Reset for next snapshot
         image_count = 0;
         start = now;
       }
         
-      // Detector needs grayscale image
+      // AprilTagDetection needs grayscale image
       Imgproc.cvtColor(image, gray, Imgproc.COLOR_BGR2GRAY);
       AprilTagDetection[] tags = detector.detect(gray);
       for (AprilTagDetection tag : tags)

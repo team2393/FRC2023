@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.drivetrain.swerve.SwerveTestRobot;
+import frc.robot.drivetrain.vision.CameraTestRobot;
 
 /** Java 'main' */
 public final class Main
@@ -13,6 +14,6 @@ public final class Main
     /** Start one of the 'XXXRobot' robots */
     public static void main(String... args)
     {
-        RobotBase.startRobot(SwerveTestRobot::new);
+        RobotBase.startRobot(CameraTestRobot::new);
     }
 }

@@ -13,9 +13,7 @@ Next steps:
     * Try new RoboRIO
     * Get 3rd party libraries for CTRE, Vec, ...
       * https://github.com/CrossTheRoadElec/Phoenix-Releases/releases
-      * https://www.chiefdelphi.com/t/wpilib-blog-2023-kickoff-release-of-wpilib
       * https://www.revrobotics.com/software
-      * https://software-metadata.revrobotics.com/REVLib-2023.json
     * Update firmware of power distribution module, pneumatic hub etc.
   * Prepare 'test' robots
     * Manual control of all the motor types (Falcon, Spark, ??) we might have in the robot
@@ -25,7 +23,7 @@ Next steps:
       * https://docs.revrobotics.com 
       * https://www.chiefdelphi.com/t/2023-falcon-updates-and-availability
     * PID control of each motor type for position as well as speed
-    * While actual robot is being designed, program swerve bot with latest WPILib?
+    * While actual robot is being designed, work with swervebot
     * Prepare test robot for each key component of new robot as design materializes
       * https://www.projectb.net.au/resources/robot-mechanisms
     * Vision

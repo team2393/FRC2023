@@ -5,8 +5,12 @@ FRC Software manual: https://docs.wpilib.org/en/latest/index.html
   * Browse through all
   * Note expecially "Changelog", "Known Issues"
  
-Next steps:
+Done:
   * Kickoff: January 7, 2023, https://efcms.engr.utk.edu/efp/first-kickoff/2023/welcome.php
+  * Swervebot: Manual and basic auto
+  * Camera: Detect April tags
+
+Next steps:
   * Study game manual, https://www.firstinspires.org/resource-library/frc/competition-manual-qa-system
   * Install 2023 WPILib
   * Prepare robot skeleton
@@ -26,21 +30,19 @@ Next steps:
     * While actual robot is being designed, work with swervebot
     * Prepare test robot for each key component of new robot as design materializes
       * https://www.projectb.net.au/resources/robot-mechanisms
-    * Vision
+    * Vision: Learn about April tags
       * https://docs.wpilib.org/en/latest/docs/software/vision-processing/apriltag/apriltag-intro.html
       * https://docs.photonvision.org/en/latest/docs/getting-started/description.html
       * https://github.com/Tigerbotics7125/AprilTag16h5
       * https://www.chiefdelphi.com/t/wpilib-apriltagdetector-sample-code
       * https://www.chiefdelphi.com/t/list-of-apriltag-3d-positions
     * Auto
-      * https://www.chiefdelphi.com/t/team-3476-introduces-autobuilder/412844/3
+      * https://www.chiefdelphi.com/t/team-3476-introduces-autobuilder
 
 
 Events, https://frc-events.firstinspires.org/2023/Events/EventList:
  * Week 1, March 1, 2023: [Searcy, AR](https://maps.google.com/maps?ll=35.249098,-91.726211&z=16&t=m&hl=en-US&gl=US&mapclient=embed&q=Searcy%2C%20AR%2072149)
  * Week 5, March 29, 2023: [Knoxville, TN](https://maps.google.com/maps?ll=35.971789,-83.900286&z=13&t=m&hl=en-US&gl=US&mapclient=embed&q=Knoxville%2C%20TN%2037915)  
-
-
 
 
 Profiling

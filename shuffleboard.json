@@ -820,8 +820,8 @@
             ],
             "content": {
               "_type": "Camera Stream",
-              "_source0": "camera_server://Rectangle",
-              "_title": "Rectangle",
+              "_source0": "camera_server://Processed",
+              "_title": "Processed",
               "_glyph": 148,
               "_showGlyph": false,
               "Crosshair/Show crosshair": true,

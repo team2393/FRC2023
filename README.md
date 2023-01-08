@@ -74,3 +74,47 @@ To connect to the program running on the robot:
  * Check 'Do not require SSL connection'
  * A new entry with a 'pid' should appear under the 'Remote' list.
    Double-click, then check 'Monitor', 'Sample.. CPU' etc.
+
+
+
+https://www.chiefdelphi.com/t/team-3476-introduces-autobuilder/412844/3
+
+
+https://www.chiefdelphi.com/t/wpilib-apriltagdetector-sample-code/421411/7
+
+// set up USB camera capture
+CameraServer.startAutomaticCapture();
+CvSink cvSink = CameraServer.getVideo();
+
+// set up AprilTag detector
+AprilTagDetector detector = new AprilTagDetector();
+AprilTagDetector.Config config = new AprilTagDetector.Config();
+// set config parameters, e.g. config.blah = 5;
+detector.setConfig(config);
+detector.addFamily("tag16h5");
+
+// Set up Pose Estimator
+AprilTagPoseEstimator.Config poseEstConfig = new AprilTagPoseEstimator.Config(...);
+AprilTagPoseEstimator estimator = new AprilTagPoseEstimator(poseEstConfig);
+
+Mat mat = new Mat();
+Mat graymat = new Mat();
+
+while (!Thread.interrupted()) {
+  // grab image from camera
+  long time = cvSink.getFrame(mat);
+  if (time == 0) {
+    continue;  // error getting image
+  }
+
+  // convert image to grayscale
+  Imgproc.cvtColor(mat, graymat, Imgproc.COLOR_BGR2GRAY);
+  
+  // run detection
+  for (AprilTagDetection detection : detector.detect(graymat)) {
+    // filter by property
+
+    // run pose estimator
+    Transform3d pose = poseEstimator.estimate(detection);
+  }
+}

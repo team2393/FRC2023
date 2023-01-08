@@ -31,6 +31,7 @@ Next steps:
       * https://docs.photonvision.org/en/latest/docs/getting-started/description.html
       * https://github.com/Tigerbotics7125/AprilTag16h5
       * https://www.chiefdelphi.com/t/wpilib-apriltagdetector-sample-code
+      * https://www.chiefdelphi.com/t/list-of-apriltag-3d-positions
     * Auto
       * https://www.chiefdelphi.com/t/team-3476-introduces-autobuilder/412844/3
 

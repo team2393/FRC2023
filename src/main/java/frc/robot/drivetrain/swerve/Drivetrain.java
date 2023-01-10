@@ -89,6 +89,12 @@ public class Drivetrain extends SubsystemBase
     odometry.resetPosition(Rotation2d.fromDegrees(0), getPositions(), new Pose2d());
   }
 
+  /** @return Position of drivetrain on field (from odometry) */
+  public Pose2d getPose()
+  {
+    return odometry.getPoseMeters();
+  }
+
   /** @return Heading of robot on field (relative to last "reset") */
   public double getHeading()
   {

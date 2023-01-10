@@ -58,7 +58,6 @@ public class SwerveTestRobot extends CommandBaseRobot
   @Override
   public void autonomousInit()
   {
-    drivetrain.reset();
     autos.getSelected().schedule();
   }
 

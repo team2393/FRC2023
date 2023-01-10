@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /** Forward/backwards part of swerve module */
 public class Driver 
 {
+  /** Maximum possible speed [m/s] */
   final public static double MAX_SPEED = 5.6;
 
   // Measured by driving some distance and computing
@@ -34,6 +35,7 @@ public class Driver
     driver.setSelectedSensorPosition(0);
 
     nt_F = SmartDashboard.getEntry("F");
+    // Trial: About 2.8 V per m/s
     nt_F.setDefaultDouble(2.8);
 
     nt_speed = SmartDashboard.getEntry("Speed" + channel);

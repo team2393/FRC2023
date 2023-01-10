@@ -11,9 +11,11 @@ import frc.robot.vision.CameraTestRobot;
 /** Java 'main' */
 public final class Main
 {
-    /** Start one of the 'XXXRobot' robots */
-    public static void main(String... args)
-    {
-        RobotBase.startRobot(CameraTestRobot::new);
-    }
+  /** Start one of the 'XXXRobot' robots */
+  public static void main(String... args)
+  {
+    // CameraTestRobot
+    // SwerveTestRobot
+    RobotBase.startRobot(CameraTestRobot::new);
+  }
 }

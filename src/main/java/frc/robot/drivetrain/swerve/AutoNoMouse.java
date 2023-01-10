@@ -15,7 +15,6 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.CommandBaseRobot;
 
 /** Auto-no-mouse routines */
 public class AutoNoMouse
@@ -46,6 +45,13 @@ public class AutoNoMouse
   public static List<Command> createAutoCommands(Drivetrain drivetrain)
   {
     List<Command> autos = new ArrayList<>();
+
+    {
+      Command auto = new SwerveToPositionCommand(drivetrain, 0, 0, 0)
+                           .andThen(new PrintCommand("Back HOME!"));
+      auto.setName("Home");
+      autos.add(auto);
+    }
     
     {
       // Forward 2m, rotating to 45 degrees while moving
@@ -53,9 +59,10 @@ public class AutoNoMouse
       Trajectory trajectory = createTrajectory(true,
                                                0.0, 0.0, 0.0,
                                                2.0, 0.0, 0.0);
-      Command auto = drivetrain.createTrajectoryCommand(trajectory, 45.0)
-                               .andThen(new PrintCommand("Done"))
-                               .andThen(new StayPutCommand(drivetrain, -45.0));
+      Command auto = new ResetPositionCommand(drivetrain)
+                    .andThen(drivetrain.createTrajectoryCommand(trajectory, 45.0))
+                    .andThen(new PrintCommand("Done"))
+                    .andThen(new StayPutCommand(drivetrain, -45.0));
       auto.setName("Forward 2m");
       autos.add(auto);
     }
@@ -63,6 +70,7 @@ public class AutoNoMouse
     {
       // Forward 1m, then back
       SequentialCommandGroup auto = new SequentialCommandGroup();
+      auto.addCommands(new ResetPositionCommand(drivetrain));
       Trajectory forward = createTrajectory(true,
                                             0.0, 0.0, 0.0,
                                             1.0, 0.0, 0.0);
@@ -79,6 +87,7 @@ public class AutoNoMouse
     {
       // Little forward and to right, then back
       SequentialCommandGroup auto = new SequentialCommandGroup();
+      auto.addCommands(new ResetPositionCommand(drivetrain));
       Trajectory forward = createTrajectory(true,
                                             0.0, 0.0, 0.0,
                                             0.7, -0.7, -45.0,

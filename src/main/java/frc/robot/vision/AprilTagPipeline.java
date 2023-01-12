@@ -62,6 +62,15 @@ public class AprilTagPipeline implements VisionPipeline
 
     // Set up Pose Estimator
     // TODO Configure focal lengths
+    // Compare PhotonVision calibration at 
+    // "resolution" : { "width" : 320.0, "height" : 240.0 },
+    // "cameraIntrinsics" : {
+    //   "rows" : 3,
+    //   "cols" : 3,
+    //   "type" : 6,
+    //   "data" : [ 302.9,   0.0, 153.3,
+    //                0.0, 303.1, 138.3,
+    //                0.0,   0.0,   1.0 ]
     AprilTagPoseEstimator.Config pose_config = new AprilTagPoseEstimator.Config(
         0.144,   // tag size in meters (14.4 cm. Actual field uses 15.24cm?)
         320,     // camera horizontal focal length, in pixels

@@ -82,3 +82,24 @@ To connect to the program running on the robot:
  * A new entry with a 'pid' should appear under the 'Remote' list.
    Double-click, then check 'Monitor', 'Sample.. CPU' etc.
 
+
+
+Camera Calibration
+------------------
+
+The `AprilTagPoseEstimator` needs "focal lengths" and "center" values.
+
+To get them via PhotonVision:
+
+ * Get PhotonVision for the PC from https://github.com/PhotonVision/photonvision/releases
+ * Plug USB camera into laptop
+ * Run in cmd window (using JDK 11 from 2022, not 2023 wpilib!):
+   `\Users\Public\wpilib\2022\jdk\bin\java -jar Downloads\photonvision-v2023.1.2-winx64.jar`
+ * Open web browser to http://localhost:5800
+ * Settings: Configure team number
+ * Cameras: Select camera, download calibration target, ...
+   See https://docs.photonvision.org/en/latest/docs/getting-started/pipeline-tuning/calibration.html
+ * Settings: Export Settings, then find the camera config.json,
+   look for calibration values,
+   compare with https://www.chiefdelphi.com/t/wpilib-apriltagdetector-sample-code/421411/23
+

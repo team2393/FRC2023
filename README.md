@@ -45,6 +45,13 @@ Events, https://frc-events.firstinspires.org/2023/Events/EventList:
  * Week 5, March 29, 2023: [Knoxville, TN](https://maps.google.com/maps?ll=35.971789,-83.900286&z=13&t=m&hl=en-US&gl=US&mapclient=embed&q=Knoxville%2C%20TN%2037915)  
 
 
+RoboRIO2
+--------
+
+WPILib documentation describes how to flash the micro-SD card on a laptop.
+Next, connect the RoboRIO via USB and use the roboRIO Imaging Tool go to Edit Startup Settings, fill out the Team Number box and hit Apply.
+This failed on the first attempt, and simply worked on the second one.
+
 Profiling
 ---------
 

@@ -30,6 +30,7 @@ Next:
       * https://www.chiefdelphi.com/t/2023-falcon-updates-and-availability
   * PID control of each motor type for position as well as speed
   * While actual robot is being designed, work with swervebot
+  * Use LimeLight to detect April tags, https://www.chiefdelphi.com/t/limelight-v2-2023-firmware/422597
   * Prepare test robot for each key component of new robot as design materializes
      * https://www.projectb.net.au/resources/robot-mechanisms
   * Calibrate camera to get April tag locations

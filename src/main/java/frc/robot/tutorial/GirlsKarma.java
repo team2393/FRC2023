@@ -1,5 +1,6 @@
 package frc.robot.tutorial;
 
+/** Example for class derived from a base class */
 public class GirlsKarma extends Karma
 {
     @Override

@@ -1,5 +1,6 @@
 package frc.robot.tutorial;
 
+/** Example for a "base" class, see GirlKarma for derived class */
 public class Karma
 {
     protected int points;

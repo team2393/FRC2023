@@ -50,7 +50,7 @@ RoboRIO2
 
 WPILib documentation describes how to flash the micro-SD card on a laptop.
 Next, connect the RoboRIO via USB and use the roboRIO Imaging Tool go to Edit Startup Settings, fill out the Team Number box and hit Apply.
-This failed on the first attempt, and simply worked on the second one.
+This failed on the first attempt, and simply worked the second time around.
 
 Profiling
 ---------

@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.drivetrain.swerve.SwerveTestRobot;
+import frc.robot.tutorial.FirstDemoRobot;
 import frc.robot.vision.CameraTestRobot;
 
 /** Java 'main' */

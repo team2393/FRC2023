@@ -2,42 +2,38 @@ Team 2393 FRC Season 2023
 =========================
 
 FRC Software manual: https://docs.wpilib.org/en/latest/index.html
-  * Browse through all
-  * Note expecially "Changelog", "Known Issues"
- 
+
+Game manual: https://www.firstinspires.org/resource-library/frc/competition-manual-qa-system
+
 Done:
   * Kickoff: January 7, 2023, https://efcms.engr.utk.edu/efp/first-kickoff/2023/welcome.php
   * Swervebot: Manual and basic auto
   * Camera: Detect April tags
-
-Next steps:
-  * Study game manual, https://www.firstinspires.org/resource-library/frc/competition-manual-qa-system
-  * Install 2023 WPILib
-  * Prepare robot skeleton
-    * Try new RoboRIO
-    * Get 3rd party libraries for CTRE, Vec, ...
-      * https://github.com/CrossTheRoadElec/Phoenix-Releases/releases
-      * https://www.revrobotics.com/software
-    * Update firmware of power distribution module, pneumatic hub etc.
-  * Prepare 'test' robots
-    * Manual control of all the motor types (Falcon, Spark, ??) we might have in the robot
-      * https://www.andymark.com
-      * https://wcproducts.com
-      * https://store.ctr-electronics.com/software
-      * https://docs.revrobotics.com 
-      * https://www.chiefdelphi.com/t/2023-falcon-updates-and-availability
-    * PID control of each motor type for position as well as speed
-    * While actual robot is being designed, work with swervebot
-    * Prepare test robot for each key component of new robot as design materializes
-      * https://www.projectb.net.au/resources/robot-mechanisms
-    * Vision: Learn about April tags
       * https://docs.wpilib.org/en/latest/docs/software/vision-processing/apriltag/apriltag-intro.html
       * https://docs.photonvision.org/en/latest/docs/getting-started/description.html
       * https://github.com/Tigerbotics7125/AprilTag16h5
       * https://www.chiefdelphi.com/t/wpilib-apriltagdetector-sample-code
       * https://www.chiefdelphi.com/t/list-of-apriltag-3d-positions
-    * Auto
-      * https://www.chiefdelphi.com/t/team-3476-introduces-autobuilder
+  * Install 2023 WPILib on robot laptop.
+  * Get 3rd party libraries for CTRE, Vec, ...
+    * https://github.com/CrossTheRoadElec/Phoenix-Releases/releases
+    * https://www.revrobotics.com/software
+   * Try new RoboRIO2
+
+Next:
+  * Update firmware of power distribution module, pneumatic hub etc.
+  * Manual control of all the motor types (Falcon, Spark, ??) we might have in the robot
+      * https://www.andymark.com
+      * https://wcproducts.com
+      * https://store.ctr-electronics.com/software
+      * https://docs.revrobotics.com 
+      * https://www.chiefdelphi.com/t/2023-falcon-updates-and-availability
+  * PID control of each motor type for position as well as speed
+  * While actual robot is being designed, work with swervebot
+  * Prepare test robot for each key component of new robot as design materializes
+     * https://www.projectb.net.au/resources/robot-mechanisms
+  * Calibrate camera to get April tag locations
+  * .. much more
 
 
 Events, https://frc-events.firstinspires.org/2023/Events/EventList:

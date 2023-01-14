@@ -17,7 +17,6 @@ import edu.wpi.first.apriltag.AprilTagPoseEstimator;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.vision.VisionPipeline;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -91,26 +90,6 @@ public class AprilTagPipeline implements VisionPipeline
     SmartDashboard.setDefaultNumber("CameraCY", pose_config.cy);
 
     estimator = new AprilTagPoseEstimator(pose_config);
-  }
-
-  // TODO Demo of converting april tag poses to robot/field cooords
-  // Use rotation?
-  public static void main(String[] args)
-  {
-    // Apriltag pose coordinates:
-    // Z = distance from camera,
-    // X = "right",
-    // Y = "down"
-    Translation3d tag = new Translation3d(-2, -3, 1);
-    System.out.println(tag);
-
-    // Robot coordinates:
-    // X = "forward"
-    // Y = "left"
-    // Z = "up"
-    Translation3d fieldpos = new Translation3d(tag.getZ(), -tag.getX(), -tag.getY());
-    // Expect 1, 2, 3
-    System.out.println(fieldpos);
   }
 
   @Override

@@ -14,7 +14,9 @@ Done:
       * https://github.com/Tigerbotics7125/AprilTag16h5
       * https://www.chiefdelphi.com/t/wpilib-apriltagdetector-sample-code
       * https://www.chiefdelphi.com/t/list-of-apriltag-3d-positions
-  * Install 2023 WPILib on robot laptop.
+  * Install 2023 WPILib on robot laptop
+    * Settings: Editor Tab Size 2, Detect indentation off, minimap disabled, inlay hints off
+    
   * Get 3rd party libraries for CTRE, Vec, ...
     * https://github.com/CrossTheRoadElec/Phoenix-Releases/releases
     * https://www.revrobotics.com/software

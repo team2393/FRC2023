@@ -71,10 +71,18 @@ public class AprilTagPipeline implements VisionPipeline
     //   "data" : [ 302.9,   0.0, 153.3,
     //                0.0, 303.1, 138.3,
     //                0.0,   0.0,   1.0 ]
+    //
+    // or
+    //
+    // "data" : [ 343.39404516429187,   0.0,                154.84166722351625,
+    //                           0.0, 342.41420449259465,   110.31066909927965,
+    //                           0.0,   0.0,                  1.0 ]
+
+
     AprilTagPoseEstimator.Config pose_config = new AprilTagPoseEstimator.Config(
-        0.144,   // tag size in meters (14.4 cm. Actual field uses 15.24cm?)
-        320,     // camera horizontal focal length, in pixels
-        320,     // camera vertical focal length, in pixels
+        0.152,   // tag size in meters (14.4 cm. Actual field uses 15.24cm?)
+        318,     // camera horizontal focal length, in pixels
+        318,     // camera vertical focal length, in pixels
         width/2, // camera horizontal focal center, in pixels
         height/2  //camera vertical focal center, in pixels
     );

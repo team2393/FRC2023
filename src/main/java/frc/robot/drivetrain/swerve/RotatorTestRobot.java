@@ -17,8 +17,8 @@ public class RotatorTestRobot extends CommandBaseRobot
   // 0       -18        Front left
   // 1        90        Front right
   // 2      -161        Back right
-  // 3      -104        Back left
-  private final Rotator rotator = new Rotator(3, 0.0);
+  // 3      -107        Back left
+  private final Rotator rotator = new Rotator(0, 0.0);
 
   @Override
   public void robotInit()

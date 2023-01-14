@@ -6,33 +6,46 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/** Robot for testing drive motors */
 public class DriveDemoRobot extends CommandBaseRobot
 {
-    XboxController joystick = new XboxController(0);
+  final int TICKS_PER_METER = 41800;
+  XboxController joystick = new XboxController(0);
+  WPI_TalonFX motor = new WPI_TalonFX(1);
 
-    final int TICKS_PER_METER = 41800;
+  @Override
+  public void robotInit()
+  {
+    super.robotInit();
+    // Allow manually moving the robot by disabling the default "brake" mode
+    motor.configFactoryDefault();
+    motor.setNeutralMode(NeutralMode.Coast);
+  }
 
-    WPI_TalonFX motor = new WPI_TalonFX(1);
+  /** @return Position in meters */
+  double getPosition()
+  {
+    return motor.getSelectedSensorPosition() / TICKS_PER_METER;
+  }
 
-    @Override
-    public void robotInit()
-    {
-        motor.configFactoryDefault();
-        motor.setNeutralMode(NeutralMode.Coast);
-    }
+  @Override
+  public void robotPeriodic()
+  {
+    super.robotPeriodic();
+    SmartDashboard.putNumber("Ticks", motor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Position", getPosition());
+    // TODO Display speed
+  }
 
-    /** @return Position in meters */
-    double getPosition()
-    {
-        return motor.getSelectedSensorPosition() / TICKS_PER_METER;
-    }
+  @Override
+  public void teleopPeriodic()
+  {
+    motor.setVoltage(joystick.getLeftY() * -10);
+  }
 
-    @Override
-    public void teleopPeriodic()
-    {
-        motor.setVoltage(joystick.getLeftY() * -10);
-
-        SmartDashboard.putNumber("Ticks", motor.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Position", getPosition());
-    }
+  @Override
+  public void autonomousPeriodic()
+  {
+    // TODO Run motor at a certain desired speed
+  }
 }

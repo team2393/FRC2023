@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.parts.RotationEncoder;
 import frc.robot.parts.SparkMini;
 
-public class DemoRobot extends CommandBaseRobot
+public class RotationDemoRobot extends CommandBaseRobot
 {
   XboxController joystick = new XboxController(0);
   SparkMini motor = new SparkMini(0);

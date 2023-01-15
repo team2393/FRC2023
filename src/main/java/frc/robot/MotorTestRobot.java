@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenixpro.hardware.TalonFX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.parts.SparkMini;
@@ -30,6 +32,9 @@ public class MotorTestRobot extends CommandBaseRobot
   // is basically the same as the older versions,
   // and remains free to use.
   private final WPI_TalonFX motor = new WPI_TalonFX(3+1);
+
+  // Brushless motor via SparkMax
+  // private final CANSparkMax motor = new CANSparkMax(0, MotorType.kBrushless);
 
   // Simple PWM controller:
   // private final SparkMini motor = new SparkMini(0);

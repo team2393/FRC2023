@@ -1,7 +1,7 @@
 Team 2393 FRC Season 2023
 =========================
 
-FRC Software manual: https://docs.wpilib.org/en/latest/index.html
+FRC Software manual: https://docs.wpilib.org/en/stable/index.html
 
 Game manual: https://www.firstinspires.org/resource-library/frc/competition-manual-qa-system
 

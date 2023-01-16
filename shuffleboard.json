@@ -353,12 +353,12 @@
             "content": {
               "_type": "Field",
               "_source0": "network_table:///SmartDashboard/Field",
-              "_title": "/SmartDashboard/Field",
-              "_glyph": 148,
+              "_title": "Field",
+              "_glyph": 0,
               "_showGlyph": false,
-              "Game/Game": "A2022_Rapid_React",
+              "Game/Game": "A2023_Charged_Up",
               "Visuals/Robot Icon Size": 50.0,
-              "Visuals/Show Outside Circles": false
+              "Visuals/Show Outside Circles": true
             }
           }
         }

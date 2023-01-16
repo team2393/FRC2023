@@ -360,6 +360,57 @@
               "Visuals/Robot Icon Size": 50.0,
               "Visuals/Show Outside Circles": true
             }
+          },
+          "6,0": {
+            "size": [
+              1,
+              2
+            ],
+            "content": {
+              "_type": "Grid Layout",
+              "_title": "Position",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Number of columns": 1,
+              "Layout/Number of rows": 3,
+              "Layout/Label position": "TOP",
+              "_children": {
+                "0,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/X",
+                  "_title": "/SmartDashboard/X",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "0,1": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Y",
+                  "_title": "/SmartDashboard/Y",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "0,2": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Heading",
+                  "_title": "/SmartDashboard/Heading",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                }
+              }
+            }
+          },
+          "7,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Auto Options",
+              "_title": "/SmartDashboard/Auto Options",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
@@ -367,8 +418,8 @@
   ],
   "windowGeometry": {
     "x": -8.0,
-    "y": 197.0,
+    "y": 289.5,
     "width": 1455.0,
-    "height": 663.5
+    "height": 571.0
   }
 }

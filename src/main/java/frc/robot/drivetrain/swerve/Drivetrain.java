@@ -182,7 +182,11 @@ public class Drivetrain extends SubsystemBase
     nt_y.setDouble(pose.getY());
     nt_heading.setDouble(pose.getRotation().getDegrees());
 
-    field.setRobotPose(pose);
+    // Move '0,0' to other position on field to get better looking start position
+    field.setRobotPose(new Pose2d(pose.getTranslation()
+                                      .rotateBy(Rotation2d.fromDegrees(90))
+                                      .plus(new Translation2d(6, 4)),
+                                  getHeading().plus(Rotation2d.fromDegrees(90))));
   }
 
   /** @param trajectory Trajectory to follow
@@ -214,6 +218,8 @@ public class Drivetrain extends SubsystemBase
           modules[i].setSwerveModule(optimized.angle.getDegrees(),
                                      optimized.speedMetersPerSecond);
         }
+        double vr = Math.toDegrees(kinematics.toChassisSpeeds(states).omegaRadiansPerSecond);
+        simulated_heading += vr * TimedRobot.kDefaultPeriod;
     };
     // Called by SwerveControllerCommand to check at what angle we want to be
     Supplier<Rotation2d> desiredRotation = () -> Rotation2d.fromDegrees(end_angle);

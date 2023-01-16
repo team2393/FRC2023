@@ -6,6 +6,8 @@ package frc.robot.drivetrain.swerve;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Forward/backwards part of swerve module */
@@ -27,6 +29,9 @@ public class Driver
   private WPI_TalonFX driver;
 
   private double zero_position = 0.0;
+
+  private double simulated_speed = 0.0;
+  private double simulated_position = 0.0;
   
   /** @param channel CAN bus ID 1-4 */
   public Driver (int channel)
@@ -47,11 +52,14 @@ public class Driver
   public void resetPosition()
   {
     zero_position = driver.getSelectedSensorPosition();
+    simulated_position = 0.0;
   }
 
   /** @return Get position in meters */
   public double getPosition()
   {
+    if (RobotBase.isSimulation())
+      return simulated_position;
     // return Units.inchesToMeters(driver.getSelectedSensorPosition() / COUNTS_PER_INCH);
     return (driver.getSelectedSensorPosition() - zero_position) / COUNTS_PER_INCH / INCHES_PER_METER;
   }
@@ -59,6 +67,8 @@ public class Driver
   /** @return Get speed in meters/sec */
   public double getSpeed()
   {
+    if (RobotBase.isReal())
+      return simulated_speed;
     return driver.getSelectedSensorVelocity()*10 / COUNTS_PER_INCH / INCHES_PER_METER;
   }
   
@@ -76,5 +86,8 @@ public class Driver
     driver.setVoltage(desired_speed * nt_F.getDouble(0));
     nt_speed.setDouble(getSpeed());
     nt_desired.setDouble(desired_speed);
+    // Update simulation, assume being called each period
+    simulated_speed = desired_speed;
+    simulated_position += desired_speed * TimedRobot.kDefaultPeriod;
   }
 }

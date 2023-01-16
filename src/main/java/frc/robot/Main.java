@@ -18,6 +18,6 @@ public final class Main
   {
     // CameraTestRobot
     // SwerveTestRobot
-    RobotBase.startRobot(CameraTestRobot::new);
+    RobotBase.startRobot(SwerveTestRobot::new);
   }
 }

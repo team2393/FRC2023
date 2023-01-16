@@ -5,6 +5,7 @@ package frc.robot.drivetrain.swerve;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.parts.RotationEncoder;
 import frc.robot.parts.SparkMini;
@@ -19,6 +20,7 @@ public class Rotator
 
   private SparkMini motor;
   private RotationEncoder encoder;
+  private double simulated_angle = 0.0;
 
   /** Construct rotator
    *  @param channel PMW channel 0-4
@@ -43,7 +45,7 @@ public class Rotator
   public void run(double speed)
   {
     motor.set(speed);
-    nt_angle.setDouble(encoder.getHeading().getDegrees());
+    nt_angle.setDouble(getAngle().getDegrees());
   }
 
   /** @param desired Desired angle of serve module in degrees */
@@ -54,14 +56,17 @@ public class Rotator
     double angle = encoder.getHeading().getDegrees();
     double error = Math.IEEEremainder(desired - angle, 360.0);
     double output = error*nt_P.getDouble(0.0);
-    nt_angle.setDouble(angle);
+    nt_angle.setDouble(RobotBase.isReal() ? angle : desired);
     nt_desired.setDouble(desired);
     motor.set(output);
+    simulated_angle = desired;
   }
 
   /** @return Angle */
   public Rotation2d getAngle()
   {
+    if (RobotBase.isSimulation())
+      return Rotation2d.fromDegrees(simulated_angle);
     return encoder.getHeading();
   }
 }

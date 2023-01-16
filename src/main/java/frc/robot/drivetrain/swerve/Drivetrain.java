@@ -19,6 +19,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -66,15 +69,21 @@ public class Drivetrain extends SubsystemBase
   /** Gyro to measure robot's heading */
   private final GyroHelper gyro = new GyroHelper();
 
+  private double simulated_heading = 0.0;
+
   /** Position tracker */
   private final SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics,
-                                                                       gyro.getRotation(),
+                                                                       getHeading(),
                                                                        getPositions());
+
+  private final Field2d field = new Field2d();
 
   public Drivetrain()
   {
     // Publish command to reset position
     SmartDashboard.putData(new ResetPositionCommand(this));
+    // Publish field
+    SmartDashboard.putData(field);
 
     nt_xy_p.setDefaultDouble(1.0);
     nt_angle_p.setDefaultDouble(5.0);
@@ -84,6 +93,7 @@ public class Drivetrain extends SubsystemBase
   public void reset()
   {
     gyro.reset();
+    simulated_heading = 0.0;
     for (int i=0; i<modules.length; ++i)
       modules[i].resetPosition();
     odometry.resetPosition(Rotation2d.fromDegrees(0), getPositions(), new Pose2d());
@@ -96,10 +106,11 @@ public class Drivetrain extends SubsystemBase
   }
 
   /** @return Heading of robot on field (relative to last "reset") */
-  public double getHeading()
+  public Rotation2d getHeading()
   {
-    // Use odometry.getPoseMeters().getRotation()?
-    return gyro.getRotation().getDegrees();
+    if (RobotBase.isSimulation())
+      return Rotation2d.fromDegrees(simulated_heading);
+    return gyro.getRotation();
   }
 
   /** @return Positions of the swerve modules */
@@ -152,18 +163,26 @@ public class Drivetrain extends SubsystemBase
     for (int i=0; i<modules.length; ++i)
       modules[i].setSwerveModule(states[i].angle.getDegrees(),
                                  states[i].speedMetersPerSecond);
+    
+    if (RobotBase.isSimulation())
+    {
+      double adjusted_vr = Math.toDegrees(kinematics.toChassisSpeeds(states).omegaRadiansPerSecond);
+      simulated_heading += adjusted_vr * TimedRobot.kDefaultPeriod;
+    }
   }
 
   @Override
   public void periodic()
   {
     // Update and publish position
-    odometry.update(gyro.getRotation(), getPositions());
+    odometry.update(getHeading(), getPositions());
 
     final Pose2d pose = odometry.getPoseMeters();
     nt_x.setDouble(pose.getX());
     nt_y.setDouble(pose.getY());
     nt_heading.setDouble(pose.getRotation().getDegrees());
+
+    field.setRobotPose(pose);
   }
 
   /** @param trajectory Trajectory to follow

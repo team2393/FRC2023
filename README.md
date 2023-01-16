@@ -8,7 +8,7 @@ Game manual: https://www.firstinspires.org/resource-library/frc/competition-manu
 Done:
   * Kickoff: January 7, 2023, https://efcms.engr.utk.edu/efp/first-kickoff/2023/welcome.php
   * Swervebot: Manual and basic auto
-  * Camera: Detect April tags
+  * Camera: Basic April tags demo
       * https://docs.wpilib.org/en/latest/docs/software/vision-processing/apriltag/apriltag-intro.html
       * https://docs.photonvision.org/en/latest/docs/getting-started/description.html
       * https://github.com/Tigerbotics7125/AprilTag16h5
@@ -32,7 +32,11 @@ Next:
       * https://www.chiefdelphi.com/t/2023-falcon-updates-and-availability
   * PID control of each motor type for position as well as speed
   * While actual robot is being designed, work with swervebot
-  * Use LimeLight to detect April tags, https://www.chiefdelphi.com/t/limelight-v2-2023-firmware/422597
+  * Vision
+      * Calibrate camera
+      * Demo of computing robot location on field
+      * Use https://github.com/wpilibsuite/WPILibPi/releases ?
+      * Use LimeLight, https://www.chiefdelphi.com/t/limelight-v2-2023-firmware/422597 ?
   * Prepare test robot for each key component of new robot as design materializes
      * https://www.projectb.net.au/resources/robot-mechanisms
   * Calibrate camera to get April tag locations

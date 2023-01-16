@@ -34,7 +34,7 @@ public class AbsoluteSwerveCommand extends CommandBase
     // If robot also points 'up', we could use (vx, vy) as given,
     // but generally we need to rotate (vx, vy) backwards from the current heading
     // of the robot to see how the robot needs to move:
-    Rotation2d correction = Rotation2d.fromDegrees(-drivetrain.getHeading());
+    Rotation2d correction = drivetrain.getHeading().unaryMinus();
     Translation2d absoluteDirection = new Translation2d(vx, vy).rotateBy(correction);
 
     // Swerve robot in 'absoluteDirection', while rotating as requested

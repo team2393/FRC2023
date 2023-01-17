@@ -28,6 +28,13 @@ public class DriveDemoRobot extends CommandBaseRobot
     return motor.getSelectedSensorPosition() / TICKS_PER_METER;
   }
 
+  /** @return Speed in meters per second */
+  double getSpeed()
+  {
+    // Convert speed in ticks per 0.1 second to m/s
+    return motor.getSelectedSensorVelocity() * 10.0 / TICKS_PER_METER;
+  }
+
   @Override
   public void robotPeriodic()
   {

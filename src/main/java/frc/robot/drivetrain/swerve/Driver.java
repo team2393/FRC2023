@@ -67,7 +67,7 @@ public class Driver
   /** @return Get speed in meters/sec */
   public double getSpeed()
   {
-    if (RobotBase.isReal())
+    if (RobotBase.isSimulation())
       return simulated_speed;
     return driver.getSelectedSensorVelocity()*10 / COUNTS_PER_INCH / INCHES_PER_METER;
   }

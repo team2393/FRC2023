@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,6 +16,7 @@ public class CanCoderDemoRobot extends CommandBaseRobot
     super.robotInit();
 
     encoder.configFactoryDefault();
+    encoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
   }
 
   @Override
@@ -23,5 +25,11 @@ public class CanCoderDemoRobot extends CommandBaseRobot
     super.robotPeriodic();
 
     SmartDashboard.putNumber("Angle", encoder.getAbsolutePosition());
+  }
+
+  @Override
+  public void teleopInit()
+  {
+    System.out.println(encoder.getLastUnitString());
   }
 }

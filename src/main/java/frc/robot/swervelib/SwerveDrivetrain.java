@@ -1,3 +1,4 @@
+package frc.robot.swervelib;
 // Copyright (c) FIRST Team 2393 and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -28,7 +29,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 /** Swerve module drive train */
-public class SwerveDrivetrain extends SubsystemBase
+abstract public class SwerveDrivetrain extends SubsystemBase
 {
   /** Don't rotate swerve module unless speed is at least this
    *  to avoid spinning in place
@@ -54,9 +55,6 @@ public class SwerveDrivetrain extends SubsystemBase
   /** Front left, front right, back right, back left module */
   private final SwerveModule[] modules;
 
-  /** Gyro that provides angle in degrees */
-  private final DoubleSupplier gyro;
-
   /** Zero offset for gyro in degrees */
   private double zero_heading = 0.0;
 
@@ -72,16 +70,12 @@ public class SwerveDrivetrain extends SubsystemBase
   /** @param width Width of the rectangle where modules are on corners in meters
    *  @param length Length of that rectangle in meters
    *  @param modules Front left, front right, back right, back left module
-   *  @param gyro Gyro that provides angle in degrees
    */
-  public SwerveDrivetrain(double width, double length,
-                          SwerveModule[] modules,
-                          DoubleSupplier gyro)
+  public SwerveDrivetrain(double width, double length, SwerveModule[] modules)
   {
     this.width = width;
     this.length = length;
     this.modules = modules;
-    this.gyro = gyro;
     
     kinematics = new SwerveDriveKinematics(new Translation2d( length / 2,  width / 2),
                                            new Translation2d( length / 2, -width / 2),
@@ -103,19 +97,22 @@ public class SwerveDrivetrain extends SubsystemBase
   /** Reset position tracker */
   public void reset()
   {
-    zero_heading = gyro.getAsDouble();
+    zero_heading = getRawHeading();
     simulated_heading = 0.0;
     for (int i=0; i<modules.length; ++i)
       modules[i].resetPosition();
     odometry.resetPosition(getHeading(), getPositions(), new Pose2d());
   }
 
+  /** @return Heading of gyro in degrees, not corrected for zero heading */
+  abstract public double getRawHeading();
+
   /** @return Heading of robot on field (relative to last "reset") */
   public Rotation2d getHeading()
   {
     if (RobotBase.isSimulation())
       return Rotation2d.fromDegrees(simulated_heading);
-    return Rotation2d.fromDegrees(gyro.getAsDouble() - zero_heading);
+    return Rotation2d.fromDegrees(getRawHeading() - zero_heading);
   }
 
   /** @return Positions of the swerve modules */

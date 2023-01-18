@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.parts.RotationEncoder;
 import frc.robot.parts.SparkMini;
 
-/** Robot for testing drive motors */
+/** Robot for testing rotation motors */
 public class RotationDemoRobot extends CommandBaseRobot
 {
   XboxController joystick = new XboxController(0);

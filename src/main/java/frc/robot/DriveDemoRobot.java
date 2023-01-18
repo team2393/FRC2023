@@ -43,7 +43,7 @@ public class DriveDemoRobot extends CommandBaseRobot
     super.robotPeriodic();
     SmartDashboard.putNumber("Ticks", motor.getSelectedSensorPosition());
     SmartDashboard.putNumber("Position", getPosition());
-   SmartDashboard.putNumber("Speed", getSpeed());
+    SmartDashboard.putNumber("Speed", getSpeed());
   }
 
   @Override
@@ -60,8 +60,9 @@ public class DriveDemoRobot extends CommandBaseRobot
     double setpoint = SmartDashboard.getNumber("setpoint", 0);
     double readback = getSpeed() ;
 
+    // Feed-forward control
     double ff = 2.1798*setpoint+.4643 ;
-
+    // .. and proportional control
     double error = setpoint - readback ; 
     motor.setVoltage(ff + error * SmartDashboard.getNumber("P", 0));
   }

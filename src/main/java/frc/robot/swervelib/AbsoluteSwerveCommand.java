@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.drivetrain.swerve;
+package frc.robot.swervelib;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -16,9 +16,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class AbsoluteSwerveCommand extends CommandBase
 {
   private final static Translation2d CENTER = new Translation2d();
-  private final Drivetrain drivetrain;
+  private final SwerveDrivetrain drivetrain;
 
-  public AbsoluteSwerveCommand(Drivetrain drivetrain)
+  public AbsoluteSwerveCommand(SwerveDrivetrain drivetrain)
   {
     this.drivetrain = drivetrain;
     addRequirements(drivetrain);
@@ -28,8 +28,8 @@ public class AbsoluteSwerveCommand extends CommandBase
   {
     // Speed vector (vx, vy) meant to be in field coordinates,
     // vx going "up" from the origin of the field along X
-    double vx = OI.getForwardSpeed();
-    double vy = OI.getLeftSpeed();
+    double vx = SwerveOI.getForwardSpeed();
+    double vy = SwerveOI.getLeftSpeed();
 
     // If robot also points 'up', we could use (vx, vy) as given,
     // but generally we need to rotate (vx, vy) backwards from the current heading
@@ -38,7 +38,7 @@ public class AbsoluteSwerveCommand extends CommandBase
     Translation2d absoluteDirection = new Translation2d(vx, vy).rotateBy(correction);
 
     // Swerve robot in 'absoluteDirection', while rotating as requested
-    double vr = OI.getRotationSpeed();
+    double vr = SwerveOI.getRotationSpeed();
     drivetrain.swerve(absoluteDirection.getX(), absoluteDirection.getY(), vr, CENTER);
   }
 }

@@ -7,10 +7,10 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import frc.robot.swervelib.SwerveDrivetrain;
 import frc.robot.swervelib.SwerveModule;
 
-/** Rotator using SparkMini and absolute encoder */
+/** Rotator using SparkMini for rotation, Falcon to drive, older pigeon as gyro */
 public class SwervebotDrivetrain extends SwerveDrivetrain
 {
-  private final PigeonIMU pigeon = new PigeonIMU(0);
+  private final PigeonIMU gyro = new PigeonIMU(0);
 
   public SwervebotDrivetrain()
   {
@@ -27,6 +27,6 @@ public class SwervebotDrivetrain extends SwerveDrivetrain
 
   public double getRawHeading()
   {
-    return pigeon.getFusedHeading();
+    return gyro.getFusedHeading();
   }
 }

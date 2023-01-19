@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.swervebot.SwerveBotRobot;
 
 /** Java 'main' */
 public final class Main
@@ -13,7 +14,6 @@ public final class Main
   public static void main(String... args)
   {
     // CameraTestRobot
-    // SwerveTestRobot
-    RobotBase.startRobot(Pigeon2DemoRobot::new);
+    RobotBase.startRobot(SwerveBotRobot::new);
   }
 }

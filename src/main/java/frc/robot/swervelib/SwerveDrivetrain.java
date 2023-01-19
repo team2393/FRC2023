@@ -45,8 +45,8 @@ abstract public class SwerveDrivetrain extends SubsystemBase
   private final Field2d field = new Field2d();
 
   /** Trajectory follower P gains */
-  private final NetworkTableEntry nt_xy_p = SmartDashboard.getEntry("P_XY");
-  private final NetworkTableEntry nt_angle_p = SmartDashboard.getEntry("P_Angle");
+  private final NetworkTableEntry nt_xy_p = SmartDashboard.getEntry("Traj XY P");
+  private final NetworkTableEntry nt_angle_p = SmartDashboard.getEntry("Traj Angle P");
 
   /** Rectangle where modules are on the corners */
   private final double width, length;
@@ -84,7 +84,7 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     odometry = new SwerveDriveOdometry(kinematics, getHeading(), getPositions());
 
     // Publish command to reset position
-    // TODO SmartDashboard.putData(new ResetPositionCommand(this));
+    SmartDashboard.putData(new ResetPositionCommand(this));
 
     // Publish field
     SmartDashboard.putData(field);

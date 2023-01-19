@@ -2,9 +2,8 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.drivetrain.swerve;
+package frc.robot.swervelib;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** Command for human to drive robot in direction in which it's currently pointed
@@ -13,20 +12,21 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
  */
 public class RelativeSwerveCommand extends CommandBase
 {
-  private final Drivetrain drivetrain;
-  private final SelectCenter center = new SelectCenter();
+  private final SwerveDrivetrain drivetrain;
+  private final SelectCenter center;
 
-  public RelativeSwerveCommand(Drivetrain drivetrain)
+  public RelativeSwerveCommand(SwerveDrivetrain drivetrain)
   {
     this.drivetrain = drivetrain;
+    center = new SelectCenter(drivetrain);
     addRequirements(drivetrain);
   }
 
   public void execute()
   {
-    drivetrain.swerve(OI.getForwardSpeed(),
-                      OI.getLeftSpeed(),
-                      OI.getRotationSpeed(),
+    drivetrain.swerve(SwerveOI.getForwardSpeed(),
+                      SwerveOI.getLeftSpeed(),
+                      SwerveOI.getRotationSpeed(),
                       center.determineCenter());
   }
 }

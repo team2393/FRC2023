@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.drivetrain.swerve;
+package frc.robot.swervelib;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,20 +14,27 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class SelectCenter
 {
+  private final double x_step, y_step;  
   private Translation2d center = new Translation2d(0, 0);
+
+  public SelectCenter(SwerveDrivetrain drivetrain)
+  {
+    x_step = drivetrain.getLength()/2;
+    y_step = drivetrain.getWidth()/2;
+  }
 
   public Translation2d determineCenter()
   {
-    if (OI.resetCenter())
+    if (SwerveOI.resetCenter())
         center = new Translation2d(0, 0);
-    if (OI.leftCenter())
-        center = new Translation2d(center.getX(), center.getY() + Drivetrain.WIDTH / 2);
-    if (OI.rightCenter())
-        center = new Translation2d(center.getX(), center.getY() - Drivetrain.WIDTH / 2);
-    if (OI.frontCenter())
-        center = new Translation2d(center.getX() + Drivetrain.LENGTH / 2, center.getY());
-    if (OI.backCenter())
-        center = new Translation2d(center.getX()- Drivetrain.LENGTH / 2, center.getY());
+    if (SwerveOI.leftCenter())
+        center = new Translation2d(center.getX(),          center.getY() + y_step);
+    if (SwerveOI.rightCenter())
+        center = new Translation2d(center.getX(),          center.getY() - y_step);
+    if (SwerveOI.frontCenter())
+        center = new Translation2d(center.getX() + x_step, center.getY());
+    if (SwerveOI.backCenter())
+        center = new Translation2d(center.getX() - x_step, center.getY());
     SmartDashboard.putNumber("CenterX", center.getX());
     SmartDashboard.putNumber("CenterY", center.getY());
     return center;

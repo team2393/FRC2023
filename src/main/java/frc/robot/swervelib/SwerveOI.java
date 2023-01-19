@@ -2,16 +2,16 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.drivetrain.swerve;
+package frc.robot.swervelib;
 
 import edu.wpi.first.wpilibj.XboxController;
 
-/** Operator Interface */
-public class OI
+/** Operator Interface for swerving */
+public class SwerveOI
 {
   private static final double MAX_METERS_PER_SEC = 0.6;
 
-  private static final double MAX_RAD_PER_SEC = 0.3*Math.PI;
+  private static final double MAX_RAD_PER_SEC = Math.toRadians(30);
 
   public static final XboxController joystick = new XboxController(0);
 

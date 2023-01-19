@@ -2,16 +2,16 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.drivetrain.swerve;
+package frc.robot.swervelib;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** Command for simplistic swerve moves */
 public class DriveCommand extends CommandBase
 {
-  private final Drivetrain drivetrain;
+  private final SwerveDrivetrain drivetrain;
 
-  public DriveCommand(Drivetrain drivetrain)
+  public DriveCommand(SwerveDrivetrain drivetrain)
   {
     this.drivetrain = drivetrain;
     addRequirements(drivetrain);
@@ -21,8 +21,8 @@ public class DriveCommand extends CommandBase
   {
     // x = "forward"
     // y = "left"
-    final double x = -OI.joystick.getRightY();
-    final double y = -OI.joystick.getRightX();
+    final double x = SwerveOI.getForwardSpeed();
+    final double y = SwerveOI.getLeftSpeed();
 
     // Speed: -1 back .. +1 m/s forward
     final double speed = Math.abs(x*x+y*y);

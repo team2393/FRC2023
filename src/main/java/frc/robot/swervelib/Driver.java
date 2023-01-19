@@ -35,7 +35,7 @@ abstract public class Driver
   /** Reset position to zero */
   public void resetPosition()
   {
-    zero_position = getPosition();
+    zero_position = getRawPosition();
     simulated_position = 0.0;
   }
 

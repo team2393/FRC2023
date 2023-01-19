@@ -5,12 +5,12 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenixpro.hardware.TalonFX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+// import com.ctre.phoenixpro.hardware.TalonFX;
+// import com.revrobotics.CANSparkMax;
+// import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.parts.SparkMini;
+// import frc.robot.parts.SparkMini;
 
 /** Motor Test robot */
 public class MotorTestRobot extends CommandBaseRobot

@@ -14,7 +14,7 @@
           "0,0": {
             "size": [
               8,
-              5
+              4
             ],
             "content": {
               "_type": "Grid Layout",
@@ -22,7 +22,7 @@
               "_glyph": 149,
               "_showGlyph": false,
               "Layout/Number of columns": 4,
-              "Layout/Number of rows": 5,
+              "Layout/Number of rows": 4,
               "Layout/Label position": "TOP",
               "_children": {
                 "0,0": {
@@ -134,34 +134,6 @@
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Speed4",
                   "_title": "Speed",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                "0,4": {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Desired speed1",
-                  "_title": "Desired speed",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                "1,4": {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Desired speed2",
-                  "_title": "Desired speed",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                "2,4": {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Desired speed3",
-                  "_title": "Desired speed",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                "3,4": {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Desired speed4",
-                  "_title": "Desired speed",
                   "_glyph": 148,
                   "_showGlyph": false
                 }
@@ -414,91 +386,12 @@
           }
         }
       }
-    },
-    {
-      "title": "Tab 4",
-      "autoPopulate": false,
-      "autoPopulatePrefix": "",
-      "widgetPane": {
-        "gridSize": 128.0,
-        "showGrid": true,
-        "hgap": 16.0,
-        "vgap": 16.0,
-        "titleType": 0,
-        "tiles": {
-          "3,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Speed",
-              "_title": "SmartDashboard/Speed",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "4,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Position",
-              "_title": "SmartDashboard/Position",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "5,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/P",
-              "_title": "/SmartDashboard/P",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "4,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/voltage",
-              "_title": "/SmartDashboard/voltage",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "3,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/setpoint",
-              "_title": "/SmartDashboard/setpoint",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          }
-        }
-      }
     }
   ],
   "windowGeometry": {
-    "x": -6.400000095367432,
-    "y": 244.8000030517578,
-    "width": 1455.199951171875,
-    "height": 571.2000122070312
+    "x": 45.0,
+    "y": 312.0,
+    "width": 1456.0,
+    "height": 572.0
   }
 }

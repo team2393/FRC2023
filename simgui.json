@@ -14,13 +14,37 @@
       "/SmartDashboard/Auto Options": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/ResetGyro": "Command",
-      "/SmartDashboard/ResetPosition": "Command"
+      "/SmartDashboard/ResetPosition": "Command",
+      "/SmartDashboard/Scheduler": "Scheduler"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables": {
     "transitory": {
+      "LiveWindow": {
+        ".status": {
+          "open": true
+        }
+      },
+      "Shuffleboard": {
+        ".metadata": {
+          "open": true
+        },
+        ".recording": {
+          "open": true
+        }
+      },
       "SmartDashboard": {
-        "Field": {
+        "ResetPosition": {
+          "open": true
+        },
+        "Scheduler": {
           "open": true
         },
         "open": true

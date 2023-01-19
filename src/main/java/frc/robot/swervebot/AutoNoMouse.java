@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.drivetrain.swerve;
+package frc.robot.swervebot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,10 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.swervelib.ResetPositionCommand;
+import frc.robot.swervelib.StayPutCommand;
+import frc.robot.swervelib.SwerveDrivetrain;
+import frc.robot.swervelib.SwerveToPositionCommand;
 
 /** Auto-no-mouse routines */
 public class AutoNoMouse
@@ -42,7 +46,7 @@ public class AutoNoMouse
       return TrajectoryGenerator.generateTrajectory(waypoints, config);
   }
 
-  public static List<Command> createAutoCommands(Drivetrain drivetrain)
+  public static List<Command> createAutoCommands(SwerveDrivetrain drivetrain)
   {
     List<Command> autos = new ArrayList<>();
 

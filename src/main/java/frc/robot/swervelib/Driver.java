@@ -8,15 +8,21 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/** Forward/backwards part of swerve module */
+/** Forward/backwards part of swerve module
+ *
+ *  Controls motor voltage using feed-forward
+ *  based on static voltage (ks) and velocity gain (ks),
+ *  plus proportional correction
+ */
 abstract public class Driver
 {
   private final NetworkTableEntry nt_position;
   private final NetworkTableEntry nt_speed;
-  private final NetworkTableEntry nt_F;
+  private final NetworkTableEntry nt_ks;
+  private final NetworkTableEntry nt_kv;
+  private final NetworkTableEntry nt_P;
   private double zero_position = 0.0;
-  // Derived class can return this in getSpeed while simulating
-  protected double simulated_speed = 0.0;
+  private double simulated_speed = 0.0;
   private double simulated_position = 0.0;
 
   /** Construct Driver
@@ -26,10 +32,14 @@ abstract public class Driver
   {
     nt_position = SmartDashboard.getEntry("Position" + index);
     nt_speed = SmartDashboard.getEntry("Speed" + index);
-    nt_F = SmartDashboard.getEntry("Driver F");
+    nt_ks = SmartDashboard.getEntry("Driver ks");
+    nt_kv = SmartDashboard.getEntry("Driver kv");
+    nt_P = SmartDashboard.getEntry("Driver P");
 
     // Trial: About 2.8 V per m/s
-    nt_F.setDefaultDouble(2.8);
+    nt_ks.setDefaultDouble(0.0);
+    nt_kv.setDefaultDouble(2.8);
+    nt_P.setDefaultDouble(0);
   }
 
   /** Reset position to zero */
@@ -39,11 +49,19 @@ abstract public class Driver
     simulated_position = 0.0;
   }
 
-  /** @return Get position in meters without zero offset */
-  abstract public double getRawPosition();
+  /** @return Get position in meters (without zero offset) */
+  abstract protected double getRawPosition();
+
+  /** @return Get speed in meters/sec (won't be called in simulation) */
+  abstract protected double getRealSpeed();
 
   /** @return Get speed in meters/sec */
-  abstract public double getSpeed();
+  public double getSpeed()
+  {
+    if (RobotBase.isSimulation())
+      return simulated_speed;
+    return getRealSpeed();
+  }
 
   /** @param voltage Voltage to motor for rotating the swerve module */
   abstract public void setVoltage(double voltage);
@@ -59,7 +77,11 @@ abstract public class Driver
   /** @param desired_speed Speed in m/s */
   public void setSpeed(double desired_speed)
   {
-    setVoltage(desired_speed * nt_F.getDouble(0));
+    double feed_forward = nt_ks.getDouble(0.0) * Math.signum(desired_speed) + nt_kv.getDouble(0.0) * desired_speed;
+    double error = desired_speed - getSpeed();
+    double prop_correction = nt_P.getDouble(0.0) * error;
+    setVoltage(feed_forward + prop_correction);
+
     // Update simulation, assume being called each period
     simulated_speed = desired_speed;
     simulated_position += desired_speed * TimedRobot.kDefaultPeriod;

@@ -5,7 +5,6 @@ package frc.robot.swervebot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.swervelib.Driver;
 
 /** Driver using Falcon */
@@ -22,15 +21,13 @@ public class FalconDriver extends Driver
     motor.configFactoryDefault();
   }
 
-  public double getRawPosition()
+  protected double getRawPosition()
   {
     return motor.getSelectedSensorPosition() / TICKS_PER_METER;
   }
 
-  public double getSpeed()
+  protected double getRealSpeed()
   {
-    if (RobotBase.isSimulation())
-      return simulated_speed;
     // Convert speed in ticks per 0.1 second to m/s
     return motor.getSelectedSensorVelocity() * 10.0 / TICKS_PER_METER;
   }

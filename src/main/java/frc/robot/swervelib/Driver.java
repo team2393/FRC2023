@@ -15,7 +15,8 @@ abstract public class Driver
   private final NetworkTableEntry nt_speed;
   private final NetworkTableEntry nt_F;
   private double zero_position = 0.0;
-  private double simulated_speed = 0.0;
+  // Derived class can return this in getSpeed while simulating
+  protected double simulated_speed = 0.0;
   private double simulated_position = 0.0;
 
   /** Construct Driver
@@ -59,9 +60,11 @@ abstract public class Driver
   public void setSpeed(double desired_speed)
   {
     setVoltage(desired_speed * nt_F.getDouble(0));
-    nt_speed.setDouble(getSpeed());
     // Update simulation, assume being called each period
     simulated_speed = desired_speed;
     simulated_position += desired_speed * TimedRobot.kDefaultPeriod;
+
+    nt_position.setNumber(getPosition());
+    nt_speed.setNumber(getSpeed());
   }
 }

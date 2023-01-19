@@ -4,6 +4,8 @@ package frc.robot.swervebot;
 // the WPILib BSD license file in the root directory of this project.
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.swervelib.Driver;
 
 /** Driver using Falcon */
@@ -27,8 +29,10 @@ public class FalconDriver extends Driver
 
   public double getSpeed()
   {
-      // Convert speed in ticks per 0.1 second to m/s
-      return motor.getSelectedSensorVelocity() * 10.0 / TICKS_PER_METER;
+    if (RobotBase.isSimulation())
+      return simulated_speed;
+    // Convert speed in ticks per 0.1 second to m/s
+    return motor.getSelectedSensorVelocity() * 10.0 / TICKS_PER_METER;
   }
 
   public void setVoltage(double voltage)

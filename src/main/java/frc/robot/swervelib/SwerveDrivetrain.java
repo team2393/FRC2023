@@ -4,7 +4,6 @@ package frc.robot.swervelib;
 // the WPILib BSD license file in the root directory of this project.
 
 import java.util.function.Consumer;
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -92,6 +91,18 @@ abstract public class SwerveDrivetrain extends SubsystemBase
 
     nt_xy_p.setDefaultDouble(1.0);
     nt_angle_p.setDefaultDouble(5.0);
+  }
+
+  /** @return Width of the rectangle where modules are on corners in meters */
+  public double getWidth()
+  {
+    return width;
+  }
+
+  /** @return Length of the rectangle where modules are on corners in meters */
+  public double getLength()
+  {
+    return length;
   }
 
   /** Reset position tracker */

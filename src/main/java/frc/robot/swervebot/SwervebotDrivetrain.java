@@ -3,10 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.swervebot;
 
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix.sensors.PigeonIMU;
-
 import frc.robot.swervelib.SwerveDrivetrain;
 import frc.robot.swervelib.SwerveModule;
 

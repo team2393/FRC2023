@@ -57,10 +57,7 @@ public class SwerveBotRobot extends CommandBaseRobot
     if (SwerveOI.selectFixedSpeed())
         fixed_speed.schedule();
     else
-    {
         fixed_speed.cancel();
-        System.out.println("Cancelling...");
-    }
   }
 
   @Override

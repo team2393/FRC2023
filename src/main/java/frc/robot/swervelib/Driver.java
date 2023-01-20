@@ -7,6 +7,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** Forward/backwards part of swerve module
  *
@@ -14,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *  based on static voltage (ks) and velocity gain (ks),
  *  plus proportional correction
  */
-abstract public class Driver
+abstract public class Driver extends SubsystemBase
 {
   private final NetworkTableEntry nt_position;
   private final NetworkTableEntry nt_speed;
@@ -85,7 +86,11 @@ abstract public class Driver
     // Update simulation, assume being called each period
     simulated_speed = desired_speed;
     simulated_position += desired_speed * TimedRobot.kDefaultPeriod;
+  }
 
+  @Override
+  public void periodic()
+  {
     nt_position.setNumber(getPosition());
     nt_speed.setNumber(getSpeed());
   }

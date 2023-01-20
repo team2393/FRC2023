@@ -7,9 +7,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** Rotational part of a swerve module */
-abstract public class Rotator
+abstract public class Rotator extends SubsystemBase
 {
   private final NetworkTableEntry nt_offset;
   private final NetworkTableEntry nt_P;
@@ -53,9 +54,14 @@ abstract public class Rotator
     double angle = getRawDegrees() - nt_offset.getDouble(0.0);
     double error = Math.IEEEremainder(desired - angle, 360.0);
     double output = error*nt_P.getDouble(0.0);
-    nt_angle.setDouble(RobotBase.isReal() ? angle : desired);
     nt_desired.setDouble(desired);
     setVoltage(output);
     simulated_angle = desired;
+  }
+  
+  @Override
+  public void periodic()
+  {
+    nt_angle.setDouble(getAngle().getDegrees());
   }
 }

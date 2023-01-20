@@ -16,9 +16,10 @@ public class FalconDriver extends Driver
 
   public FalconDriver(int index)
   {
-    super(index);
+    super(index, 0.4, 2.5, 3);
     motor = new WPI_TalonFX(index + 1);
     motor.configFactoryDefault();
+    motor.configOpenloopRamp(0.3);
   }
 
   protected double getRawPosition()

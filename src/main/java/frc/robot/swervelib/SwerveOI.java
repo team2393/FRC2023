@@ -5,6 +5,7 @@
 package frc.robot.swervelib;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 
 /** Operator Interface for swerving */
@@ -16,23 +17,29 @@ public class SwerveOI
 
   public static final XboxController joystick = new XboxController(0);
 
+  private static final SlewRateLimiter x_throttle = new SlewRateLimiter(0.3);
+  private static final SlewRateLimiter y_throttle = new SlewRateLimiter(0.3);
+
   public static void reset()
   {
     // Clear memory of past button presses
     for (int i=1; i<=joystick.getButtonCount(); ++i)
       joystick.getRawButtonPressed(i);
+    
+    x_throttle.reset(0.0);
+    y_throttle.reset(0.0);
   }
 
   /** @return Forward/backwards speed [m/s] */
   public static double getForwardSpeed()
   {
-    return -MAX_METERS_PER_SEC * MathUtil.applyDeadband(joystick.getRightY(), 0.1);
+    return -MAX_METERS_PER_SEC * MathUtil.applyDeadband(x_throttle.calculate(joystick.getRightY()), 0.1);
   }
 
   /** @return Left/right speed [m/s] */
   public static double getLeftSpeed()
   {
-    return -MAX_METERS_PER_SEC * MathUtil.applyDeadband(joystick.getRightX(), 0.1);
+    return -MAX_METERS_PER_SEC * MathUtil.applyDeadband(y_throttle.calculate(joystick.getRightX()), 0.1);
   }
 
   /** @return Rotational speed, counter-clockwise [rad/s] */

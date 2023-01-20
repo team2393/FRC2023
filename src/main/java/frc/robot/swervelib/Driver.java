@@ -28,8 +28,11 @@ abstract public class Driver extends SubsystemBase
 
   /** Construct Driver
    *  @param index Driver index 0..3
+   *  @param ks Static voltage
+   *  @param kv Velocity gain
+   *  @param P Proportional gain
    */
-  public Driver(int index)
+  public Driver(int index, double ks, double kv, double P)
   {
     nt_position = SmartDashboard.getEntry("Position" + index);
     nt_speed = SmartDashboard.getEntry("Speed" + index);
@@ -37,10 +40,9 @@ abstract public class Driver extends SubsystemBase
     nt_kv = SmartDashboard.getEntry("Driver kv");
     nt_P = SmartDashboard.getEntry("Driver P");
 
-    // Trial: About 2.8 V per m/s
-    nt_ks.setDefaultDouble(0.0);
-    nt_kv.setDefaultDouble(2.8);
-    nt_P.setDefaultDouble(0);
+    nt_ks.setDefaultDouble(ks);
+    nt_kv.setDefaultDouble(kv);
+    nt_P.setDefaultDouble(P);
   }
 
   /** Reset position to zero */

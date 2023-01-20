@@ -51,6 +51,11 @@ public class SwerveOI
     return joystick.getRightBumperPressed();
   }
 
+  public static boolean selectFixedSpeed()
+  {
+    return joystick.getPOV() == 0;
+  }
+
   public static boolean resetOrigin()
   { // Small right button
     return joystick.getStartButtonPressed();

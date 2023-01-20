@@ -10,7 +10,7 @@ import frc.robot.swervelib.Driver;
 /** Driver using Falcon */
 public class FalconDriver extends Driver
 {
-  private final static int TICKS_PER_METER = 41800;
+  private final static int TICKS_PER_METER = 42962;
 
   private final WPI_TalonFX motor;
 

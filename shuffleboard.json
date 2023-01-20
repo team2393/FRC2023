@@ -111,29 +111,29 @@
                 },
                 "0,3": {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Speed1",
-                  "_title": "Speed",
+                  "_source0": "network_table:///SmartDashboard/Speed0",
+                  "_title": "SmartDashboard/Speed0",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
                 "1,3": {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Speed2",
-                  "_title": "Speed",
+                  "_source0": "network_table:///SmartDashboard/Speed1",
+                  "_title": "SmartDashboard/Speed1",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
                 "2,3": {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Speed3",
-                  "_title": "Speed",
+                  "_source0": "network_table:///SmartDashboard/Speed2",
+                  "_title": "SmartDashboard/Speed2",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
                 "3,3": {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Speed4",
-                  "_title": "Speed",
+                  "_source0": "network_table:///SmartDashboard/Speed3",
+                  "_title": "SmartDashboard/Speed3",
                   "_glyph": 148,
                   "_showGlyph": false
                 }
@@ -389,8 +389,8 @@
     }
   ],
   "windowGeometry": {
-    "x": 45.0,
-    "y": 312.0,
+    "x": 4.0,
+    "y": 377.6000061035156,
     "width": 1456.0,
     "height": 572.0
   }

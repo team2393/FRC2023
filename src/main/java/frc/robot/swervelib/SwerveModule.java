@@ -5,10 +5,9 @@ package frc.robot.swervelib;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** One serve module that can rotate and drive */
-public class SwerveModule extends SubsystemBase
+public class SwerveModule
 {
   private final Rotator rotator;
   private final Driver driver;    

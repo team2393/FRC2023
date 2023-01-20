@@ -13,7 +13,7 @@ public class SwerveOI
 {
   private static final double MAX_METERS_PER_SEC = 0.6;
 
-  private static final double MAX_RAD_PER_SEC = Math.toRadians(90);
+  private static final double MAX_RAD_PER_SEC = Math.toRadians(30);
 
   public static final XboxController joystick = new XboxController(0);
 
@@ -60,9 +60,14 @@ public class SwerveOI
     return joystick.getRightBumperPressed();
   }
 
-  public static boolean selectFixedSpeed()
+  public static boolean selectFixedForward()
   {
     return joystick.getPOV() == 0;
+  }
+
+  public static boolean selectFixedBack()
+  {
+    return joystick.getPOV() == 180;
   }
 
   public static boolean resetOrigin()

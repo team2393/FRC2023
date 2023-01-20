@@ -23,7 +23,8 @@ public class SwerveBotRobot extends CommandBaseRobot
   // private final CommandBase drive = new DriveCommand(drivetrain);
   private final CommandBase drive_relative = new RelativeSwerveCommand(drivetrain);
   private final CommandBase drive_absolute = new AbsoluteSwerveCommand(drivetrain);
-  private final CommandBase fixed_speed = new FixedSpeedCommand(drivetrain, 0.3);
+  private final CommandBase fixed_fwd = new FixedSpeedCommand(drivetrain, 0.2);
+  private final CommandBase fixed_back = new FixedSpeedCommand(drivetrain, -0.2);
   private final CommandBase reset = new ResetPositionCommand(drivetrain);
 
   private final SendableChooser<Command> autos = new SendableChooser<>();
@@ -55,10 +56,15 @@ public class SwerveBotRobot extends CommandBaseRobot
       drive_relative.schedule();
     if (SwerveOI.resetOrigin())
         reset.schedule();
-    if (SwerveOI.selectFixedSpeed())
-        fixed_speed.schedule();
+    if (SwerveOI.selectFixedForward())
+        fixed_fwd.schedule();
+    else if (SwerveOI.selectFixedBack())
+        fixed_back.schedule();
     else
-        fixed_speed.cancel();
+    {
+        fixed_fwd.cancel();
+        fixed_back.cancel();
+    }
   }
 
   @Override

@@ -4,30 +4,25 @@
 
 package frc.robot.swervelib;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.swervebot.AutoNoMouse;
 
 /** Command for swerving to a desired location
- * 
- *  Doesn't try to come up with a trajectory,
- *  simply uses vx, vy, vr to get to desired X, Y, Angle
+ *
+ *   Created trajectory from whereever we are to
+ *   the target location, a straight line.
+ *   Schedules a new trajectory following command
+ *   for that path and then waits for it to finish.
  */
 public class SwerveToPositionCommand extends CommandBase
 {
-  private static final Translation2d CENTER = new Translation2d();
   private final SwerveDrivetrain drivetrain;
- 
-  // kP = 0.4 m/s if 0.1 m away ... but limit speed to 0.5
-  private final ProfiledPIDController x_pid = new ProfiledPIDController(4, 0, 0, new Constraints(0.5, 0.5));
-  private final ProfiledPIDController y_pid = new ProfiledPIDController(4, 0, 0, new Constraints(0.5, 0.5));
-  // kP = 10 deg/sec if 1 deg away .. 20 deg/sec
-  private final ProfiledPIDController angle_pid = new ProfiledPIDController(10, 0, 0, new Constraints(20, 20));
-
-  private boolean close_enough;
-  
+  private final double target_x, target_y, final_angle;
+  private Command follower;
+   
   /** @param drivetrain
    *  @param x Desired X [m],
    *  @param y Y [m],
@@ -36,43 +31,29 @@ public class SwerveToPositionCommand extends CommandBase
   public SwerveToPositionCommand(SwerveDrivetrain drivetrain, double x, double y, double angle)
   {
     this.drivetrain = drivetrain;
-    addRequirements(drivetrain);
-
-    x_pid.setGoal(x);
-    y_pid.setGoal(y);
-    angle_pid.setGoal(angle);
-  }
+    target_x = x;
+    target_y = y;
+    final_angle = angle;
+    // Do NOT require the drivebase. The `follower` will do that.
+ }
 
   @Override
   public void initialize()
   {
-    Pose2d pose = drivetrain.getPose();
-    x_pid.reset(pose.getX());
-    y_pid.reset(pose.getY());
-    angle_pid.reset(pose.getRotation().getDegrees());
-    close_enough = false;
-  }
+    Pose2d current = drivetrain.getPose();
 
-  @Override
-  public void execute()
-  {
-    Pose2d pose = drivetrain.getPose();
-    double heading = pose.getRotation().getDegrees();
-    double vx = x_pid.calculate(pose.getX());
-    double vy = y_pid.calculate(pose.getY());
-    double vr = angle_pid.calculate(heading);
-    drivetrain.swerve(vx, vy, Math.toRadians(vr), CENTER);
-
-    // Within 5 cm and 5 degrees of desired position?
-    close_enough = Math.abs(angle_pid.getGoal().position - heading) < 5  &&
-                   Math.abs(x_pid.getGoal().position - pose.getX()) < 0.05 &&
-                   Math.abs(y_pid.getGoal().position - pose.getY()) < 0.05;
-
+    double heading = Math.toDegrees(Math.atan2(target_y - current.getY(),
+                                               target_x - current.getX()));
+    Trajectory path = AutoNoMouse.createTrajectory(true,
+                                                   current.getX(), current.getY(), heading,
+                                                   target_x, target_y, heading);
+    follower = drivetrain.createTrajectoryCommand(path, final_angle);
+    follower.schedule();
   }
 
   @Override
   public boolean isFinished()
   {
-    return close_enough;
+    return follower.isFinished();
   }
 }

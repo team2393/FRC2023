@@ -1,8 +1,9 @@
-package frc.robot;
+package frc.robot.demos;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.CommandBaseRobot;
 
 /** REV Through-Bore Encoder demo robot */
 public class ThroughBoreEncoderRobot extends CommandBaseRobot

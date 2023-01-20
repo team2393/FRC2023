@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot;
+package frc.robot.demos;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 // import com.ctre.phoenixpro.hardware.TalonFX;
@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.XboxController;
 // import frc.robot.parts.SparkMini;
+import frc.robot.CommandBaseRobot;
 
 /** Motor Test robot */
 public class MotorTestRobot extends CommandBaseRobot

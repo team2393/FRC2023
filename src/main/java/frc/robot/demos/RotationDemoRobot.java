@@ -1,7 +1,8 @@
-package frc.robot;
+package frc.robot.demos;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.CommandBaseRobot;
 import frc.robot.parts.RotationEncoder;
 import frc.robot.parts.SparkMini;
 

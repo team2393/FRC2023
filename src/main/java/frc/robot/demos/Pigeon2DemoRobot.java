@@ -1,8 +1,9 @@
-package frc.robot;
+package frc.robot.demos;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.CommandBaseRobot;
 
 /** Pigeon2 demo robot */
 public class Pigeon2DemoRobot extends CommandBaseRobot

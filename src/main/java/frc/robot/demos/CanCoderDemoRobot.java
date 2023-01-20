@@ -1,9 +1,10 @@
-package frc.robot;
+package frc.robot.demos;
 
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.CommandBaseRobot;
 
 /** CANcoder demo robot */
 public class CanCoderDemoRobot extends CommandBaseRobot

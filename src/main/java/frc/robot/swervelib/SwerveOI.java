@@ -17,8 +17,10 @@ public class SwerveOI
 
   public static final XboxController joystick = new XboxController(0);
 
-  private static final SlewRateLimiter x_throttle = new SlewRateLimiter(0.3);
-  private static final SlewRateLimiter y_throttle = new SlewRateLimiter(0.3);
+  // Limit joystick slew, go 0 to 1 in 1/2 second
+  private static final SlewRateLimiter x_throttle = new SlewRateLimiter(2.0);
+  private static final SlewRateLimiter y_throttle = new SlewRateLimiter(2.0);
+  private static final SlewRateLimiter rot_throttle = new SlewRateLimiter(2.0);
 
   public static void reset()
   {
@@ -45,7 +47,7 @@ public class SwerveOI
   /** @return Rotational speed, counter-clockwise [rad/s] */
   public static double getRotationSpeed()
   {
-    return -MAX_RAD_PER_SEC * MathUtil.applyDeadband(joystick.getLeftX(), 0.1);
+    return -MAX_RAD_PER_SEC * MathUtil.applyDeadband(rot_throttle.calculate(joystick.getLeftX()), 0.1);
   }
 
   public static boolean selectAbsoluteMode()

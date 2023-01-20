@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.CommandBaseRobot;
 import frc.robot.swervelib.AbsoluteSwerveCommand;
 import frc.robot.swervelib.RelativeSwerveCommand;
+import frc.robot.swervelib.ResetPositionCommand;
 import frc.robot.swervelib.SwerveOI;
 
 /** ServeBot */
@@ -20,6 +21,7 @@ public class SwerveBotRobot extends CommandBaseRobot
   // private final CommandBase drive = new DriveCommand(drivetrain);
   private final CommandBase drive_relative = new RelativeSwerveCommand(drivetrain);
   private final CommandBase drive_absolute = new AbsoluteSwerveCommand(drivetrain);
+  private final CommandBase reset = new ResetPositionCommand(drivetrain);
 
   private final SendableChooser<Command> autos = new SendableChooser<>();
 
@@ -48,6 +50,8 @@ public class SwerveBotRobot extends CommandBaseRobot
       drive_absolute.schedule();
     if (SwerveOI.selectRelativeMode())
       drive_relative.schedule();
+    if (SwerveOI.resetOrigin())
+        reset.schedule();
   }
 
   @Override

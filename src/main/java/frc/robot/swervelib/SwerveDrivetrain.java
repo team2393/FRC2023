@@ -81,7 +81,7 @@ abstract public class SwerveDrivetrain extends SubsystemBase
                                            new Translation2d(-length / 2, -width / 2),
                                            new Translation2d(-length / 2,  width / 2) );
 
-    odometry = new SwerveDriveOdometry(kinematics, getHeading(), getPositions());
+    odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(), getPositions());
 
     // Publish command to reset position
     SmartDashboard.putData(new ResetPositionCommand(this));

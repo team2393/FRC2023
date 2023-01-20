@@ -14,6 +14,7 @@ abstract public class Rotator
   private final NetworkTableEntry nt_offset;
   private final NetworkTableEntry nt_P;
   private final NetworkTableEntry nt_angle;
+  private final NetworkTableEntry nt_desired;
   private double simulated_angle = 0.0;
 
   /** Construct Rotator
@@ -24,10 +25,11 @@ abstract public class Rotator
   {
     nt_offset = SmartDashboard.getEntry("Offset" + index);
     nt_angle = SmartDashboard.getEntry("Angle" + index);
+    nt_desired = SmartDashboard.getEntry("Desired" + index);
     nt_P = SmartDashboard.getEntry("Rotator P");
 
     nt_offset.setDefaultDouble(offset);
-    nt_P.setDefaultDouble(0.05);
+    nt_P.setDefaultDouble(0.5);
   }
 
   /** @return Angle without any offset correction */
@@ -52,6 +54,7 @@ abstract public class Rotator
     double error = Math.IEEEremainder(desired - angle, 360.0);
     double output = error*nt_P.getDouble(0.0);
     nt_angle.setDouble(RobotBase.isReal() ? angle : desired);
+    nt_desired.setDouble(desired);
     setVoltage(output);
     simulated_angle = desired;
   }

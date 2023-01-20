@@ -51,12 +51,34 @@ public class AutoNoMouse
     List<Command> autos = new ArrayList<>();
 
     {
+      Command auto = new StayPutCommand(drivetrain, 0.0);
+      auto.setName("Stay");
+      autos.add(auto);
+    }
+
+    {
       Command auto = new SwerveToPositionCommand(drivetrain, 0, 0, 0)
                            .andThen(new PrintCommand("Back HOME!"));
       auto.setName("Home");
       autos.add(auto);
     }
     
+    {
+      // Forward and right
+      Trajectory trajectory = createTrajectory(true,
+                                               0.0, 0.0, 0.0,
+                                               3.2, 2.0, 0.0,
+                                               4.5, 1.5, -90.0,
+                                               3.5, -0.5, -90.0
+                                               );
+      Command auto = new ResetPositionCommand(drivetrain)
+                    .andThen(drivetrain.createTrajectoryCommand(trajectory, -90.0))
+                    .andThen(new PrintCommand("Done"))
+                    .andThen(new StayPutCommand(drivetrain, 0.0));
+      auto.setName("Test Trajectory");
+      autos.add(auto);
+    }
+
     {
       // Forward 2m, rotating to 45 degrees while moving
       // Wheels in the end stay at -45 deg

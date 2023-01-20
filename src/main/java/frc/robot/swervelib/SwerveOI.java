@@ -4,6 +4,7 @@
 
 package frc.robot.swervelib;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 
 /** Operator Interface for swerving */
@@ -11,7 +12,7 @@ public class SwerveOI
 {
   private static final double MAX_METERS_PER_SEC = 0.6;
 
-  private static final double MAX_RAD_PER_SEC = Math.toRadians(30);
+  private static final double MAX_RAD_PER_SEC = Math.toRadians(90);
 
   public static final XboxController joystick = new XboxController(0);
 
@@ -25,19 +26,19 @@ public class SwerveOI
   /** @return Forward/backwards speed [m/s] */
   public static double getForwardSpeed()
   {
-    return -MAX_METERS_PER_SEC * joystick.getRightY();
+    return -MAX_METERS_PER_SEC * MathUtil.applyDeadband(joystick.getRightY(), 0.1);
   }
 
   /** @return Left/right speed [m/s] */
   public static double getLeftSpeed()
   {
-    return -MAX_METERS_PER_SEC * joystick.getRightX();
+    return -MAX_METERS_PER_SEC * MathUtil.applyDeadband(joystick.getRightX(), 0.1);
   }
 
   /** @return Rotational speed, counter-clockwise [rad/s] */
   public static double getRotationSpeed()
   {
-    return -MAX_RAD_PER_SEC * joystick.getLeftX();
+    return -MAX_RAD_PER_SEC * MathUtil.applyDeadband(joystick.getLeftX(), 0.1);
   }
 
   public static boolean selectAbsoluteMode()

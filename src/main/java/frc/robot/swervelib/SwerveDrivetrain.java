@@ -91,6 +91,9 @@ abstract public class SwerveDrivetrain extends SubsystemBase
 
     nt_xy_p.setDefaultDouble(1.0);
     nt_angle_p.setDefaultDouble(5.0);
+
+    // When no other command uses the drivetrain, stay put with modules pointed to 0.0
+    setDefaultCommand(new StayPutCommand(this, 0.0));
   }
 
   /** @return Width of the rectangle where modules are on corners in meters */

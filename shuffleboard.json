@@ -5,16 +5,16 @@
       "autoPopulate": false,
       "autoPopulatePrefix": "",
       "widgetPane": {
-        "gridSize": 64.0,
+        "gridSize": 50.0,
         "showGrid": true,
-        "hgap": 16.0,
-        "vgap": 16.0,
+        "hgap": 10.0,
+        "vgap": 10.0,
         "titleType": 0,
         "tiles": {
           "0,0": {
             "size": [
-              8,
-              4
+              9,
+              5
             ],
             "content": {
               "_type": "Grid Layout",
@@ -140,9 +140,9 @@
               }
             }
           },
-          "0,4": {
+          "0,5": {
             "size": [
-              7,
+              9,
               2
             ],
             "content": {
@@ -150,28 +150,35 @@
               "_title": "Settings",
               "_glyph": 149,
               "_showGlyph": false,
-              "Layout/Number of columns": 3,
+              "Layout/Number of columns": 4,
               "Layout/Number of rows": 1,
               "Layout/Label position": "TOP",
               "_children": {
-                "0,0": {
+                "3,0": {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Driver ks",
-                  "_title": "SmartDashboard/Driver ks",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                "1,0": {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Driver kv",
-                  "_title": "SmartDashboard/Driver kv",
+                  "_source0": "network_table:///SmartDashboard/Driver P",
+                  "_title": "Driver P",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
                 "2,0": {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Driver P",
-                  "_title": "SmartDashboard/Driver P",
+                  "_source0": "network_table:///SmartDashboard/Driver kv",
+                  "_title": "Driver kv",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "1,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Driver ks",
+                  "_title": "Driver ks",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "0,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Rotator P",
+                  "_title": "Rotator P",
                   "_glyph": 148,
                   "_showGlyph": false
                 }
@@ -378,7 +385,7 @@
                 "0,3": {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/ResetPosition",
-                  "_title": "Reset",
+                  "_title": "  ",
                   "_glyph": 148,
                   "_showGlyph": false
                 }
@@ -403,8 +410,8 @@
     }
   ],
   "windowGeometry": {
-    "x": -7.5,
-    "y": 239.0,
+    "x": -6.0,
+    "y": 248.5,
     "width": 1455.0,
     "height": 618.5
   }

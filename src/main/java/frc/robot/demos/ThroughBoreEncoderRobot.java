@@ -9,7 +9,7 @@ import frc.robot.CommandBaseRobot;
 public class ThroughBoreEncoderRobot extends CommandBaseRobot
 {
   // Absolute readout uses (white, red, black) into DI
-  private DutyCycleEncoder encoder = new DutyCycleEncoder(new DigitalInput(1));
+  private DutyCycleEncoder encoder = new DutyCycleEncoder(new DigitalInput(3));
   
   @Override
   public void robotInit()

@@ -5,6 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.demos.CanCoderDemoRobot;
+import frc.robot.demos.Pigeon2DemoRobot;
+import frc.robot.demos.ThroughBoreEncoderRobot;
 import frc.robot.swervebot.SwerveBotRobot;
 
 /** Java 'main' */
@@ -14,6 +17,6 @@ public final class Main
   public static void main(String... args)
   {
     // CameraTestRobot
-    RobotBase.startRobot(SwerveBotRobot::new);
+    RobotBase.startRobot(ThroughBoreEncoderRobot::new);
   }
 }

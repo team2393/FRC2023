@@ -88,6 +88,33 @@ public class AutoNoMouse
     }
 
     {
+      SequentialCommandGroup auto = new SequentialCommandGroup();
+      for (int i=0; i<5; ++i)
+      {
+        auto.addCommands(new TimedDriveCommand(drivetrain, 0, 0, 3));
+        auto.addCommands(new TimedDriveCommand(drivetrain, 180, 0, 3));
+      }
+      auto.setName("Wiggle 180");
+      autos.add(auto);
+    }
+
+    {
+      Trajectory trajectory = createTrajectory(true,
+                                               0.0, 0.0, 0.0,
+                                               3.9, 0.0, 45.0,
+                                               4.5, 1.3, 90.0,
+                                               3.5, 2.3, 180.0,
+                                               1.9, 1.9, 180.0
+                                               );
+      Command auto = new ResetPositionCommand(drivetrain)
+                    .andThen(drivetrain.createTrajectoryCommand(trajectory, 180.0))
+                    .andThen(new PrintCommand("Done"))
+                    .andThen(new StayPutCommand(drivetrain, 0.0));
+      auto.setName("U-Cube");
+      autos.add(auto);
+    }
+
+    {
       // Forward and right
       Trajectory trajectory = createTrajectory(true,
                                                0.0, 0.0, 0.0,

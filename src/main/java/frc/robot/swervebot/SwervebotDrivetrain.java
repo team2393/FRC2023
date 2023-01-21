@@ -18,8 +18,8 @@ public class SwervebotDrivetrain extends SwerveDrivetrain
           0.61595,
           new SwerveModule[]
           {
-            new SwerveModule(new SparkMiniRotator(0,  -19), new FalconDriver(0)),
-            new SwerveModule(new SparkMiniRotator(1,   90), new FalconDriver(1)),
+            new SwerveModule(new SparkMiniRotator(0,  -16), new FalconDriver(0)),
+            new SwerveModule(new SparkMiniRotator(1,   89), new FalconDriver(1)),
             new SwerveModule(new SparkMiniRotator(2, -161), new FalconDriver(2)),
             new SwerveModule(new SparkMiniRotator(3, -108), new FalconDriver(3))
           });

@@ -3,7 +3,9 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.swervelib;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,6 +18,9 @@ abstract public class Rotator extends SubsystemBase
   private final NetworkTableEntry nt_P;
   private final NetworkTableEntry nt_angle;
   private final NetworkTableEntry nt_desired;
+  private final ProfiledPIDController pid = new ProfiledPIDController(0,0,0,
+                      new TrapezoidProfile.Constraints(3*360.0, 2*360.0));
+  private boolean initialized = false;
   private double simulated_angle = 0.0;
 
   /** Construct Rotator
@@ -28,6 +33,8 @@ abstract public class Rotator extends SubsystemBase
     nt_angle = SmartDashboard.getEntry("Angle" + index);
     nt_desired = SmartDashboard.getEntry("Desired" + index);
     nt_P = SmartDashboard.getEntry("Rotator P");
+
+    pid.enableContinuousInput(-180, 180);
 
     nt_offset.setDefaultDouble(offset);
     nt_P.setDefaultDouble(0.5);
@@ -50,10 +57,19 @@ abstract public class Rotator extends SubsystemBase
   /** @param desired Desired angle of serve module in degrees */
   public void setAngle(double desired)
   {
+    if (! initialized)
+    {
+      pid.reset(getAngle().getDegrees());
+      initialized = true;
+    }
+
     // Proportional control, with error normalized to -180..180
     double angle = getRawDegrees() - nt_offset.getDouble(0.0);
-    double error = Math.IEEEremainder(desired - angle, 360.0);
-    double output = error*nt_P.getDouble(0.0);
+    // double error = Math.IEEEremainder(desired - angle, 360.0);
+    // double output = error*nt_P.getDouble(0.0);
+
+    pid.setP(nt_P.getDouble(0.0));
+    double output = pid.calculate(angle, desired);
     nt_desired.setDouble(desired);
     setVoltage(output);
     simulated_angle = desired;

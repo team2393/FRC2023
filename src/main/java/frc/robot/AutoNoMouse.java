@@ -81,9 +81,9 @@ public class AutoNoMouse
       for (int i=0; i<5; ++i)
       {
         auto.addCommands(new TimedDriveCommand(drivetrain, 0, 0, 3));
-        auto.addCommands(new TimedDriveCommand(drivetrain, 30, 0, 3));
+        auto.addCommands(new TimedDriveCommand(drivetrain, 90, 0, 3));
       }
-      auto.setName("Wiggle 30");
+      auto.setName("Wiggle 90");
       autos.add(auto);
     }
 

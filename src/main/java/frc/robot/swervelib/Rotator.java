@@ -19,7 +19,7 @@ abstract public class Rotator extends SubsystemBase
   private final NetworkTableEntry nt_angle;
   private final NetworkTableEntry nt_desired;
   private final ProfiledPIDController pid = new ProfiledPIDController(0,0,0,
-                      new TrapezoidProfile.Constraints(3*360.0, 2*360.0));
+                      new TrapezoidProfile.Constraints(4*360.0, 4*360.0));
   private boolean initialized = false;
   private double simulated_angle = 0.0;
 

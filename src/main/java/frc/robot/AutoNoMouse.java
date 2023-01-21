@@ -19,6 +19,7 @@ import frc.robot.swervelib.ResetPositionCommand;
 import frc.robot.swervelib.StayPutCommand;
 import frc.robot.swervelib.SwerveDrivetrain;
 import frc.robot.swervelib.SwerveToPositionCommand;
+import frc.robot.swervelib.TimedDriveCommand;
 
 /** Auto-no-mouse routines */
 public class AutoNoMouse
@@ -63,6 +64,29 @@ public class AutoNoMouse
       autos.add(auto);
     }
     
+
+    {
+      SequentialCommandGroup auto = new SequentialCommandGroup();
+      for (int i=0; i<5; ++i)
+      {
+        auto.addCommands(new TimedDriveCommand(drivetrain, 0, 0, 3));
+        auto.addCommands(new TimedDriveCommand(drivetrain, 15, 0, 3));
+      }
+      auto.setName("Wiggle 15");
+      autos.add(auto);
+    }
+  
+    {
+      SequentialCommandGroup auto = new SequentialCommandGroup();
+      for (int i=0; i<5; ++i)
+      {
+        auto.addCommands(new TimedDriveCommand(drivetrain, 0, 0, 3));
+        auto.addCommands(new TimedDriveCommand(drivetrain, 30, 0, 3));
+      }
+      auto.setName("Wiggle 30");
+      autos.add(auto);
+    }
+
     {
       // Forward and right
       Trajectory trajectory = createTrajectory(true,

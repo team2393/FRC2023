@@ -5,6 +5,7 @@ package frc.robot.swervelib;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
+/** Command to drive at a fixed speed straight ahead */
 public class FixedSpeedCommand extends CommandBase
 {
   private final SwerveDrivetrain drivetrain;

@@ -1,7 +1,6 @@
 // Copyright (c) FIRST Team 2393 and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import java.util.ArrayList;
@@ -24,6 +23,7 @@ import frc.robot.swervelib.TimedDriveCommand;
 /** Auto-no-mouse routines */
 public class AutoNoMouse
 {
+  // Run at up to 0.5m/s, accelerate by 0.5ms per second
   private static final TrajectoryConfig config = new TrajectoryConfig(0.5, 0.5);
 
   /** Create trajectory from points
@@ -47,6 +47,7 @@ public class AutoNoMouse
       return TrajectoryGenerator.generateTrajectory(waypoints, config);
   }
 
+  /** Create all our auto-no-mouse commands */
   public static List<Command> createAutoCommands(SwerveDrivetrain drivetrain)
   {
     List<Command> autos = new ArrayList<>();
@@ -64,7 +65,6 @@ public class AutoNoMouse
       autos.add(auto);
     }
     
-
     {
       SequentialCommandGroup auto = new SequentialCommandGroup();
       for (int i=0; i<5; ++i)

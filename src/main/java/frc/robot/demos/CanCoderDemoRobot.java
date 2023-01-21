@@ -5,11 +5,12 @@ import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.CommandBaseRobot;
+import frc.robot.magnussen.RobotMap;
 
 /** CANcoder demo robot */
 public class CanCoderDemoRobot extends CommandBaseRobot
 {
-  private final CANCoder encoder = new CANCoder(1, "CANivore2393");
+  private final CANCoder encoder = new CANCoder(1, RobotMap.CANIVORE);
 
   @Override
   public void robotInit()

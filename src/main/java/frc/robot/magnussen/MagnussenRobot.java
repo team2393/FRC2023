@@ -16,7 +16,16 @@ import frc.robot.swervelib.RelativeSwerveCommand;
 import frc.robot.swervelib.ResetPositionCommand;
 import frc.robot.swervelib.SwerveOI;
 
-/** ServeBot */
+// TODO:
+//
+// - Update all motor firmwares
+// - 'blink' all motors, set CAN ID, update RobotMap
+// - Deploy robot, briefly POV up for 'forward' and release to enter 'StayPul',
+//   adjust all swerve angle offsets
+// - Run Wiggle XX autos to adjust rotator settings
+// - Hold POV up and adjust driver settings to get correct speed
+
+/** Team 2393 2023 Robot */
 public class MagnussenRobot extends CommandBaseRobot
 {
   private final MagnussenDriveTrain drivetrain = new MagnussenDriveTrain();

@@ -1,3 +1,6 @@
+// Copyright (c) FIRST Team 2393 and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 package frc.robot.magnussen;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -9,21 +12,21 @@ import frc.robot.swervelib.Rotator;
 
 public class FC_Rotator extends Rotator
 {
-
   private final WPI_TalonFX motor;
   private final CANCoder sensor;
 
   public FC_Rotator(int index, double offset)
-{
-  super(index, offset);
-  motor = new WPI_TalonFX(index+1, "CANivore2393");
-  motor.configFactoryDefault();
-  motor.setNeutralMode(NeutralMode.Coast);
-  sensor = new CANCoder(index+1, "CANivore2393");
-  sensor.configFactoryDefault();
-  sensor.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
-  
-}
+  {
+    super(index, offset);
+
+    motor = new WPI_TalonFX(RobotMap.ROTATOR_ID[index], RobotMap.CANIVORE);
+    motor.configFactoryDefault();
+    motor.setNeutralMode(NeutralMode.Coast);
+    
+    sensor = new CANCoder(RobotMap.ANGLE_ID[index], RobotMap.CANIVORE);
+    sensor.configFactoryDefault();
+    sensor.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);    
+  }
 
   @Override
   public double getRawDegrees() 
@@ -35,7 +38,5 @@ public class FC_Rotator extends Rotator
   public void setVoltage(double voltage) 
   {
     motor.setVoltage(voltage);
-    
   }
-  
 }

@@ -9,7 +9,7 @@ import frc.robot.CommandBaseRobot;
 public class Pigeon2DemoRobot extends CommandBaseRobot
 {
   // Wasn't detected on CANivore
-  // private final Pigeon2 encoder = new Pigeon2(0, "CANivore2393");
+  // private final Pigeon2 encoder = new Pigeon2(0, RobotMap.CARNIVORE);
   private final Pigeon2 encoder = new Pigeon2(0, "rio");
 
   @Override

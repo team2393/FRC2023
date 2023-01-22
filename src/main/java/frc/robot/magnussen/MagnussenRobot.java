@@ -43,6 +43,8 @@ public class MagnussenRobot extends CommandBaseRobot
   {
     super.robotInit();
 
+    OI.reset();
+
     autos.setDefaultOption("Nothing", new PrintCommand("Doing nothing"));
     for (Command auto : AutoNoMouse.createAutoCommands(drivetrain))
       autos.addOption(auto.getName(), auto);

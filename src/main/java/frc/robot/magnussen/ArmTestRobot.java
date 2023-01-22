@@ -9,7 +9,7 @@ import frc.robot.CommandBaseRobot;
 /** Arm test robot
  *
  *  TODO Setup Procedure:
- * - Use correct motor and sensor types, ID, ..
+ * - Use correct motor and sensor types, ID, pneumatics module type, ..
  *
  * Disabled:
  * - Check if "Arm Angle" is correctly indicated,
@@ -18,16 +18,19 @@ import frc.robot.CommandBaseRobot;
  *   above horizontal gives positive angle
  * 
  * Teleop, Y, A:
+ * - Does arm start out retracted?
  * - Check if 'Y' extends arm and 'A' retracts arm
-
+ *
  * Teleop, right stick:
  * - Check if moving 'up' with positive voltage moves indeed 'up'.
  *   If not, reverse motor wiring.
+ * - Try to hold arm horizontally, note required voltage
+ *   while in vs. out
  * 
  * Autonomouse:
  * - Carefully move arm manually and adjust "Arm kg in" and "out"
  *   such that arm counteracts gravity and stays put.
- *   (Need to move arm in/out in teleop)
+ *   (Need to move arm in/out in teleop.)
  * - Enter a setpoint above current angle
  *   adjust ks such that motor just barely starts moving 'up'
  * - Enter different setpoints and adjust P such that arm gets there

@@ -31,6 +31,7 @@ public class Lift extends SubsystemBase
     motor.setNeutralMode(NeutralMode.Brake);
     motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
   
+    // TODO SmartDashboard.getEntry(..
     SmartDashboard.setDefaultNumber("Lift kg", 0.0);
     SmartDashboard.setDefaultNumber("Lift ks", 0.0);
     SmartDashboard.setDefaultNumber("Lift P", 0.0);
@@ -67,9 +68,10 @@ public class Lift extends SubsystemBase
   {
     // Don't go below the bottom!
     if (atBottom())
-      motor.setVoltage(0.0);
-    else
-      motor.setVoltage(voltage);
+      voltage = 0.0;
+
+    motor.setVoltage(voltage);
+    SmartDashboard.putNumber("Lift Voltage", voltage);
   }
 
   public void setHeight(double desired_height)

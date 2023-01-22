@@ -35,6 +35,7 @@ public class Arm extends SubsystemBase
 
     extender.set(false);
 
+    // TODO SmartDashboard.getEntry(..
     SmartDashboard.setDefaultNumber("Arm Offset", 0.0);
     SmartDashboard.setDefaultNumber("Arm kg in", 0.0);
     SmartDashboard.setDefaultNumber("Arm kg out", 0.0);
@@ -42,7 +43,7 @@ public class Arm extends SubsystemBase
     SmartDashboard.setDefaultNumber("Arm P", 0.0);
   }
 
-  /** @return Arm angle in degrees, zero = horizontal */
+  /** @return Arm angle in degrees, zero = horizontal, -90 = vertical down */
   public double getAngle()
   {
     return encoder.getAbsolutePosition() - SmartDashboard.getNumber("Arm Offset", 0.0);
@@ -59,6 +60,7 @@ public class Arm extends SubsystemBase
   public void setVoltage(double voltage)
   {
     motor.setVoltage(voltage);
+    SmartDashboard.putNumber("Arm Voltage", voltage);
   }
 
   /** @param out Extend arm out, or pull in? */

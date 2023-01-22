@@ -49,6 +49,12 @@ public class MagnussenRobot extends CommandBaseRobot
     for (Command auto : AutoNoMouse.createAutoCommands(drivetrain))
       autos.addOption(auto.getName(), auto);
     SmartDashboard.putData("Auto Options", autos);
+
+    // TODO Configure power dist. & publish power info    
+    // PowerDistribution power = new PowerDistribution(0, ModuleType.kRev);
+    // power.clearStickyFaults();
+    // power.setSwitchableChannel(false);
+    // SmartDashboard.putData(power);
   }
 
   @Override

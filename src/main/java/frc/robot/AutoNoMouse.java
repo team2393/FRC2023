@@ -105,7 +105,6 @@ public class AutoNoMouse {
           .andThen(new PrintCommand("Done"))
           .andThen(new StayPutCommand(drivetrain, 0.0));
       auto.setName("U-Cube");
-      // Hello this is kaspar
       autos.add(auto);
     }
 

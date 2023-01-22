@@ -54,7 +54,7 @@ public class RobotMap
   // Remaining CAN devices are on RIO
 
   /** DIO Lift bottom position sensor */
-  public static final int LIFT_HOME = 1;
+  public static final int LIFT_BOTTOM = 1;
 
   /** CAN ID for Lift motor */
   public static final int LIFT_ID = 9;

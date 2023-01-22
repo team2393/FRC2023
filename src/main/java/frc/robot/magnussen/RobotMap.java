@@ -23,8 +23,8 @@ public class RobotMap
    *  19 - 20 Amp Pneumatic hub -> Compressor  0 - 
    *  20 - 10 Amp Radio power
    *  21 - 10 Amp RoboRIO
-   *  22 - 
-   *  23 - (switched)
+   *  22 - 10 Amp CANivore (optional?)
+   *  23 - 10 Amp Camera LED ring (switched)
    * 
    *  40 Amp Front left driver
    *  40 Amp Front right driver
@@ -46,7 +46,7 @@ public class RobotMap
    *  10 Amp Front right CANcoder
    *  10 Amp Back right CANcoder
    *  10 Amp Back left CANcoder
-   *  10 Amp Pigeon
+   *  10 Amp Pigeon (or plug into a nearby TalonFX?)
    *  10 Amp Limelight
    *  10 Amp Camera LED ring
    */

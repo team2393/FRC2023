@@ -52,6 +52,9 @@ abstract public class Driver extends SubsystemBase
     simulated_position = 0.0;
   }
 
+  /** @param brake Enable brake (if supported by motor) */
+  abstract public void brake(boolean brake);
+
   /** @return Get position in meters (without zero offset) */
   abstract protected double getRawPosition();
 

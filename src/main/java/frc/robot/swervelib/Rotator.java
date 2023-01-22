@@ -40,6 +40,9 @@ abstract public class Rotator extends SubsystemBase
     nt_P.setDefaultDouble(0.5);
   }
 
+  /** @param brake Enable brake (if supported by motor) */
+  abstract public void brake(boolean brake);
+
   /** @return Angle without any offset correction */
   abstract public double getRawDegrees();
 

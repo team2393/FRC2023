@@ -27,6 +27,12 @@ public class FC_Rotator extends Rotator
     sensor.configFactoryDefault();
     sensor.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);    
   }
+    
+  @Override
+  public void brake(boolean brake)
+  {
+    motor.setNeutralMode(brake ? NeutralMode.Brake : NeutralMode.Coast);
+  }
 
   @Override
   public double getRawDegrees() 

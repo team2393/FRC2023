@@ -23,6 +23,12 @@ public class SparkMiniRotator extends Rotator
     motor = new SparkMini(index);
     encoder = new RotationEncoder(index, 0.0);
   }
+    
+  @Override
+  public void brake(boolean brake)
+  {
+    // Not supported
+  }
 
   public double getRawDegrees()
   {

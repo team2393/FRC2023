@@ -118,6 +118,13 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     odometry.resetPosition(getHeading(), getPositions(), new Pose2d());
   }
 
+  /** @param brake Enable brake (if supported by motors) */
+  public void brake(boolean brake)
+  {
+    for (SwerveModule module : modules)
+      module.brake(brake);
+  }
+
   /** @return Heading of gyro in degrees, not corrected for zero heading */
   abstract public double getRawHeading();
 

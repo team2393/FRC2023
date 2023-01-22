@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.magnussen;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
@@ -26,6 +27,12 @@ public class FalconDriver extends Driver
 
     // Enable limit to 18 amp if exceeding 20 amp for 0.2 sec
     motor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 18, 20, 0.2));
+  }
+    
+  @Override
+  public void brake(boolean brake)
+  {
+    motor.setNeutralMode(brake ? NeutralMode.Brake : NeutralMode.Coast);
   }
 
   protected double getRawPosition()

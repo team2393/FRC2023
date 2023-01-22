@@ -25,6 +25,13 @@ public class SwerveModule
     driver.resetPosition();
   }
 
+  /** @param brake Enable brake (if supported by motors) */
+  public void brake(boolean brake)
+  {
+    rotator.brake(brake);
+    driver.brake(brake);
+  }
+
   /** @return Angle of rotator */
   public Rotation2d getAngle()
   {

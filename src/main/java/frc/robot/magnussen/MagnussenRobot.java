@@ -58,8 +58,17 @@ public class MagnussenRobot extends CommandBaseRobot
   }
 
   @Override
+  public void disabledInit()
+  {
+    // Make robot easier to move while disabled
+    drivetrain.brake(false);
+  }
+
+  @Override
   public void teleopInit()
   {
+    // Stop motors unless they're supposed to move
+    drivetrain.brake(true);
     drive_relative.schedule();
   }
 
@@ -87,6 +96,10 @@ public class MagnussenRobot extends CommandBaseRobot
   @Override
   public void autonomousInit()
   {
+    // Stop motors unless they're supposed to move
+    drivetrain.brake(true);
+
+    // Run selected auto
     autos.getSelected().schedule();
   }
 

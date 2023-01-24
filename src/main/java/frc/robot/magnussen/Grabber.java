@@ -11,6 +11,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /** Grabber */
 public class Grabber extends SubsystemBase
 {
+  // TODO Pick suitable voltages
+  public static final double INTAKE_VOLTAGE = 2.0;
+  public static final double RELEASE_VOLTAGE = -1.5;
+
   /** Motor controller1 */
   private WPI_TalonSRX spinner1 = new WPI_TalonSRX(RobotMap.SPINNER1_ID);
   private WPI_TalonSRX spinner2 = new WPI_TalonSRX(RobotMap.SPINNER2_ID);

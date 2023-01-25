@@ -6,32 +6,90 @@ package frc.robot.vision;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.revrobotics.CANSparkMax.ExternalFollower;
 
-/** Helper for dealing with Limelight */
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
+/** Helper for dealing with Limelight
+ *
+ *  Fetch network table entry "limelight-front", "json"
+ *  and decode the "t6t_rs"
+ */
 public class LimelightClient
 {
-  /*
-  Network table "limelight-front", "json": "t6t_rs" contains the x, y, z position
-  {"Results":{"Classifier":[],"Detector":[],"Fiducial":[{"fID":6,"fam":"16H5C","pts":[],"skew":[],"t6c_ts":[-0.1819821297174766,0.19152947927501754,-1.2927626167319477,9.536598317113642,5.656188787485489,0.8302258066244446],"t6r_fs":[-5.950337624721007,0.2342261550517298,0.2711905207249825,0.837496139143989,-9.45377348720073,174.20548791505757],"t6r_ts":[-0.1819821297174766,0.19152947927501754,-1.2927626167319477,9.536598317113642,5.656188787485489,0.8302258066244446],"t6t_cs":[0.050902202415996876,0.024601799378643218,1.3182715719623306,-9.501442252719597,-5.715398671275721,0.11734407372542792],"t6t_rs":[0.050902202415996876,0.024601799378643218,1.3182715719623306,-9.501442252719597,-5.715398671275721,0.11734407372542792],"ta":0.011568170972168446,"tx":2.081610679626465,"txp":169.65443420410156,"ty":-1.1051111221313477,"typ":124.498291015625}],"Retro":[],"botpose":[-5.950337201950147,0.2342294161416599,0.27119060041452736,0.8374914064004849,-9.453768731433065,174.20563327242846],"pID":1.0,"tl":24.398488998413086,"ts":512294.35746,"v":1}}
-  */
+  private static final String LIMELIGHT_NAME = "limelight-front";
+  private static final String POSE_DATA = "t6t_rs";
+  private static final  ObjectMapper mapper = new ObjectMapper();
+  private final NetworkTableEntry nt_json;
 
+  public LimelightClient()
+  {
+    NetworkTable table = NetworkTableInstance.getDefault().getTable(LIMELIGHT_NAME);
+    nt_json = table.getEntry("json");
+  }
+
+  /** @return Apriltag detection info from Limelight in JSON format */
+  public String getJSON()
+  {
+    return nt_json.getString("json");
+  }
+
+  /** @param json Apriltag detection info from Limelight
+   *  @return Nearest Apriltag pose in robot coordinates
+   *  @throws Exception on error
+   */
+  public static Pose3d decode(String json) throws Exception
+  {
+    Pose3d nearest = null;
+    JsonNode root = mapper.readTree(json);
+    JsonNode tags = root.get("Results").get("Fiducial");
+    for (int i=0; i<tags.size(); ++i)
+    {
+      JsonNode tag = tags.get(i);
+      int id = tag.get("fID").intValue();
+      JsonNode pose = tag.get(POSE_DATA);
+      if (pose == null  ||  pose.size() != 6)
+        throw new Exception(POSE_DATA + " does not contain expected elements");
+      // Map from camera into robot coordinates
+      double x =  pose.get(2).doubleValue();
+      double y = -pose.get(0).doubleValue();
+      double z = -pose.get(1).doubleValue();      
+      double angle = -pose.get(4).doubleValue();
+      System.out.format("Tag #%2d @ %.2f, %.2f, %.2f m, %.1f degrees\n",
+                        id, x, y, z, angle);
+      if (nearest == null   ||    x < nearest.getX())
+        nearest = new Pose3d(x, y, z, new Rotation3d(0.0, 0.0, Math.toRadians(angle)));
+    }
+
+    return nearest;
+  }
+
+  /** @return Nearest Apriltag pose in robot coordinates
+   *  @throws Exception on error
+   */
+  public Pose3d getNearestTag() throws Exception
+  {
+    return decode(getJSON());
+  }
+
+  /** Standalone demo with saved data */
   public static void main(String[] args) throws Exception
   {
     String json = Files.readString(Path.of(LimelightClient.class.getResource("json.txt").toURI()));
     System.out.println(json);
 
-    ObjectMapper mapper = new ObjectMapper();
-
-    // HashMap<String, String> data = mapper.readValue(json, HashMap.class);
-    // System.out.println(data);
-
-    JsonNode node = mapper.readTree(json);
-    System.out.println(node.get("Results")
-                           .get("Fiducial")
-                           );
+    Pose3d nearest = decode(json);
+    System.out.format("--------> %.2f, %.2f, %.2f m, %.1f degrees\n",
+                      nearest.getTranslation().getX(),
+                      nearest.getTranslation().getY(),
+                      nearest.getTranslation().getZ(),
+                      Math.toDegrees(nearest.getRotation().getZ()));
   }
 }

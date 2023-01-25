@@ -21,6 +21,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
  *
  *  Fetch network table entry "limelight-front", "json"
  *  and decode the "t6t_rs"
+ *
+ *  TODO Test with actual camera
+ *  TODO Add MedianFilter(3), see last year
  */
 public class LimelightClient
 {

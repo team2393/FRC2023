@@ -3,6 +3,11 @@
     "mode": "Client (NT4)",
     "serverTeam": "2393"
   },
+  "retained": {
+    "limelight-front": {
+      "open": true
+    }
+  },
   "transitory": {
     "SmartDashboard": {
       "open": true

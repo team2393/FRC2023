@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Lift extends SubsystemBase
 {
   /** Height encoder calibration */
-  private static final int TICKS_PER_METER = 0;
+  private static final int TICKS_PER_METER = 1;
 
   /** Motor controller with mag encoder */
   private WPI_TalonSRX motor = new WPI_TalonSRX(RobotMap.LIFT_ID);
@@ -67,7 +67,7 @@ public class Lift extends SubsystemBase
   public void setVoltage(double voltage)
   {
     // Don't go below the bottom!
-    if (atBottom())
+    if (atBottom()  &&  voltage < 0)
       voltage = 0.0;
 
     motor.setVoltage(voltage);

@@ -22,6 +22,7 @@ public class FC_Rotator extends Rotator
     motor = new WPI_TalonFX(RobotMap.ROTATOR_ID[index], RobotMap.CANIVORE);
     motor.configFactoryDefault();
     motor.setNeutralMode(NeutralMode.Coast);
+    motor.setInverted(true);
     
     sensor = new CANCoder(RobotMap.ANGLE_ID[index], RobotMap.CANIVORE);
     sensor.configFactoryDefault();

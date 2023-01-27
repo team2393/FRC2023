@@ -19,7 +19,7 @@ abstract public class Rotator extends SubsystemBase
   private final NetworkTableEntry nt_angle;
   private final NetworkTableEntry nt_desired;
   private final ProfiledPIDController pid = new ProfiledPIDController(0,0,0,
-                      new TrapezoidProfile.Constraints(4*360.0, 4*360.0));
+                      new TrapezoidProfile.Constraints(180, 180));
   private boolean initialized = false;
   private double simulated_angle = 0.0;
 
@@ -37,7 +37,7 @@ abstract public class Rotator extends SubsystemBase
     pid.enableContinuousInput(-180, 180);
 
     nt_offset.setDefaultDouble(offset);
-    nt_P.setDefaultDouble(0.5);
+    nt_P.setDefaultDouble(0.4);
   }
 
   /** @param brake Enable brake (if supported by motor) */
@@ -73,6 +73,14 @@ abstract public class Rotator extends SubsystemBase
 
     pid.setP(nt_P.getDouble(0.0));
     double output = pid.calculate(angle, desired);
+    if (output > 1)
+    {
+      output = 1;
+    }
+    else if (output < -1)
+    {
+      output = -1;
+    }
     nt_desired.setDouble(desired);
     setVoltage(output);
     simulated_angle = desired;

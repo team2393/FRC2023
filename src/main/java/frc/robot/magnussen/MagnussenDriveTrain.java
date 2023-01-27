@@ -10,7 +10,7 @@ import frc.robot.swervelib.SwerveModule;
 /** Rotator using SparkMini for rotation, Falcon to drive, older pigeon as gyro */
 public class MagnussenDriveTrain extends SwerveDrivetrain
 {
-  private final Pigeon2 gyro = new Pigeon2(0, "rio");
+  // private final Pigeon2 gyro = new Pigeon2(0, "rio");
 
   public MagnussenDriveTrain()
   {
@@ -20,15 +20,16 @@ public class MagnussenDriveTrain extends SwerveDrivetrain
           new SwerveModule[]
           {
             //TODO configure offsets
-            new SwerveModule(new FC_Rotator(0,  0), new FalconDriver(0)),
-            new SwerveModule(new FC_Rotator(1,   0), new FalconDriver(1)),
-            new SwerveModule(new FC_Rotator(2, 0), new FalconDriver(2)),
-            new SwerveModule(new FC_Rotator(3, 0), new FalconDriver(3))
+            new SwerveModule(new FC_Rotator(0,  13), new FalconDriver(0)),
+            new SwerveModule(new FC_Rotator(1,   80), new FalconDriver(1)),
+            new SwerveModule(new FC_Rotator(2, -172), new FalconDriver(2)),
+            new SwerveModule(new FC_Rotator(3, -122), new FalconDriver(3))
           });
   }
 
   public double getRawHeading()
   {
-    return gyro.getYaw();
+    // return gyro.getYaw();
+    return 0;
   }
 }

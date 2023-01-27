@@ -12,16 +12,16 @@ public class RobotMap
    *
    *  TODO Check actual fuse assignments
    *  REV Power Distribution Hub
-   *  10 - 20 Amp front left rotator?          9 - 40 Amp front left driver?
-   *  11 -                                     8 - 40 Amp front right driver?
+   *  10 - 20 Amp front left rotator?          9 - 
+   *  11 -                                     8 - 
    *  12 -                                     7 - 
    *  13 -                                     6 - 
-   *  14 -                                     5 - 
-   *  15 -                                     4 - 
-   *  16 -                                     3 - 
-   *  17 -                                     2 - 
-   *  18 -                                     1 - 
-   *  19 - 20 Amp Pneumatic hub -> Compressor? 0 - 
+   *  14 - 20 Amp back right encoder           5 - 20 Amp back left encoder
+   *  15 - 40 Amp back right driver            4 - 40 Amp back left rotator
+   *  16 - 40 Amp back right rotator           3 - 40 Amp back left driver
+   *  17 - 20 Amp front right encoder          2 - 20 Amp front left encoder
+   *  18 - 40 Amp front right driver           1 - 40 Amp front left rotator
+   *  19 - 40 Amp front right rotator          0 - 40 Amp front left driver
    *  20 - 10 Amp Radio power
    *  21 - 10 Amp RoboRIO
    *  22 - 10 Amp CANivore (optional?)
@@ -59,19 +59,20 @@ public class RobotMap
    */
 
   /** Name of CANivore */
-  public static final String CANIVORE = "CANivore2393";
+  // public static final String CANIVORE = "CANivore2393";
+  public static final String CANIVORE = "rio";
 
   // Following CAN devices are on CANIVORE
   // (but keep unique IDs so they can move)
 
   /** CAN IDs for driver motors */
-  public static final int[] DRIVER_ID = new int[] { 1, 2, 3, 4 };
+  public static final int[] DRIVER_ID = new int[] { 1, 4, 10, 7 };
 
   /** CAN IDs for rotator motors */
-  public static final int[] ROTATOR_ID = new int[] { 5, 6, 7, 8 };
+  public static final int[] ROTATOR_ID = new int[] { 3, 2, 8, 9 };
 
   /** CAN IDs for rotator angle encoders */
-  public static final int[] ANGLE_ID = new int[] { 1, 2, 3, 4 };
+  public static final int[] ANGLE_ID = new int[] { 5, 6, 12, 11 };
 
   // Remaining devices are on RIO
 

@@ -32,7 +32,7 @@ public class MotorTestRobot extends CommandBaseRobot
   // C:\Users\Public\Documents\FRC\2023 Firmware\Phoenix\TalonFX-Application-22.1.1.0-season2023.crf
   // is basically the same as the older versions,
   // and remains free to use.
-  private final WPI_TalonFX motor = new WPI_TalonFX(3+1);
+  private final WPI_TalonFX motor = new WPI_TalonFX(1);
 
   // Brushless motor via SparkMax
   // private final CANSparkMax motor = new CANSparkMax(0, MotorType.kBrushless);

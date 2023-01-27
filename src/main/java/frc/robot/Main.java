@@ -4,16 +4,21 @@
 
 package frc.robot;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.demos.MotorTestRobot;
+import frc.robot.magnussen.MagnussenRobot;
+import frc.robot.magnussen.SwerveModuleTestRobot;
 import frc.robot.swervebot.SwerveBotRobot;
 
 /** Java 'main' */
 public final class Main
-{
+{ 
   /** Start one of the 'XXXRobot' robots */
   public static void main(String... args)
   {
     // CameraTestRobot
-    RobotBase.startRobot(SwerveBotRobot::new);
+    RobotBase.startRobot(MagnussenRobot::new);
   }
 }

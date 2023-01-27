@@ -1,7 +1,6 @@
 package frc.robot.magnussen;
 
 import frc.robot.CommandBaseRobot;
-import frc.robot.swervelib.SwerveModule;
 
 public class SwerveModuleTestRobot extends CommandBaseRobot
 {
@@ -14,7 +13,11 @@ public class SwerveModuleTestRobot extends CommandBaseRobot
   }
 
   @Override
-  public void autonomousPeriodic() {
-    rotator.setAngle(0);
+  public void autonomousPeriodic()
+  {
+    // Cycle between 0 and 90 degrees every 2 seconds
+    long cycle = (System.currentTimeMillis() / 2000) % 2;
+    double angle = cycle * 90.0;
+    rotator.setAngle(angle);
   }
 }

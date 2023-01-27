@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.demos.MotorTestRobot;
 import frc.robot.magnussen.MagnussenRobot;
@@ -19,6 +17,6 @@ public final class Main
   public static void main(String... args)
   {
     // CameraTestRobot
-    RobotBase.startRobot(MagnussenRobot::new);
+    RobotBase.startRobot(SwerveModuleTestRobot::new);
   }
 }

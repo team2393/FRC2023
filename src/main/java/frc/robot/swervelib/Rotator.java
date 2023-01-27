@@ -3,6 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.swervelib;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -16,10 +18,14 @@ abstract public class Rotator extends SubsystemBase
 {
   private final NetworkTableEntry nt_offset;
   private final NetworkTableEntry nt_P;
+  private final NetworkTableEntry nt_D;
+  private final NetworkTableEntry nt_clamp;
   private final NetworkTableEntry nt_angle;
   private final NetworkTableEntry nt_desired;
-  private final ProfiledPIDController pid = new ProfiledPIDController(0,0,0,
-                      new TrapezoidProfile.Constraints(180, 180));
+  private final PIDController pid = new PIDController(0,0,0);
+  // TODO Use profiled PID
+  // private final ProfiledPIDController pid = new ProfiledPIDController(0,0,0,
+  //                     new TrapezoidProfile.Constraints(180, 180));
   private boolean initialized = false;
   private double simulated_angle = 0.0;
 
@@ -33,11 +39,15 @@ abstract public class Rotator extends SubsystemBase
     nt_angle = SmartDashboard.getEntry("Angle" + index);
     nt_desired = SmartDashboard.getEntry("Desired" + index);
     nt_P = SmartDashboard.getEntry("Rotator P");
+    nt_D = SmartDashboard.getEntry("Rotator D");
+    nt_clamp = SmartDashboard.getEntry("Rotator Calmp");
 
     pid.enableContinuousInput(-180, 180);
 
     nt_offset.setDefaultDouble(offset);
     nt_P.setDefaultDouble(0.4);
+    nt_D.setDefaultDouble(0.0);
+    nt_clamp.setDefaultDouble(5.0);
   }
 
   /** @param brake Enable brake (if supported by motor) */
@@ -62,27 +72,22 @@ abstract public class Rotator extends SubsystemBase
   {
     if (! initialized)
     {
-      pid.reset(getAngle().getDegrees());
+      // TODO Use profiled PID
+      // pid.reset(getAngle().getDegrees());
       initialized = true;
     }
 
-    // Proportional control, with error normalized to -180..180
+    // PID control, with error normalized to -180..180
     double angle = getRawDegrees() - nt_offset.getDouble(0.0);
     // double error = Math.IEEEremainder(desired - angle, 360.0);
     // double output = error*nt_P.getDouble(0.0);
 
-    pid.setP(nt_P.getDouble(0.0));
+    pid.setPID(nt_P.getDouble(0.0), 0.0, nt_D.getDouble(0.0));
     double output = pid.calculate(angle, desired);
-    if (output > 1)
-    {
-      output = 1;
-    }
-    else if (output < -1)
-    {
-      output = -1;
-    }
-    nt_desired.setDouble(desired);
+    double clamp = nt_clamp.getDouble(0.0);
+    output = MathUtil.clamp(output, -clamp, clamp);
     setVoltage(output);
+    nt_desired.setDouble(desired);
     simulated_angle = desired;
   }
   

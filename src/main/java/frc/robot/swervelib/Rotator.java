@@ -45,9 +45,9 @@ abstract public class Rotator extends SubsystemBase
     pid.enableContinuousInput(-180, 180);
 
     nt_offset.setDefaultDouble(offset);
-    nt_P.setDefaultDouble(0.4);
-    nt_D.setDefaultDouble(0.0);
-    nt_clamp.setDefaultDouble(5.0);
+    nt_P.setDefaultDouble(0.2);
+    nt_D.setDefaultDouble(0.00);
+    nt_clamp.setDefaultDouble(2.0);
   }
 
   /** @param brake Enable brake (if supported by motor) */

@@ -174,13 +174,6 @@
                   "_title": "Driver ks",
                   "_glyph": 148,
                   "_showGlyph": false
-                },
-                "0,0": {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Rotator P",
-                  "_title": "Rotator P",
-                  "_glyph": 148,
-                  "_showGlyph": false
                 }
               }
             }
@@ -239,6 +232,45 @@
               "_type": "ComboBox Chooser",
               "_source0": "network_table:///SmartDashboard/Auto Options",
               "_title": "Auto Options",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "13,4": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Rotator D",
+              "_title": "/SmartDashboard/Rotator D",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "16,4": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Rotator Calmp",
+              "_title": "/SmartDashboard/Rotator Calmp",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "10,4": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Rotator P",
+              "_title": "Rotator P",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -410,9 +442,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -6.0,
-    "y": 248.5,
-    "width": 1455.0,
-    "height": 618.5
+    "x": -465.6000061035156,
+    "y": 696.0,
+    "width": 1455.199951171875,
+    "height": 480.0
   }
 }

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 abstract public class Rotator extends SubsystemBase
 {
   private final NetworkTableEntry nt_offset;
+  private final NetworkTableEntry nt_ks;
   private final NetworkTableEntry nt_P;
   private final NetworkTableEntry nt_I;
   private final NetworkTableEntry nt_D;
@@ -24,7 +25,7 @@ abstract public class Rotator extends SubsystemBase
   private final NetworkTableEntry nt_angle;
   private final NetworkTableEntry nt_desired;
   private final PIDController pid = new PIDController(0,0,0);
-  // TODO Use profiled PID
+  // TODO Use profiled PID?
   // private final ProfiledPIDController pid = new ProfiledPIDController(0,0,0,
   //                     new TrapezoidProfile.Constraints(180, 180));
   private boolean initialized = false;
@@ -33,12 +34,14 @@ abstract public class Rotator extends SubsystemBase
   /** Construct Rotator
    *  @param index Rotator index 0..3
    *  @param offset Offset from 'forward' in degrees
+   *  TODO Params for initial PID settings
    */
   public Rotator(int index, double offset)
   {
     nt_offset = SmartDashboard.getEntry("Offset" + index);
     nt_angle = SmartDashboard.getEntry("Angle" + index);
     nt_desired = SmartDashboard.getEntry("Desired" + index);
+    nt_ks = SmartDashboard.getEntry("Rotator ks");
     nt_P = SmartDashboard.getEntry("Rotator P");
     nt_I = SmartDashboard.getEntry("Rotator I");
     nt_D = SmartDashboard.getEntry("Rotator D");
@@ -47,6 +50,7 @@ abstract public class Rotator extends SubsystemBase
     pid.enableContinuousInput(-180, 180);
 
     nt_offset.setDefaultDouble(offset);
+    nt_ks.setDefaultDouble(0.0);
     nt_P.setDefaultDouble(0.2);
     nt_I.setDefaultDouble(0.0);
     nt_D.setDefaultDouble(0.00);
@@ -75,21 +79,26 @@ abstract public class Rotator extends SubsystemBase
   {
     if (! initialized)
     {
-      // TODO Use profiled PID
+      // TODO Use profiled PID?
       // pid.reset(getAngle().getDegrees());
       initialized = true;
     }
 
     // PID control, with error normalized to -180..180
     double angle = getRawDegrees() - nt_offset.getDouble(0.0);
-    // double error = Math.IEEEremainder(desired - angle, 360.0);
+    double error = Math.IEEEremainder(desired - angle, 360.0);
     // double output = error*nt_P.getDouble(0.0);
 
+    // Start with minimal static voltage to overcome friction
+    double output = nt_ks.getDouble(0.0) * Math.signum(error);
+    // Add PID correction
     pid.setPID(nt_P.getDouble(0.0), nt_I.getDouble(0.0), nt_D.getDouble(0.0));
-    double output = pid.calculate(angle, desired);
+    output += pid.calculate(angle, desired);
+    // Limit output voltage
     double clamp = nt_clamp.getDouble(0.0);
     output = MathUtil.clamp(output, -clamp, clamp);
     setVoltage(output);
+
     nt_desired.setDouble(desired);
     simulated_angle = desired;
   }

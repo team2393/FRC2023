@@ -13,19 +13,19 @@ import frc.robot.swervelib.Driver;
 public class FalconDriver extends Driver
 {
   // TODO Calibrate distance
-  private final static int TICKS_PER_METER = 43746;
+  private final static double TICKS_PER_METER = 44696.7;
 
   private final WPI_TalonFX motor;
 
   public FalconDriver(int index)
   {
-    super(index, 0.6, 2.15, 1);
+    super(index, 0.6, 2.3, 1);
     motor = new WPI_TalonFX(RobotMap.DRIVER_ID[index], RobotMap.CANIVORE);
     motor.configFactoryDefault();
-    motor.configOpenloopRamp(0.3);
+    // motor.configOpenloopRamp(0.3);
 
     // Enable limit to 18 amp if exceeding 20 amp for 0.2 sec
-    motor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 18, 20, 0.2));
+    // motor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 18, 20, 0.2));
   }
     
   @Override

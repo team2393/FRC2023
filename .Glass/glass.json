@@ -1,12 +1,18 @@
 {
   "NetworkTables": {
     "transitory": {
+      "FMSInfo": {
+        "open": true
+      },
       "SmartDashboard": {
         "open": true
       }
     },
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Auto Options": "String Chooser",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/ResetPosition": "Command",
       "/SmartDashboard/Scheduler": "Scheduler"
     }
   },
@@ -39,6 +45,32 @@
                 0.8666667342185974,
                 0.5176470875740051,
                 0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/Speed0"
+            }
+          ]
+        }
+      ],
+      "window": {
+        "visible": false
+      }
+    },
+    "Plot <1>": {
+      "plots": [
+        {
+          "axis": [
+            {
+              "autoFit": true
+            }
+          ],
+          "height": 502,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
                 1.0
               ],
               "id": "NT:/SmartDashboard/Speed0"

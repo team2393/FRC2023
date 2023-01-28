@@ -19,7 +19,7 @@ public class SparkMiniRotator extends Rotator
    */
   public SparkMiniRotator(int index, double offset)
   {
-    super(index, offset);
+    super(index, offset, 0, 0, 0, 0, 5);
     motor = new SparkMini(index);
     encoder = new RotationEncoder(index, 0.0);
   }

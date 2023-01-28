@@ -12,20 +12,20 @@ import edu.wpi.first.wpilibj.XboxController;
 public class SwerveOI
 {
   /** Use correct stick setup, or the wrong one? */
-  private static final boolean CORRECT = true;
+  private static final boolean CORRECT = false;
 
   /** Maximum swerve speed sent from joystick input */
-  private static final double MAX_METERS_PER_SEC = 0.6;
+  private static final double MAX_METERS_PER_SEC = 2.0;
 
   /** Maximum rotational speed sent from joystick input */
-  private static final double MAX_RAD_PER_SEC = Math.toRadians(90);
+  private static final double MAX_RAD_PER_SEC = Math.toRadians(180);
 
   public static final XboxController joystick = new XboxController(0);
 
   // Limit joystick slew, go 0 to 1 in 1/4 second
-  private static final SlewRateLimiter x_throttle = new SlewRateLimiter(4.0);
-  private static final SlewRateLimiter y_throttle = new SlewRateLimiter(4.0);
-  private static final SlewRateLimiter rot_throttle = new SlewRateLimiter(4.0);
+  private static final SlewRateLimiter x_throttle = new SlewRateLimiter(8.0);
+  private static final SlewRateLimiter y_throttle = new SlewRateLimiter(8.0);
+  private static final SlewRateLimiter rot_throttle = new SlewRateLimiter(16.0);
 
   public static void reset()
   {

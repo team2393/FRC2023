@@ -34,9 +34,14 @@ abstract public class Rotator extends SubsystemBase
   /** Construct Rotator
    *  @param index Rotator index 0..3
    *  @param offset Offset from 'forward' in degrees
-   *  TODO Params for initial PID settings
+   *  @param ks Static gain
+   *  @param kp Proportional gain
+   *  @param ki Integral gain
+   *  @param kd Differential gain
+   *  @param clamp Voltage clamp
    */
-  public Rotator(int index, double offset)
+  public Rotator(int index, double offset,
+                 double ks, double kp, double ki, double kd, double clamp)
   {
     nt_offset = SmartDashboard.getEntry("Offset" + index);
     nt_angle = SmartDashboard.getEntry("Angle" + index);
@@ -50,11 +55,11 @@ abstract public class Rotator extends SubsystemBase
     pid.enableContinuousInput(-180, 180);
 
     nt_offset.setDefaultDouble(offset);
-    nt_ks.setDefaultDouble(0.0);
-    nt_P.setDefaultDouble(0.2);
-    nt_I.setDefaultDouble(0.0);
-    nt_D.setDefaultDouble(0.00);
-    nt_clamp.setDefaultDouble(2.0);
+    nt_ks.setDefaultDouble(ks);
+    nt_P.setDefaultDouble(kp);
+    nt_I.setDefaultDouble(ki);
+    nt_D.setDefaultDouble(kd);
+    nt_clamp.setDefaultDouble(clamp);
   }
 
   /** @param brake Enable brake (if supported by motor) */

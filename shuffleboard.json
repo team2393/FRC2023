@@ -142,36 +142,71 @@
           },
           "0,5": {
             "size": [
-              9,
-              2
+              10,
+              3
             ],
             "content": {
               "_type": "Grid Layout",
               "_title": "Settings",
               "_glyph": 149,
               "_showGlyph": false,
-              "Layout/Number of columns": 4,
-              "Layout/Number of rows": 1,
+              "Layout/Number of columns": 5,
+              "Layout/Number of rows": 2,
               "Layout/Label position": "TOP",
               "_children": {
-                "3,0": {
+                "0,0": {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Driver P",
-                  "_title": "Driver P",
+                  "_source0": "network_table:///SmartDashboard/Rotator ks",
+                  "_title": "Rotator ks",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "1,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Rotator P",
+                  "_title": "Rotator P",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
                 "2,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Rotator I",
+                  "_title": "Rotator I",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "3,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Rotator D",
+                  "_title": "Rotator D",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "4,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Rotator Clamp",
+                  "_title": "Rotator Clamp",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "0,1": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Driver ks",
+                  "_title": "Driver ks",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "1,1": {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Driver kv",
                   "_title": "Driver kv",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
-                "1,0": {
+                "2,1": {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Driver ks",
-                  "_title": "Driver ks",
+                  "_source0": "network_table:///SmartDashboard/Driver P",
+                  "_title": "Driver P",
                   "_glyph": 148,
                   "_showGlyph": false
                 }
@@ -232,45 +267,6 @@
               "_type": "ComboBox Chooser",
               "_source0": "network_table:///SmartDashboard/Auto Options",
               "_title": "Auto Options",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "13,4": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Rotator D",
-              "_title": "/SmartDashboard/Rotator D",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "16,4": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Rotator Calmp",
-              "_title": "/SmartDashboard/Rotator Calmp",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "10,4": {
-            "size": [
-              3,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Rotator P",
-              "_title": "Rotator P",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -442,9 +438,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -465.6000061035156,
-    "y": 696.0,
-    "width": 1455.199951171875,
-    "height": 480.0
+    "x": 0.0,
+    "y": 172.0,
+    "width": 1532.800048828125,
+    "height": 619.2000122070312
   }
 }

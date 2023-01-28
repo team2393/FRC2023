@@ -15,15 +15,15 @@ public class MagnussenDriveTrain extends SwerveDrivetrain
   public MagnussenDriveTrain()
   {
     //TODO measure proper lengths
-    super(0.6604,
-          0.6604,
+    super(0.542,
+          0.54,
           new SwerveModule[]
           {
             //TODO configure offsets
-            new SwerveModule(new FC_Rotator(0,  13), new FalconDriver(0)),
-            new SwerveModule(new FC_Rotator(1,   80), new FalconDriver(1)),
-            new SwerveModule(new FC_Rotator(2, -172), new FalconDriver(2)),
-            new SwerveModule(new FC_Rotator(3, -122), new FalconDriver(3))
+            new SwerveModule(new FC_Rotator(0, -169.5+180), new FalconDriver(0)),
+            new SwerveModule(new FC_Rotator(1,  -93.3+180), new FalconDriver(1)),
+            new SwerveModule(new FC_Rotator(2,    8.9+180), new FalconDriver(2)),
+            new SwerveModule(new FC_Rotator(3,   58.3+180), new FalconDriver(3))
           });
   }
 

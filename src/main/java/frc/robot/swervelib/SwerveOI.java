@@ -11,16 +11,21 @@ import edu.wpi.first.wpilibj.XboxController;
 /** Operator Interface for swerving */
 public class SwerveOI
 {
+  /** Use correct stick setup, or the wrong one? */
+  private static final boolean CORRECT = true;
+
+  /** Maximum swerve speed sent from joystick input */
   private static final double MAX_METERS_PER_SEC = 0.6;
 
-  private static final double MAX_RAD_PER_SEC = Math.toRadians(30);
+  /** Maximum rotational speed sent from joystick input */
+  private static final double MAX_RAD_PER_SEC = Math.toRadians(90);
 
   public static final XboxController joystick = new XboxController(0);
 
-  // Limit joystick slew, go 0 to 1 in 1/2 second
-  private static final SlewRateLimiter x_throttle = new SlewRateLimiter(2.0);
-  private static final SlewRateLimiter y_throttle = new SlewRateLimiter(2.0);
-  private static final SlewRateLimiter rot_throttle = new SlewRateLimiter(2.0);
+  // Limit joystick slew, go 0 to 1 in 1/4 second
+  private static final SlewRateLimiter x_throttle = new SlewRateLimiter(4.0);
+  private static final SlewRateLimiter y_throttle = new SlewRateLimiter(4.0);
+  private static final SlewRateLimiter rot_throttle = new SlewRateLimiter(4.0);
 
   public static void reset()
   {
@@ -35,19 +40,22 @@ public class SwerveOI
   /** @return Forward/backwards speed [m/s] */
   public static double getForwardSpeed()
   {
-    return -MAX_METERS_PER_SEC * MathUtil.applyDeadband(x_throttle.calculate(joystick.getRightY()), 0.1);
+    double stick = CORRECT ? joystick.getRightY() : joystick.getLeftY();
+    return -MAX_METERS_PER_SEC * MathUtil.applyDeadband(x_throttle.calculate(stick), 0.1);
   }
 
   /** @return Left/right speed [m/s] */
   public static double getLeftSpeed()
   {
-    return -MAX_METERS_PER_SEC * MathUtil.applyDeadband(y_throttle.calculate(joystick.getRightX()), 0.1);
+    double stick = CORRECT ? joystick.getRightX() : joystick.getLeftX();
+    return -MAX_METERS_PER_SEC * MathUtil.applyDeadband(y_throttle.calculate(stick), 0.1);
   }
 
   /** @return Rotational speed, counter-clockwise [rad/s] */
   public static double getRotationSpeed()
   {
-    return -MAX_RAD_PER_SEC * MathUtil.applyDeadband(rot_throttle.calculate(joystick.getLeftX()), 0.1);
+    double stick = CORRECT ? joystick.getLeftX() : joystick.getRightX();
+    return -MAX_RAD_PER_SEC * MathUtil.applyDeadband(rot_throttle.calculate(stick), 0.1);
   }
 
   public static boolean selectAbsoluteMode()

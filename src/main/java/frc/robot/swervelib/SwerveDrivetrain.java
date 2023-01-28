@@ -30,6 +30,8 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 /** Swerve module drive train */
 abstract public class SwerveDrivetrain extends SubsystemBase
 {
+  private static final Translation2d CENTER = new Translation2d(0, 0);
+
   /** Don't rotate swerve module unless speed is at least this
    *  to avoid spinning in place
    */
@@ -159,6 +161,16 @@ abstract public class SwerveDrivetrain extends SubsystemBase
   {
     for (SwerveModule module : modules)
         module.drive(angle, speed);
+  }
+
+  /** Swerve, rotating around center
+   *  @param vx Speed in 'X' (forward/back) direction [m/s]
+   *  @param vy Speed in 'Y' (left/right) direction [m/s]
+   *  @param vr Speed for rotation [rad/s]
+   */
+  public void swerve(double vx, double vy, double vr)
+  {
+    swerve(vx, vy, vr, CENTER);
   }
 
   /** Swerve

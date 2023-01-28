@@ -1,19 +1,19 @@
 // Copyright (c) FIRST Team 2393 and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-package frc.robot.magnussen;
+package frc.robot.swervebot;
 
 import frc.robot.CommandBaseRobot;
+import frc.robot.swervelib.SwerveOI;
 
 public class RotatorTestRobot extends CommandBaseRobot
 {
-  FC_Rotator rotator = new FC_Rotator(0, 11.1);
+  SparkMiniRotator rotator = new SparkMiniRotator(0, -16);
 
   @Override
   public void teleopPeriodic()
   {
-    // rotator.setVoltage(OI.joystick.getLeftX()*-5);
-    rotator.setAngle(OI.joystick.getLeftX()*-180);
+    rotator.setVoltage(SwerveOI.joystick.getLeftX()*-5);
   }
 
   @Override

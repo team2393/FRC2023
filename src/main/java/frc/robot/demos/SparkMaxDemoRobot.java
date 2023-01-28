@@ -1,6 +1,10 @@
+// Copyright (c) FIRST Team 2393 and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 package frc.robot.demos;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.XboxController;
@@ -17,14 +21,15 @@ public class SparkMaxDemoRobot extends CommandBaseRobot
   public void robotInit()
   {
     motor.restoreFactoryDefaults();
+    motor.setIdleMode(IdleMode.kBrake);
   }
 
   @Override
   public void teleopPeriodic()
   {
     motor.setVoltage(controller.getLeftX());
-    // Position in turns
-    SmartDashboard.putNumber("velocity", motor.getEncoder().getVelocity());
-    SmartDashboard.putNumber("position", motor.getEncoder().getPosition());
+    // Position in turns, speed in RPM
+    SmartDashboard.putNumber("Turns", motor.getEncoder().getPosition());
+    SmartDashboard.putNumber("RPM", motor.getEncoder().getVelocity());
   }
 }

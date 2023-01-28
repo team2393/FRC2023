@@ -18,7 +18,9 @@ public class Lift extends SubsystemBase
   private static final int TICKS_PER_METER = 1;
 
   /** Motor controller with mag encoder */
-  private WPI_TalonSRX motor = new WPI_TalonSRX(RobotMap.LIFT_ID);
+  private WPI_TalonSRX primary_motor = new WPI_TalonSRX(RobotMap.LIFT1_ID);
+  /** Other motor */
+  private WPI_TalonSRX secondary_motor = new WPI_TalonSRX(RobotMap.LIFT2_ID);
 
   /** At-bottom switch */
   private DigitalInput at_bottom = new DigitalInput(RobotMap.LIFT_BOTTOM);
@@ -27,10 +29,17 @@ public class Lift extends SubsystemBase
 
   public Lift()
   {
-    motor.configFactoryDefault();
-    motor.setNeutralMode(NeutralMode.Brake);
-    motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-  
+    // Primary motor has sensor and is the one we control
+    primary_motor.configFactoryDefault();
+    primary_motor.setNeutralMode(NeutralMode.Brake);
+    primary_motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+
+    // Secondary motor set to follow the primary
+    secondary_motor.configFactoryDefault();
+    secondary_motor.setNeutralMode(NeutralMode.Brake);
+    secondary_motor.follow(primary_motor);
+
+
     // TODO SmartDashboard.getEntry(..
     SmartDashboard.setDefaultNumber("Lift kg", 0.0);
     SmartDashboard.setDefaultNumber("Lift ks", 0.0);
@@ -45,7 +54,7 @@ public class Lift extends SubsystemBase
 
     // Reset encoder's zero offset?
     if (is_at_bottom)
-      bottom_offset = motor.getSelectedSensorPosition();
+      bottom_offset = primary_motor.getSelectedSensorPosition();
 
     return is_at_bottom;
   }
@@ -53,7 +62,7 @@ public class Lift extends SubsystemBase
   /** @return Lift height in meters */
   public double getHeight()
   {
-    return (motor.getSelectedSensorPosition() - bottom_offset) / TICKS_PER_METER;
+    return (primary_motor.getSelectedSensorPosition() - bottom_offset) / TICKS_PER_METER;
   }
 
   @Override
@@ -70,7 +79,7 @@ public class Lift extends SubsystemBase
     if (atBottom()  &&  voltage < 0)
       voltage = 0.0;
 
-    motor.setVoltage(voltage);
+    primary_motor.setVoltage(voltage);
     SmartDashboard.putNumber("Lift Voltage", voltage);
   }
 

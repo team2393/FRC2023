@@ -12,7 +12,7 @@ public class RobotMap
    *
    *  TODO Check actual fuse assignments
    *  REV Power Distribution Hub
-   *  10 - 20 Amp front left rotator?          9 - 
+   *  10 -                                     9 - 
    *  11 -                                     8 - 
    *  12 -                                     7 - 
    *  13 -                                     6 - 
@@ -22,8 +22,8 @@ public class RobotMap
    *  17 - 20 Amp front right encoder          2 - 20 Amp front left encoder
    *  18 - 40 Amp front right driver           1 - 40 Amp front left rotator
    *  19 - 40 Amp front right rotator          0 - 40 Amp front left driver
-   *  20 - 10 Amp Radio power
-   *  21 - 10 Amp RoboRIO
+   *  20 - 10 Amp RoboRIO
+   *  21 - 10 Amp Radio power
    *  22 - 10 Amp CANivore (optional?)
    *  23 - 10 Amp Camera LED ring (switched)
    *
@@ -35,10 +35,10 @@ public class RobotMap
    *  40 Amp Front right driver
    *  40 Amp Back right driver
    *  40 Amp Back left driver
-   *  40 Amp Lift
+   *  40 Amp Lift1
+   *  40 Amp Lift2
    *  40 Amp Arm angle
-   *  40 Amp Spinner1
-   *  40 Amp Spinner2
+   *  40 Amp Spinner
    *
    *  20 Amp Front left rotator
    *  20 Amp Front right rotator
@@ -49,11 +49,11 @@ public class RobotMap
    *  10 Amp RoboRIO
    *  10 Amp Radio power
    *  10 Amp CANivore (optional?)
-   *  10 Amp Front left CANcoder
-   *  10 Amp Front right CANcoder
-   *  10 Amp Back right CANcoder
-   *  10 Amp Back left CANcoder
-   *  10 Amp Pigeon (or plug into a nearby TalonFX?)
+   *  5 Amp Front left CANcoder
+   *  5 Amp Front right CANcoder
+   *  5 Amp Back right CANcoder
+   *  5 Amp Back left CANcoder
+   *  5 Amp Pigeon (or plug into a nearby TalonFX?)
    *  10 Amp Limelight
    *  10 Amp Camera LED ring
    */
@@ -80,18 +80,18 @@ public class RobotMap
   public static final int LIFT_BOTTOM = 1;
 
   /** CAN ID for Lift motor */
-  public static final int LIFT_ID = 9;
+  public static final int LIFT1_ID = 13;
+  public static final int LIFT2_ID = 14;
 
   /** DIO Arm angle sensor */
   public static final int ARM_ANGLE = 2;
 
   /** CAN ID for Arm motor */
-  public static final int ARM_ID = 10;
+  public static final int ARM_ID = 15;
 
   /** Pneumatic for Arm extender */
   public static final int ARM_EXTENDER = 0;
 
-  /** CAN IDs for Spinner */
-  public static final int SPINNER1_ID = 11;
-  public static final int SPINNER2_ID = 12;
+  /** CAN ID for Spinner */
+  public static final int SPINNER_ID = 16;
 }

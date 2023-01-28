@@ -9,7 +9,7 @@ import frc.robot.CommandBaseRobot;
 /** Lift test robot
  *
  *  TODO Setup Procedure:
- * - Use correct motor and sensor types, ID, ..
+ * - Use correct motors and sensor types, ID, ..
  *
  * Disabled:
  * - Check if "At Bottom" is correctly indicated,
@@ -17,11 +17,14 @@ import frc.robot.CommandBaseRobot;
  *   Ideally, wiring could be fail-safe..
  * 
  * Teleop, right stick:
- * - Check if moving 'up' with positive voltage moves indeed 'up'.
- *   If not, reverse motor wiring.
+ * - Disconnect secondary motor from speed controller
+ * - Check if moving 'up' with positive voltage indeed moves primary motor 'up'.
+ *   If not, reverse primary motor wiring.
  * - Check if moving 'down' stops when hitting bottom switch
  * - Check if indicated "Height" zeroes when hitting bottom switch
  * - Calibrate height encoder
+ * - Connect secondary motor to speed controller and check that it moves
+ *   the same direction as primary. If not, reverse secondary  wiring. 
  * 
  * Autonomouse:
  * - Start with "Setpoint" = 0.0, assert that motor is not powered

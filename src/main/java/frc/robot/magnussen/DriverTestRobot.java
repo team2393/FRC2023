@@ -18,23 +18,18 @@ public class DriverTestRobot extends CommandBaseRobot
     driver.brake(true);
   }
 
-
   @Override
   public void teleopPeriodic()
   {
-      driver.setVoltage(OI.joystick.getRightY()*-5);
+    driver.setVoltage(OI.joystick.getRightY()*-5);
   }
 
   @Override
   public void autonomousPeriodic()
   {
-    // Cycle between 0 and 90 degrees every 2 seconds
+    // Cycle between two speeds every 5 seconds
     long cycle = (System.currentTimeMillis() / 5000) % 2;
-    double speed;
-    if (cycle == 0)
-      speed = 0.5;
-    else
-       speed = 1.5;
+    double speed = cycle == 0 ? 0.5 : 1.5;
     driver.setSpeed(speed);
   }
 }

@@ -12,15 +12,13 @@ import frc.robot.swervelib.Driver;
 /** Driver using Falcon */
 public class FalconDriver extends Driver
 {
-  // TODO
-  // (41983+47258+45040+40705)/4
+  // TODO Calibrate distance
   private final static int TICKS_PER_METER = 43746;
 
   private final WPI_TalonFX motor;
 
   public FalconDriver(int index)
   {
-    // TODO ks, kv, P gains
     super(index, 0.6, 2.15, 1);
     motor = new WPI_TalonFX(RobotMap.DRIVER_ID[index], RobotMap.CANIVORE);
     motor.configFactoryDefault();

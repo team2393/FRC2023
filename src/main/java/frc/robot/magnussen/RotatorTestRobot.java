@@ -9,15 +9,14 @@ public class RotatorTestRobot extends CommandBaseRobot
   @Override
   public void teleopPeriodic()
   {
-      // rotator.setVoltage(OI.joystick.getLeftX()*-5);
-
-      rotator.setAngle(OI.joystick.getLeftX()*-180);
+    // rotator.setVoltage(OI.joystick.getLeftX()*-5);
+    rotator.setAngle(OI.joystick.getLeftX()*-180);
   }
 
   @Override
   public void autonomousPeriodic()
   {
-    // Cycle between 0 and 90 degrees every 2 seconds
+    // Cycle between 0 and 90 degrees every 5 seconds
     long cycle = (System.currentTimeMillis() / 5000) % 2;
     double angle = cycle * 90.0;
     rotator.setAngle(angle);

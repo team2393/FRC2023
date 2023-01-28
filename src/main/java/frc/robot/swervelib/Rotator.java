@@ -18,6 +18,7 @@ abstract public class Rotator extends SubsystemBase
 {
   private final NetworkTableEntry nt_offset;
   private final NetworkTableEntry nt_P;
+  private final NetworkTableEntry nt_I;
   private final NetworkTableEntry nt_D;
   private final NetworkTableEntry nt_clamp;
   private final NetworkTableEntry nt_angle;
@@ -39,13 +40,15 @@ abstract public class Rotator extends SubsystemBase
     nt_angle = SmartDashboard.getEntry("Angle" + index);
     nt_desired = SmartDashboard.getEntry("Desired" + index);
     nt_P = SmartDashboard.getEntry("Rotator P");
+    nt_I = SmartDashboard.getEntry("Rotator I");
     nt_D = SmartDashboard.getEntry("Rotator D");
-    nt_clamp = SmartDashboard.getEntry("Rotator Calmp");
+    nt_clamp = SmartDashboard.getEntry("Rotator Clamp");
 
     pid.enableContinuousInput(-180, 180);
 
     nt_offset.setDefaultDouble(offset);
     nt_P.setDefaultDouble(0.2);
+    nt_I.setDefaultDouble(0.0);
     nt_D.setDefaultDouble(0.00);
     nt_clamp.setDefaultDouble(2.0);
   }
@@ -82,7 +85,7 @@ abstract public class Rotator extends SubsystemBase
     // double error = Math.IEEEremainder(desired - angle, 360.0);
     // double output = error*nt_P.getDouble(0.0);
 
-    pid.setPID(nt_P.getDouble(0.0), 0.0, nt_D.getDouble(0.0));
+    pid.setPID(nt_P.getDouble(0.0), nt_I.getDouble(0.0), nt_D.getDouble(0.0));
     double output = pid.calculate(angle, desired);
     double clamp = nt_clamp.getDouble(0.0);
     output = MathUtil.clamp(output, -clamp, clamp);

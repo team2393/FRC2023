@@ -55,6 +55,8 @@ public class SwerveOI
   public static double getRotationSpeed()
   {
     double stick = CORRECT ? joystick.getLeftX() : joystick.getRightX();
+    // Square output (keeping sign) for more sensitive center moves
+    stick *= Math.abs(stick);
     return -MAX_RAD_PER_SEC * MathUtil.applyDeadband(rot_throttle.calculate(stick), 0.1);
   }
 

@@ -24,7 +24,7 @@ public class RobotMap
    *  19 - 40 Amp front right rotator          0 - 40 Amp front left driver
    *  20 - 10 Amp RoboRIO
    *  21 - 10 Amp Radio power
-   *  22 - 10 Amp CANivore (optional?)
+   *  22 - 10 Amp Pigeon 2.0
    *  23 - 10 Amp Camera LED ring (switched)
    *
    *  ^^^^  24 ports (0-23) ^^^^^

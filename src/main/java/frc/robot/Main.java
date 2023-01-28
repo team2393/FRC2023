@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.demos.MotorTestRobot;
+import frc.robot.demos.SparkMaxDemoRobot;
 import frc.robot.magnussen.DriverTestRobot;
 import frc.robot.magnussen.MagnussenRobot;
 import frc.robot.magnussen.RotatorTestRobot;

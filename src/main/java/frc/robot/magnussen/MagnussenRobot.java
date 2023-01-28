@@ -3,6 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.magnussen;
 
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -50,11 +52,11 @@ public class MagnussenRobot extends CommandBaseRobot
       autos.addOption(auto.getName(), auto);
     SmartDashboard.putData("Auto Options", autos);
 
-    // TODO Configure power dist. & publish power info    
-    // PowerDistribution power = new PowerDistribution(0, ModuleType.kRev);
-    // power.clearStickyFaults();
-    // power.setSwitchableChannel(false);
-    // SmartDashboard.putData(power);
+    // Configure power dist. & publish power info
+    PowerDistribution power = new PowerDistribution(1, ModuleType.kRev);
+    power.clearStickyFaults();
+    power.setSwitchableChannel(false);
+    SmartDashboard.putData(power);
   }
 
   @Override

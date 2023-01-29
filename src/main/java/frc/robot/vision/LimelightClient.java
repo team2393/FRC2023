@@ -46,8 +46,8 @@ public class LimelightClient extends SubsystemBase
     {
       return String.format("#%d (%s) seen as %s",
                            tag_id,
-                           format(tag_position),
-                           format(tag_view));
+                           FieldInfo.format(tag_position),
+                           FieldInfo.format(tag_view));
     }
   }
 
@@ -66,21 +66,7 @@ public class LimelightClient extends SubsystemBase
   /** NT entries updated with info obtained from camera */
   private final NetworkTableEntry nt_camera, nt_tagrel;
   
-  /** Database of all the april tags */
-  private final AprilTagFieldLayout field;
-
   private final SwerveDrivetrain drivetrain;
-
-  /** @param pose Pose
-   *  @return Text representation
-   */
-  static String format(Pose2d pose)
-  {
-    return String.format("X %3.1f Y %3.1f < %5.1f",
-                         pose.getX(),
-                         pose.getY(),
-                         pose.getRotation().getDegrees());
-  }
 
   /** Construct LimeLight client
    *  @param drivetrain Drivetrain where field position (odometry) is updated
@@ -93,15 +79,6 @@ public class LimelightClient extends SubsystemBase
     nt_camera = SmartDashboard.getEntry("CameraTagView");
     nt_tagrel = SmartDashboard.getEntry("PosFromTag");
     
-    try
-    {
-      field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
-    }
-    catch (Exception ex)
-    {
-      throw new IllegalStateException(ex);
-    }
-
     this.drivetrain = drivetrain;
   }
 
@@ -119,7 +96,7 @@ public class LimelightClient extends SubsystemBase
       return null;
     
     // Is it a known tag?
-    Optional<Pose3d> tag = field.getTagPose(id);
+    Optional<Pose3d> tag = FieldInfo.april_tags.getTagPose(id);
     if (tag.isEmpty())
       return null;
     
@@ -171,13 +148,13 @@ public class LimelightClient extends SubsystemBase
       // How camera saw the tag
       nt_camera.setString(String.format("%d @ %s",
                                         info.tag_id,
-                                        format(info.tag_view)));
+                                        FieldInfo.format(info.tag_view)));
       // Update estimated field location
       Pose2d robot_pose = computeRobotPose(info);
       drivetrain.updateLocationFromCamera(robot_pose);
 
       // Robot pos relative to tag
-      nt_tagrel.setString(format(robot_pose.relativeTo(info.tag_position)));
+      nt_tagrel.setString(FieldInfo.format(robot_pose.relativeTo(info.tag_position)));
     }
   }
 
@@ -192,6 +169,6 @@ public class LimelightClient extends SubsystemBase
 
     Pose2d robot_pose = computeRobotPose(info);
 
-    System.out.println(format(robot_pose));
+    System.out.println(FieldInfo.format(robot_pose));
   }
 }

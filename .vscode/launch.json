@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch FieldInfo",
+      "request": "launch",
+      "mainClass": "frc.robot.vision.FieldInfo",
+      "projectName": "FRC2023"
+    },
+    {
+      "type": "java",
       "name": "Launch LimelightClient",
       "request": "launch",
       "mainClass": "frc.robot.vision.LimelightClient",

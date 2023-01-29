@@ -20,8 +20,15 @@ public class SwerveToPositionCommand extends CommandBase
 {
   private final SwerveDrivetrain drivetrain;
   private final double target_x, target_y, final_angle;
-  private Command follower;
-   
+
+  /** @param drivetrain
+   *  @param Target Desired pose
+   */
+  public SwerveToPositionCommand(SwerveDrivetrain drivetrain, Pose2d target)
+  {
+    this(drivetrain, target.getX(), target.getY(), target.getRotation().getDegrees());
+  }
+
   /** @param drivetrain
    *  @param x Desired X [m],
    *  @param y Y [m],
@@ -33,26 +40,31 @@ public class SwerveToPositionCommand extends CommandBase
     target_x = x;
     target_y = y;
     final_angle = angle;
-    // Do NOT require the drivebase. The `follower` will do that.
+    addRequirements(drivetrain);
  }
 
   @Override
   public void initialize()
   {
     Pose2d current = drivetrain.getPose();
+    double dist = Math.hypot(target_x - current.getX(), target_y - current.getY());
 
     double heading = Math.toDegrees(Math.atan2(target_y - current.getY(),
                                                target_x - current.getX()));
-    Trajectory path = AutoNoMouse.createTrajectory(true,
-                                                   current.getX(), current.getY(), heading,
-                                                   target_x, target_y, heading);
-    follower = drivetrain.createTrajectoryCommand(path, final_angle);
-    follower.schedule();
-  }
-
-  @Override
-  public boolean isFinished()
-  {
-    return follower.isFinished();
+    
+    try
+    {
+      Trajectory path = AutoNoMouse.createTrajectory(true,
+                                                     current.getX(), current.getY(), heading,
+                                                     target_x, target_y, heading);
+      Command follower = drivetrain.createTrajectoryCommand(path, final_angle);
+      // Scheduling the follower cancels this command because follower uses drivetrain
+      follower.schedule();
+    }
+    catch (Exception ex)
+    {
+      System.err.println("Cannot create trajectory for distance of " + dist + " meters");
+      ex.printStackTrace();
+    }
   }
 }

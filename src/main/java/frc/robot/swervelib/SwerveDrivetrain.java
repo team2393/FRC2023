@@ -254,10 +254,10 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     // Controllers that correct for the x, y and angle to match the trajectory
     PIDController x_pid = new PIDController(nt_xy_p.getDouble(0), 0, 0);
     PIDController y_pid = new PIDController(nt_xy_p.getDouble(0), 0, 0);
-    // Angle controller is 'profiled', allowing up to 30 deg/sec (and 30 deg/sec/sec acceleration) 
+    // Angle controller is 'profiled', allowing up to 90 deg/sec (and 90 deg/sec/sec acceleration) 
     ProfiledPIDController angle_pid = new ProfiledPIDController(
       nt_angle_p.getDouble(0), 0, 0,
-      new TrapezoidProfile.Constraints(Math.toRadians(30), Math.toRadians(30)));
+      new TrapezoidProfile.Constraints(Math.toRadians(90), Math.toRadians(90)));
     // ..and 'continuous' because angle wraps around
     angle_pid.enableContinuousInput(-Math.PI, Math.PI);
 

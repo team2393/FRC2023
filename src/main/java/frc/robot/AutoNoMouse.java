@@ -22,8 +22,8 @@ import frc.robot.swervelib.TimedDriveCommand;
 
 /** Auto-no-mouse routines */
 public class AutoNoMouse {
-  // Run at up to 0.5m/s, accelerate by 0.5ms per second
-  private static final TrajectoryConfig config = new TrajectoryConfig(0.5, 0.5);
+  // Run at up to 1.0m/s, accelerate by 0.5ms per second
+  private static final TrajectoryConfig config = new TrajectoryConfig(1.0, 0.5);
 
   /**
    * Create trajectory from points

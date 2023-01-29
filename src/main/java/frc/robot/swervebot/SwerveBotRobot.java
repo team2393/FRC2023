@@ -3,6 +3,7 @@ package frc.robot.swervebot;
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,6 +17,7 @@ import frc.robot.swervelib.FixedSpeedCommand;
 import frc.robot.swervelib.RelativeSwerveCommand;
 import frc.robot.swervelib.ResetPositionCommand;
 import frc.robot.swervelib.SwerveOI;
+import frc.robot.vision.Drive2GridCommand;
 import frc.robot.vision.LimelightClient;
 
 /** ServeBot */
@@ -28,6 +30,7 @@ public class SwerveBotRobot extends CommandBaseRobot
   private final CommandBase drive_straight = new DriveStraightCommand(drivetrain);
   // private final CommandBase fixed_fwd = new FixedSpeedCommand(drivetrain, 0.2);
   // private final CommandBase fixed_back = new FixedSpeedCommand(drivetrain, -0.2);
+  private final CommandBase drive2grid = new Drive2GridCommand(drivetrain);
   private final CommandBase reset = new ResetPositionCommand(drivetrain);
 
   private final SendableChooser<Command> autos = new SendableChooser<>();
@@ -40,8 +43,11 @@ public class SwerveBotRobot extends CommandBaseRobot
     super.robotInit();
 
     // Reduce speed of practice robot
-    SwerveOI.MAX_METERS_PER_SEC = 0.5;
-    SwerveOI.MAX_RAD_PER_SEC /= 2;
+    if (RobotBase.isReal())
+    {
+      SwerveOI.MAX_METERS_PER_SEC = 0.5;
+      SwerveOI.MAX_RAD_PER_SEC /= 2;
+    }
 
     autos.setDefaultOption("Nothing", new PrintCommand("Doing nothing"));
     for (Command auto : AutoNoMouse.createAutoCommands(drivetrain))
@@ -64,9 +70,13 @@ public class SwerveBotRobot extends CommandBaseRobot
     if (SwerveOI.selectRelativeMode())
       drive_relative.schedule();
     if (SwerveOI.resetOrigin())
-        reset.schedule();
+      reset.schedule();
     if (SwerveOI.selectFixedForward())
-        drive_straight.schedule();
+      drive_straight.schedule();
+      
+    if (SwerveOI.joystick.getLeftTriggerAxis() > 0.5)
+      drive2grid.schedule();
+
     //     fixed_fwd.schedule();
     // else if (SwerveOI.selectFixedBack())
     //     fixed_back.schedule();

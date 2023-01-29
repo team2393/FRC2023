@@ -19,7 +19,7 @@ public class DriveStraightCommand extends CommandBase
     this.drivetrain = drivetrain;
     addRequirements(drivetrain);
     nt_p = SmartDashboard.getEntry("Straight P");
-    nt_p.setDefaultNumber(0.0);
+    nt_p.setDefaultNumber(0.1);
   }
 
   @Override

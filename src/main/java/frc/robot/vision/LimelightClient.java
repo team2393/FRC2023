@@ -4,20 +4,14 @@
 
 package frc.robot.vision;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -26,41 +20,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.swervelib.SwerveDrivetrain;
 
-/** Helper for dealing with Limelight
- *
- *  TODO Test with actual camera
- *  TODO Add MedianFilter(3), see last year
- */
+/** Helper for dealing with Limelight */
 public class LimelightClient extends SubsystemBase
 {
-  private static final double[] NOTHING = new double[] { 0, 0, 0, 0, 0, 0 };
-
-  // How far is camera mounted 'forward' from the center of the robot? */
-  private static final double camera_forward = 0.4;
-
-  // How far is camera mounted 'left' from the center of the robot? */
-  private static final double camera_left = -0.1;
-
-  private final SwerveDrivetrain drivetrain;
-  private final NetworkTableEntry nt_id;
-  private final NetworkTableEntry nt_data;
-  private AprilTagFieldLayout field;
-
-  static String format(Pose2d pose)
-  {
-    return String.format("X %3.1f Y %3.1f < %5.1f",
-                         pose.getX(),
-                         pose.getY(),
-                         pose.getRotation().getDegrees());
-  }
-
-
-  static class CameraInfo
+  private static class CameraInfo
   {
     /** ID of tag */
     public final int tag_id;
-    /** Position of tag on field  */
+
+    /** Position of that tag on field  */
     public final Pose2d tag_position;
+
     /** Relative position of tag as seen by camera */
     public final Pose2d tag_view;
 
@@ -81,26 +51,62 @@ public class LimelightClient extends SubsystemBase
     }
   }
 
+  /** Data returned by Limelight when camera doesn't see a tag */
+  private static final double[] NOTHING = new double[] { 0, 0, 0, 0, 0, 0 };
+
+  /** How far is camera mounted 'forward' from the center of the robot? */
+  public static double camera_forward = 0.4;
+
+  /** How far is camera mounted 'left' from the center of the robot? */
+  public static double camera_left = -0.1;
+  
+  /** NT entries read from camera */
+  private final NetworkTableEntry nt_id, nt_data;
+  
+  /** NT entries updated with info obtained from camera */
+  private final NetworkTableEntry nt_camera, nt_tagrel;
+  
+  /** Database of all the april tags */
+  private final AprilTagFieldLayout field;
+
+  private final SwerveDrivetrain drivetrain;
+
+  /** @param pose Pose
+   *  @return Text representation
+   */
+  static String format(Pose2d pose)
+  {
+    return String.format("X %3.1f Y %3.1f < %5.1f",
+                         pose.getX(),
+                         pose.getY(),
+                         pose.getRotation().getDegrees());
+  }
+
+  /** Construct LimeLight client
+   *  @param drivetrain Drivetrain where field position (odometry) is updated
+   */
   public LimelightClient(SwerveDrivetrain drivetrain)
   {
-    this.drivetrain = drivetrain;
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-front");
     nt_id = table.getEntry("tid");
     nt_data = table.getEntry("targetpose_cameraspace");
-
+    nt_camera = SmartDashboard.getEntry("CameraTagView");
+    nt_tagrel = SmartDashboard.getEntry("PosFromTag");
+    
     try
     {
       field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
     }
     catch (Exception ex)
     {
-      ex.printStackTrace();
-      field = null;
+      throw new IllegalStateException(ex);
     }
+
+    this.drivetrain = drivetrain;
   }
 
-  /** @return Nearest Apriltag pose in robot coordinates or null */
-  public CameraInfo getCameraInfo()
+  /** @return Camera info for closest Apriltag or null */
+  private CameraInfo getCameraInfo()
   {
     // Does camera recognize a tag?
     int id = (int) nt_id.getInteger(-1);
@@ -113,7 +119,7 @@ public class LimelightClient extends SubsystemBase
       return null;
     
     // Is it a known tag?
-    Optional<Pose3d> tag = field.getTagPose(6);
+    Optional<Pose3d> tag = field.getTagPose(id);
     if (tag.isEmpty())
       return null;
     
@@ -124,14 +130,17 @@ public class LimelightClient extends SubsystemBase
     return new CameraInfo(id, tag.get().toPose2d(), tag_view);
   }
 
-  public static Pose2d computeRobotPose(CameraInfo info)
+  /** @param info camera info, tag the camera saw and where
+   *  @return Robot position on field
+   */
+  private static Pose2d computeRobotPose(CameraInfo info)
   {
     // Correct tag_view.translation by tag's rotation
     // to get the tag's view of the robot, looking straight from the tag
     Translation2d tags_robot_view = info.tag_view
                                         .getTranslation()
                                         .rotateBy(info.tag_view.getRotation().unaryMinus());
-                                        
+
     // Get from tag's position to the robot's position 
     Translation2d camera_position = info.tag_position.getTranslation()
                                                      .plus(tags_robot_view);
@@ -141,6 +150,7 @@ public class LimelightClient extends SubsystemBase
     Rotation2d robot_heading = info.tag_position.getRotation()
                                                 .minus(info.tag_view.getRotation())
                                                 .plus(Rotation2d.fromDegrees(180));
+
     // Go from camera's position to center of robot
     Translation2d robot_position = camera_position.plus(new Translation2d(-camera_forward, -camera_left).rotateBy(robot_heading));
 
@@ -152,13 +162,22 @@ public class LimelightClient extends SubsystemBase
   {
     CameraInfo info = getCameraInfo();
     if (info == null)
-      SmartDashboard.putString("Camera", "?");
+    {
+      nt_camera.setString("?");
+      nt_tagrel.setString("?");
+    }
     else
     {
-      drivetrain.updateLocationFromCamera(computeRobotPose(info));
-      SmartDashboard.putString("Camera", String.format("%d @ %s",
-                                                        info.tag_id,
-                                                        format(info.tag_view)));
+      // How camera saw the tag
+      nt_camera.setString(String.format("%d @ %s",
+                                        info.tag_id,
+                                        format(info.tag_view)));
+      // Update estimated field location
+      Pose2d robot_pose = computeRobotPose(info);
+      drivetrain.updateLocationFromCamera(robot_pose);
+
+      // Robot pos relative to tag
+      nt_tagrel.setString(format(robot_pose.relativeTo(info.tag_position)));
     }
   }
 

@@ -6,6 +6,7 @@ package frc.robot.swervelib;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -87,7 +88,10 @@ abstract public class SwerveDrivetrain extends SubsystemBase
                                            new Translation2d(-length / 2,  width / 2) );
 
     // odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(), getPositions());
-    odometry = new SwerveDrivePoseEstimator(kinematics, new Rotation2d(), getPositions(), new Pose2d());
+    // Default errors are 0.1 for state  vs. 0.9 for vision
+    odometry = new SwerveDrivePoseEstimator(kinematics, new Rotation2d(), getPositions(), new Pose2d(),
+                                            VecBuilder.fill(0.05, 0.05, 0.05),
+                                            VecBuilder.fill(0.95, 0.95, 0.95));
 
     // Publish command to reset position
     SmartDashboard.putData(new ResetPositionCommand(this));
@@ -156,6 +160,13 @@ abstract public class SwerveDrivetrain extends SubsystemBase
   {
     // return odometry.getPoseMeters();
     return odometry.getEstimatedPosition();
+  }
+
+  /** @param Robot's position on field as estimated by camera */
+  public void updateLocationFromCamera(Pose2d robot_position)
+  {
+    // TODO Only use robot_position if it is within 1 meter of the current estimate?
+    odometry.addVisionMeasurement(robot_position, Timer.getFPGATimestamp());
   }
 
   /** Drive all modules with same angle and speed
@@ -268,11 +279,5 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     return new SwerveControllerCommand(trajectory, this::getPose, kinematics,
                                         x_pid, y_pid, angle_pid,
                                         desiredRotation, module_setter, this);
-  }
-
-  public void updateLocationFromCamera(Pose2d robot_position)
-  {
-    // TODO Only use robot_position if it is within 1 meter of the current estimate?
-    odometry.addVisionMeasurement(robot_position, Timer.getFPGATimestamp());
   }
 }

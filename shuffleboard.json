@@ -369,14 +369,39 @@
           "7,1": {
             "size": [
               2,
-              1
+              2
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Camera",
+              "_type": "Grid Layout",
               "_title": "Camera",
-              "_glyph": 148,
-              "_showGlyph": false
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Number of columns": 1,
+              "Layout/Number of rows": 3,
+              "Layout/Label position": "TOP",
+              "_children": {
+                "0,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///limelight-front/tid",
+                  "_title": "TagID",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "0,1": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/CameraTagView",
+                  "_title": "CameraTagView",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "0,2": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/PosFromTag",
+                  "_title": "PosFromTag",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                }
+              }
             }
           }
         }
@@ -384,8 +409,8 @@
     }
   ],
   "windowGeometry": {
-    "x": -5.0,
-    "y": 238.0,
+    "x": 0.5,
+    "y": 238.5,
     "width": 1455.0,
     "height": 619.5
   }

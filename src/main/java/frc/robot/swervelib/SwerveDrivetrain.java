@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,6 +22,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -66,7 +68,8 @@ abstract public class SwerveDrivetrain extends SubsystemBase
   private final SwerveDriveKinematics kinematics;
 
   /** Position tracker */
-  private final SwerveDriveOdometry odometry;
+  // private final SwerveDriveOdometry odometry;
+  private final SwerveDrivePoseEstimator odometry;
 
   /** @param width Width of the rectangle where modules are on corners in meters
    *  @param length Length of that rectangle in meters
@@ -83,7 +86,8 @@ abstract public class SwerveDrivetrain extends SubsystemBase
                                            new Translation2d(-length / 2, -width / 2),
                                            new Translation2d(-length / 2,  width / 2) );
 
-    odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(), getPositions());
+    // odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(), getPositions());
+    odometry = new SwerveDrivePoseEstimator(kinematics, new Rotation2d(), getPositions(), new Pose2d());
 
     // Publish command to reset position
     SmartDashboard.putData(new ResetPositionCommand(this));
@@ -150,7 +154,8 @@ abstract public class SwerveDrivetrain extends SubsystemBase
   /** @return Position of drivetrain on field (from odometry) */
   public Pose2d getPose()
   {
-    return odometry.getPoseMeters();
+    // return odometry.getPoseMeters();
+    return odometry.getEstimatedPosition();
   }
 
   /** Drive all modules with same angle and speed
@@ -213,16 +218,18 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     // Update and publish position
     odometry.update(getHeading(), getPositions());
 
-    final Pose2d pose = odometry.getPoseMeters();
+    final Pose2d pose = getPose();
     nt_x.setDouble(pose.getX());
     nt_y.setDouble(pose.getY());
     nt_heading.setDouble(pose.getRotation().getDegrees());
 
-    // Move '0,0' to other position on field to get better looking start position
-    field.setRobotPose(new Pose2d(pose.getTranslation()
-                                      .rotateBy(Rotation2d.fromDegrees(90))
-                                      .plus(new Translation2d(6, 4)),
-                                  getHeading().plus(Rotation2d.fromDegrees(90))));
+    // Move '0,0' to other position on field to get better looking start position?
+    // pose = new Pose2d(pose.getTranslation()
+    //                       .rotateBy(Rotation2d.fromDegrees(90))
+    //                       .plus(new Translation2d(6, 4)),
+    //                   getHeading().plus(Rotation2d.fromDegrees(90)));
+
+    field.setRobotPose(pose);
   }
 
   /** @param trajectory Trajectory to follow
@@ -244,7 +251,6 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     angle_pid.enableContinuousInput(-Math.PI, Math.PI);
 
     // Called by SwerveControllerCommand to check where we are
-    Supplier<Pose2d> pose_getter = () -> odometry.getPoseMeters();
     // Called by SwerveControllerCommand to tell us what modules should do
     Consumer<SwerveModuleState[]> module_setter = states ->
     {
@@ -259,8 +265,14 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     };
     // Called by SwerveControllerCommand to check at what angle we want to be
     Supplier<Rotation2d> desiredRotation = () -> Rotation2d.fromDegrees(end_angle);
-    return new SwerveControllerCommand(trajectory, pose_getter, kinematics,
+    return new SwerveControllerCommand(trajectory, this::getPose, kinematics,
                                         x_pid, y_pid, angle_pid,
                                         desiredRotation, module_setter, this);
+  }
+
+  public void updateLocationFromCamera(Pose2d robot_position)
+  {
+    // TODO Only use robot_position if it is within 1 meter of the current estimate?
+    odometry.addVisionMeasurement(robot_position, Timer.getFPGATimestamp());
   }
 }

@@ -5,13 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.demos.MotorTestRobot;
-import frc.robot.demos.SparkMaxDemoRobot;
-import frc.robot.magnussen.DriverTestRobot;
-import frc.robot.magnussen.MagnussenRobot;
-import frc.robot.magnussen.RotatorTestRobot;
-import frc.robot.magnussen.SwerveModuleTestRobot;
-import frc.robot.swervebot.SwerveBotRobot;
 
 /** Java 'main' */
 public final class Main
@@ -19,7 +12,7 @@ public final class Main
   /** Start one of the 'XXXRobot' robots */
   public static void main(String... args)
   {
-    // CameraTestRobot
-    RobotBase.startRobot(MagnussenRobot::new);
+    // RobotBase.startRobot(frc.robot.magnussen.MagnussenRobot::new);
+    RobotBase.startRobot(frc.robot.swervebot.SwerveBotRobot::new);
   }
 }

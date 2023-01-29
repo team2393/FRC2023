@@ -36,6 +36,10 @@ public class SwerveBotRobot extends CommandBaseRobot
   {
     super.robotInit();
 
+    // Reduce speed of practice robot
+    SwerveOI.MAX_METERS_PER_SEC = 0.5;
+    SwerveOI.MAX_RAD_PER_SEC /= 2;
+
     autos.setDefaultOption("Nothing", new PrintCommand("Doing nothing"));
     for (Command auto : AutoNoMouse.createAutoCommands(drivetrain))
       autos.addOption(auto.getName(), auto);

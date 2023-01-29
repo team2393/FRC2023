@@ -76,7 +76,7 @@ abstract public class Rotator extends SubsystemBase
   {
     if (RobotBase.isSimulation())
       return Rotation2d.fromDegrees(simulated_angle);
-    return Rotation2d.fromDegrees(getRawDegrees() - nt_offset.getDouble(0.0));
+    return Rotation2d.fromDegrees(Math.IEEEremainder(getRawDegrees() - nt_offset.getDouble(0.0), 360.0));
   }
 
   /** @param desired Desired angle of serve module in degrees */

@@ -366,15 +366,15 @@
               "_showGlyph": false
             }
           },
-          "7,2": {
+          "7,1": {
             "size": [
               2,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Target",
-              "_title": "Target",
+              "_source0": "network_table:///SmartDashboard/Camera",
+              "_title": "Camera",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -384,8 +384,8 @@
     }
   ],
   "windowGeometry": {
-    "x": -2.0,
-    "y": 236.0,
+    "x": -5.0,
+    "y": 238.0,
     "width": 1455.0,
     "height": 619.5
   }

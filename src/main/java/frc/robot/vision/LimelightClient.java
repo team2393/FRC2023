@@ -7,17 +7,24 @@ package frc.robot.vision;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.swervelib.SwerveDrivetrain;
 
 /** Helper for dealing with Limelight
  *
@@ -26,40 +33,146 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class LimelightClient extends SubsystemBase
 {
-  private static final String LIMELIGHT_NAME = "limelight-front";
-  private static final String POSE_DATA = "targetpose_cameraspace";
   private static final double[] NOTHING = new double[] { 0, 0, 0, 0, 0, 0 };
-  private final NetworkTableEntry nt_data;
 
-  public LimelightClient()
+  // How far is camera mounted 'forward' from the center of the robot? */
+  private static final double camera_forward = 0.4;
+
+  // How far is camera mounted 'left' from the center of the robot? */
+  private static final double camera_left = -0.1;
+
+  private final SwerveDrivetrain drivetrain;
+  private final NetworkTableEntry nt_id;
+  private final NetworkTableEntry nt_data;
+  private AprilTagFieldLayout field;
+
+  static String format(Pose2d pose)
   {
-    NetworkTable table = NetworkTableInstance.getDefault().getTable(LIMELIGHT_NAME);
-    nt_data = table.getEntry(POSE_DATA);
+    return String.format("X %3.1f Y %3.1f < %5.1f",
+                         pose.getX(),
+                         pose.getY(),
+                         pose.getRotation().getDegrees());
+  }
+
+
+  static class CameraInfo
+  {
+    /** ID of tag */
+    public final int tag_id;
+    /** Position of tag on field  */
+    public final Pose2d tag_position;
+    /** Relative position of tag as seen by camera */
+    public final Pose2d tag_view;
+
+    public CameraInfo(int tag_id, Pose2d tag_position, Pose2d tag_view)
+    {
+      this.tag_id = tag_id;
+      this.tag_position = tag_position;
+      this.tag_view = tag_view;
+    }
+
+    @Override
+    public String toString()
+    {
+      return String.format("#%d (%s) seen as %s",
+                           tag_id,
+                           format(tag_position),
+                           format(tag_view));
+    }
+  }
+
+  public LimelightClient(SwerveDrivetrain drivetrain)
+  {
+    this.drivetrain = drivetrain;
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-front");
+    nt_id = table.getEntry("tid");
+    nt_data = table.getEntry("targetpose_cameraspace");
+
+    try
+    {
+      field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
+    }
+    catch (Exception ex)
+    {
+      ex.printStackTrace();
+      field = null;
+    }
   }
 
   /** @return Nearest Apriltag pose in robot coordinates or null */
-  public Pose3d readTargetPose()
+  public CameraInfo getCameraInfo()
   {
+    // Does camera recognize a tag?
+    int id = (int) nt_id.getInteger(-1);
+    if (id < 0)
+      return null;
+
+    // Valid data?
     double [] data = nt_data.getDoubleArray(NOTHING);
     if (data.length != 6   ||  Arrays.equals(data, NOTHING))
       return null;
-    return new Pose3d(data[2], -data[0], -data[1],
-                      new Rotation3d(0.0, 0.0, -Math.toRadians(data[4])));
+    
+    // Is it a known tag?
+    Optional<Pose3d> tag = field.getTagPose(6);
+    if (tag.isEmpty())
+      return null;
+    
+    // Camera reports "forward" (x) as "Z", "left (y)" as "-X",
+    // and tag rotation as "Y" angle
+    Pose2d tag_view = new Pose2d(data[2], -data[0], Rotation2d.fromDegrees(-data[4]));
+
+    return new CameraInfo(id, tag.get().toPose2d(), tag_view);
+  }
+
+  public static Pose2d computeRobotPose(CameraInfo info)
+  {
+    // Correct tag_view.translation by tag's rotation
+    // to get the tag's view of the robot, looking straight from the tag
+    Translation2d tags_robot_view = info.tag_view
+                                        .getTranslation()
+                                        .rotateBy(info.tag_view.getRotation().unaryMinus());
+                                        
+    // Get from tag's position to the robot's position 
+    Translation2d camera_position = info.tag_position.getTranslation()
+                                                     .plus(tags_robot_view);
+    
+    // Get from tag's view direction onto field to robot's,
+    // considering that robots is pointed 180 degrees around to view the tag
+    Rotation2d robot_heading = info.tag_position.getRotation()
+                                                .minus(info.tag_view.getRotation())
+                                                .plus(Rotation2d.fromDegrees(180));
+    // Go from camera's position to center of robot
+    Translation2d robot_position = camera_position.plus(new Translation2d(-camera_forward, -camera_left).rotateBy(robot_heading));
+
+    return new Pose2d(robot_position, robot_heading);
   }
 
   @Override
   public void periodic()
   {
-    Pose3d nearest = readTargetPose();
-    String info;
-    if (nearest == null)
-      info = "<unknown>";
+    CameraInfo info = getCameraInfo();
+    if (info == null)
+      SmartDashboard.putString("Camera", "?");
     else
-      info = String.format("X %.2f, Y %.2f, Z %.2f m at %.1f degrees\n",
-                      nearest.getTranslation().getX(),
-                      nearest.getTranslation().getY(),
-                      nearest.getTranslation().getZ(),
-                      Math.toDegrees(nearest.getRotation().getZ()));
-    SmartDashboard.putString("Target", info);
+    {
+      drivetrain.updateLocationFromCamera(computeRobotPose(info));
+      SmartDashboard.putString("Camera", String.format("%d @ %s",
+                                                        info.tag_id,
+                                                        format(info.tag_view)));
+    }
+  }
+
+  /** Offline demo */
+  public static void main(String[] args)
+  {
+    CameraInfo info = new CameraInfo(6,
+                                     new Pose2d(1, 4.4, Rotation2d.fromDegrees(0)),
+                                     new Pose2d(1.4, 0, Rotation2d.fromDegrees(-20)));
+    
+    System.out.println(info);
+
+    Pose2d robot_pose = computeRobotPose(info);
+
+    System.out.println(format(robot_pose));
   }
 }

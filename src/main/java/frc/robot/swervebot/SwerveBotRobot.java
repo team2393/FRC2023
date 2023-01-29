@@ -32,7 +32,7 @@ public class SwerveBotRobot extends CommandBaseRobot
 
   private final SendableChooser<Command> autos = new SendableChooser<>();
 
-  private final LimelightClient camera = new LimelightClient();
+  private final LimelightClient camera = new LimelightClient(drivetrain);
 
   @Override
   public void robotInit()

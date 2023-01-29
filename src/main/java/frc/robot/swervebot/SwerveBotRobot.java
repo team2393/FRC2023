@@ -16,6 +16,7 @@ import frc.robot.swervelib.FixedSpeedCommand;
 import frc.robot.swervelib.RelativeSwerveCommand;
 import frc.robot.swervelib.ResetPositionCommand;
 import frc.robot.swervelib.SwerveOI;
+import frc.robot.vision.LimelightClient;
 
 /** ServeBot */
 public class SwerveBotRobot extends CommandBaseRobot
@@ -30,6 +31,8 @@ public class SwerveBotRobot extends CommandBaseRobot
   private final CommandBase reset = new ResetPositionCommand(drivetrain);
 
   private final SendableChooser<Command> autos = new SendableChooser<>();
+
+  private final LimelightClient camera = new LimelightClient();
 
   @Override
   public void robotInit()

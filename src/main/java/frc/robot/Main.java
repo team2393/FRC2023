@@ -12,7 +12,7 @@ public final class Main
   /** Start one of the 'XXXRobot' robots */
   public static void main(String... args)
   {
-    // RobotBase.startRobot(frc.robot.magnussen.MagnussenRobot::new);
-    RobotBase.startRobot(frc.robot.swervebot.SwerveBotRobot::new);
+    RobotBase.startRobot(frc.robot.magnussen.MagnussenRobot::new);
+    // RobotBase.startRobot(frc.robot.swervebot.SwerveBotRobot::new);
   }
 }

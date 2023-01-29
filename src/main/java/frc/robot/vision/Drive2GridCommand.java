@@ -1,3 +1,6 @@
+// Copyright (c) FIRST Team 2393 and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 package frc.robot.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -7,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.swervelib.SwerveDrivetrain;
 import frc.robot.swervelib.SwerveToPositionCommand;
 
+/** Command that drives to the nearest 'grid' */
 public class Drive2GridCommand extends CommandBase
 {
   private SwerveDrivetrain drivetrain;

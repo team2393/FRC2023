@@ -1,7 +1,7 @@
-package frc.robot.swervebot;
 // Copyright (c) FIRST Team 2393 and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
+package frc.robot.swervebot;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -74,7 +74,7 @@ public class SwerveBotRobot extends CommandBaseRobot
     if (SwerveOI.selectFixedForward())
       drive_straight.schedule();
       
-    if (SwerveOI.joystick.getLeftTriggerAxis() > 0.5)
+    if (SwerveOI.joystick.getLeftStickButtonPressed())
       drive2grid.schedule();
 
     //     fixed_fwd.schedule();

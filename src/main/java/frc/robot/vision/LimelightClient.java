@@ -7,8 +7,6 @@ package frc.robot.vision;
 import java.util.Arrays;
 import java.util.Optional;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,6 +14,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.swervelib.SwerveDrivetrain;
@@ -150,8 +149,14 @@ public class LimelightClient extends SubsystemBase
                                         info.tag_id,
                                         FieldInfo.format(info.tag_view)));
       // Update estimated field location
+      // TODO Only use robot_position if it is within 1 meter of the current estimate?
+
       Pose2d robot_pose = computeRobotPose(info);
-      drivetrain.updateLocationFromCamera(robot_pose);
+      // TODO Check https://docs.limelightvision.io/en/latest/networktables_api.html
+      // tl - "The pipeline’s latency contribution (ms)"
+      // " Add at least 11ms for image capture latency."
+      double timestamp = Timer.getFPGATimestamp() - 0.011;
+      drivetrain.updateLocationFromCamera(robot_pose, timestamp);
 
       // Robot pos relative to tag
       nt_tagrel.setString(FieldInfo.format(robot_pose.relativeTo(info.tag_position)));

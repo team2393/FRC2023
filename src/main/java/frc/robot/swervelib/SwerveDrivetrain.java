@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -23,7 +22,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -162,11 +160,12 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     return odometry.getEstimatedPosition();
   }
 
-  /** @param Robot's position on field as estimated by camera */
-  public void updateLocationFromCamera(Pose2d robot_position)
+  /** @param robot_position Robot's position on field as estimated by camera
+   *  @param timestamp Based on Timer.getFPGATimestamp()
+  */
+  public void updateLocationFromCamera(Pose2d robot_position, double timestamp)
   {
-    // TODO Only use robot_position if it is within 1 meter of the current estimate?
-    odometry.addVisionMeasurement(robot_position, Timer.getFPGATimestamp());
+    odometry.addVisionMeasurement(robot_position, timestamp);
   }
 
   /** Drive all modules with same angle and speed

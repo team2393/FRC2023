@@ -70,6 +70,9 @@ abstract public class SwerveDrivetrain extends SubsystemBase
   // private final SwerveDriveOdometry odometry;
   private final SwerveDrivePoseEstimator odometry;
 
+  /** Origin used by {@link #createTrajectoryCommand} */
+  private Pose2d trajectory_origin = new Pose2d();
+
   /** @param width Width of the rectangle where modules are on corners in meters
    *  @param length Length of that rectangle in meters
    *  @param modules Front left, front right, back right, back left module
@@ -124,6 +127,7 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     for (int i=0; i<modules.length; ++i)
       modules[i].resetPosition();
     odometry.resetPosition(getHeading(), getPositions(), new Pose2d());
+    trajectory_origin = new Pose2d();
   }
 
   /** @param brake Enable brake (if supported by motors) */
@@ -228,7 +232,7 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     // Update and publish position
     odometry.update(getHeading(), getPositions());
 
-    final Pose2d pose = getPose();
+    Pose2d pose = getPose();
     nt_x.setDouble(pose.getX());
     nt_y.setDouble(pose.getY());
     nt_heading.setDouble(pose.getRotation().getDegrees());
@@ -242,6 +246,14 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     field.setRobotPose(pose);
   }
 
+  /** @param new_origin New origin for trajectory commands
+   *  @see #createTrajectoryCommand
+   */
+  public void setTrajectoryOrigin(Pose2d new_origin)
+  {
+    trajectory_origin = new_origin;
+  }
+
   /** @param trajectory Trajectory to follow
    *  @param end_angle Final heading angle
    *  @return Command that follows the trajectory
@@ -249,8 +261,11 @@ abstract public class SwerveDrivetrain extends SubsystemBase
   public Command createTrajectoryCommand(Trajectory trajectory, double end_angle)
   {
     // SwerveControllerCommand will basically send the speed at each point of the
-    // trajectory to the serve modules, using many little helpers:
+    // trajectory to the serve modules, using many little helpers
+
     // Controllers that correct for the x, y and angle to match the trajectory
+    // in case simply using the suggested wheel speed settings aren't
+    // perfectly placing us on the trajectory
     PIDController x_pid = new PIDController(nt_xy_p.getDouble(0), 0, 0);
     PIDController y_pid = new PIDController(nt_xy_p.getDouble(0), 0, 0);
     // Angle controller is 'profiled', allowing up to 90 deg/sec (and 90 deg/sec/sec acceleration) 
@@ -260,7 +275,11 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     // ..and 'continuous' because angle wraps around
     angle_pid.enableContinuousInput(-Math.PI, Math.PI);
 
-    // Called by SwerveControllerCommand to check where we are
+    // Called by SwerveControllerCommand to check where we are.
+    // We return our position relative to a 'trajectory origin'
+    // which starts out as 0, 0, 0 but may be updated
+    Supplier<Pose2d> pose_getter = () -> getPose().relativeTo(trajectory_origin);
+
     // Called by SwerveControllerCommand to tell us what modules should do
     Consumer<SwerveModuleState[]> module_setter = states ->
     {
@@ -273,10 +292,13 @@ abstract public class SwerveDrivetrain extends SubsystemBase
         double vr = Math.toDegrees(kinematics.toChassisSpeeds(states).omegaRadiansPerSecond);
         simulated_heading += vr * TimedRobot.kDefaultPeriod;
     };
+
     // Called by SwerveControllerCommand to check at what angle we want to be
     Supplier<Rotation2d> desiredRotation = () -> Rotation2d.fromDegrees(end_angle);
-    return new SwerveControllerCommand(trajectory, this::getPose, kinematics,
-                                        x_pid, y_pid, angle_pid,
-                                        desiredRotation, module_setter, this);
+
+    // Create command that follows the trajectory
+    return new SwerveControllerCommand(trajectory, pose_getter, kinematics,
+                                       x_pid, y_pid, angle_pid,
+                                       desiredRotation, module_setter, this);
   }
 }

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.swervelib.ResetPositionCommand;
+import frc.robot.swervelib.SelectRelativeTrajectoryCommand;
 import frc.robot.swervelib.StayPutCommand;
 import frc.robot.swervelib.SwerveDrivetrain;
 import frc.robot.swervelib.SwerveToPositionCommand;
@@ -100,7 +101,7 @@ public class AutoNoMouse {
           4.5, 1.3, 90.0,
           3.5, 2.3, 180.0,
           1.9, 1.9, 180.0);
-      Command auto = new ResetPositionCommand(drivetrain)
+      Command auto = new SelectRelativeTrajectoryCommand(drivetrain)
           .andThen(drivetrain.createTrajectoryCommand(trajectory, 180.0))
           .andThen(new PrintCommand("Done"))
           .andThen(new StayPutCommand(drivetrain, 0.0));
@@ -140,7 +141,8 @@ public class AutoNoMouse {
     {
       // Forward 1m, then back
       SequentialCommandGroup auto = new SequentialCommandGroup();
-      auto.addCommands(new ResetPositionCommand(drivetrain));
+      // auto.addCommands(new ResetPositionCommand(drivetrain));
+      auto.addCommands(new SelectRelativeTrajectoryCommand(drivetrain));
       Trajectory forward = createTrajectory(true,
           0.0, 0.0, 0.0,
           1.0, 0.0, 0.0);
@@ -156,8 +158,10 @@ public class AutoNoMouse {
 
     {
       // Little forward and to right, then back
+      // from current location on
       SequentialCommandGroup auto = new SequentialCommandGroup();
-      auto.addCommands(new ResetPositionCommand(drivetrain));
+      // auto.addCommands(new ResetPositionCommand(drivetrain));
+      auto.addCommands(new SelectRelativeTrajectoryCommand(drivetrain));
       Trajectory forward = createTrajectory(true,
           0.0, 0.0, 0.0,
           0.7, -0.7, -45.0,

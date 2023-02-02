@@ -12,6 +12,7 @@ public class RobotMap
    *
    *  TODO Check actual fuse assignments
    *  REV Power Distribution Hub
+   *  ==========================
    *  10 -                                     9 - 
    *  11 -                                     8 - 
    *  12 -                                     7 - 
@@ -27,32 +28,25 @@ public class RobotMap
    *  22 - 10 Amp Pigeon 2.0
    *  23 - 10 Amp Camera LED ring (switched)
    *
-   *  ^^^^  24 ports (0-23) ^^^^^
+   *  REV Mini Power Module
+   *  =====================
+   *  0 - 3 Amp CanCoder
+   *  1 - 3 Amp CanCoder
+   *  2 - 3 Amp CanCoder
+   *  3 - 3 Amp CanCoder
+   *  4 -
+   *  5 -
    * 
-   *  23 devices to be powered:
+   *  Remaining devices to be powered:
    *
-   *  40 Amp Front left driver
-   *  40 Amp Front right driver
-   *  40 Amp Back right driver
-   *  40 Amp Back left driver
    *  40 Amp Lift1
    *  40 Amp Lift2
    *  40 Amp Arm angle
    *  40 Amp Spinner
    *
-   *  20 Amp Front left rotator
-   *  20 Amp Front right rotator
-   *  20 Amp Back right rotator
-   *  20 Amp Back left rotator
    *  20 Amp Pneumatic hub -> Compressor
    * 
-   *  10 Amp RoboRIO
-   *  10 Amp Radio power
    *  10 Amp CANivore (optional?)
-   *  5 Amp Front left CANcoder
-   *  5 Amp Front right CANcoder
-   *  5 Amp Back right CANcoder
-   *  5 Amp Back left CANcoder
    *  5 Amp Pigeon (or plug into a nearby TalonFX?)
    *  10 Amp Limelight
    *  10 Amp Camera LED ring

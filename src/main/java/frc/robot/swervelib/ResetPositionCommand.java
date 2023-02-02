@@ -5,7 +5,7 @@ package frc.robot.swervelib;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
-/** Command to reset drivetrain */
+/** Command to reset drivetrain to all zero */
 public class ResetPositionCommand extends InstantCommand
 {
   public ResetPositionCommand(SwerveDrivetrain drivetrain)

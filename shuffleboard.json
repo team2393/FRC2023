@@ -294,8 +294,8 @@
         "tiles": {
           "0,0": {
             "size": [
-              6,
-              3
+              7,
+              4
             ],
             "content": {
               "_type": "Field",
@@ -308,65 +308,7 @@
               "Visuals/Show Outside Circles": true
             }
           },
-          "6,0": {
-            "size": [
-              1,
-              2
-            ],
-            "content": {
-              "_type": "Grid Layout",
-              "_title": "Position",
-              "_glyph": 149,
-              "_showGlyph": false,
-              "Layout/Number of columns": 1,
-              "Layout/Number of rows": 4,
-              "Layout/Label position": "TOP",
-              "_children": {
-                "0,0": {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/X",
-                  "_title": "X",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                "0,1": {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Y",
-                  "_title": "Y",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                "0,2": {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Heading",
-                  "_title": "Heading",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                },
-                "0,3": {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ResetPosition",
-                  "_title": "  ",
-                  "_glyph": 148,
-                  "_showGlyph": false
-                }
-              }
-            }
-          },
-          "8,0": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "ComboBox Chooser",
-              "_source0": "network_table:///SmartDashboard/Auto Options",
-              "_title": "Auto Options",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "8,3": {
+          "9,2": {
             "size": [
               2,
               2
@@ -404,69 +346,108 @@
               }
             }
           },
-          "8,1": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/AutoDelay",
-              "_title": "AutoDelay",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "7,0": {
             "size": [
-              1,
-              1
+              2,
+              3
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/SetX",
-              "_title": "SetX",
-              "_glyph": 148,
-              "_showGlyph": false
+              "_type": "Grid Layout",
+              "_title": "Position",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Number of columns": 2,
+              "Layout/Number of rows": 5,
+              "Layout/Label position": "TOP",
+              "_children": {
+                "0,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/X",
+                  "_title": "X",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "1,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/SetX",
+                  "_title": "SetX",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "0,1": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Y",
+                  "_title": "Y",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "1,1": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/SetY",
+                  "_title": "SetY",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "0,2": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Heading",
+                  "_title": "Heading",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "1,2": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/SetHeading",
+                  "_title": "SetHeading",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "0,3": {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ResetPosition",
+                  "_title": "  ",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "1,3": {
+                  "_type": "Toggle Button",
+                  "_source0": "network_table:///SmartDashboard/SetPose",
+                  "_title": "SetPose",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                }
+              }
             }
           },
-          "7,1": {
+          "9,0": {
             "size": [
-              1,
-              1
+              2,
+              2
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/SetY",
-              "_title": "SetY",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "7,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Toggle Button",
-              "_source0": "network_table:///SmartDashboard/SetPose",
-              "_title": "SetPose",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "7,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/SetHeading",
-              "_title": "SetHeading",
-              "_glyph": 148,
-              "_showGlyph": false
+              "_type": "Grid Layout",
+              "_title": "Auto",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Number of columns": 1,
+              "Layout/Number of rows": 2,
+              "Layout/Label position": "BOTTOM",
+              "_children": {
+                "0,0": {
+                  "_type": "ComboBox Chooser",
+                  "_source0": "network_table:///SmartDashboard/Auto Options",
+                  "_title": "Auto Options",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "0,1": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/AutoDelay",
+                  "_title": "AutoDelay",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                }
+              }
             }
           }
         }
@@ -474,9 +455,9 @@
     }
   ],
   "windowGeometry": {
-    "x": 27.0,
-    "y": -857.0,
-    "width": 1455.0,
+    "x": -10.399999618530273,
+    "y": 212.0,
+    "width": 1551.199951171875,
     "height": 620.0
   }
 }

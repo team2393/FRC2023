@@ -20,6 +20,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -45,6 +46,11 @@ abstract public class SwerveDrivetrain extends SubsystemBase
   private final NetworkTableEntry nt_x = SmartDashboard.getEntry("X");
   private final NetworkTableEntry nt_y = SmartDashboard.getEntry("Y");
   private final NetworkTableEntry nt_heading = SmartDashboard.getEntry("Heading");
+  private final NetworkTableEntry nt_set_pose = SmartDashboard.getEntry("SetPose");
+  private final NetworkTableEntry nt_set_x = SmartDashboard.getEntry("SetX");
+  private final NetworkTableEntry nt_set_y = SmartDashboard.getEntry("SetY");
+  private final NetworkTableEntry nt_set_heading = SmartDashboard.getEntry("SetHeading");
+
   private final Field2d field = new Field2d();
 
   /** Trajectory follower P gains */
@@ -100,8 +106,15 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     // Publish field
     SmartDashboard.putData(field);
 
+    // Gain settings
     nt_xy_p.setDefaultDouble(1.0);
     nt_angle_p.setDefaultDouble(5.0);
+
+    // Entries for setting the pose (while disabled)
+    nt_set_pose.setDefaultBoolean(false);
+    nt_set_x.setDefaultDouble(0.0);
+    nt_set_y.setDefaultDouble(0.0);
+    nt_set_heading.setDefaultDouble(0.0);
 
     // When no other command uses the drivetrain, stay put with modules pointed to 0.0
     setDefaultCommand(new StayPutCommand(this, 0.0));
@@ -232,15 +245,30 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     // Update and publish position
     odometry.update(getHeading(), getPositions());
 
+    // While disabled, allow setting X, Y, Heading
+    if (DriverStation.isDisabled())
+    { // Pushing the "SetPose" button updates pose to entered values
+      if (nt_set_pose.getBoolean(false))
+      {
+        double x = nt_set_x.getDouble(0.0);
+        double y = nt_set_y.getDouble(0.0);
+        double h = nt_set_heading.getDouble(0.0);
+        System.out.println("Setting pose to X " + x + " m, Y " + y + " m, Heading " + h + " deg");
+        odometry.resetPosition(getHeading(), getPositions(), new Pose2d(x, y, Rotation2d.fromDegrees(h)));
+
+        // Reset the button to "acknowledge" and only set position once
+        nt_set_pose.setBoolean(false);
+      }
+    }
+
     Pose2d pose = getPose();
     nt_x.setDouble(pose.getX());
     nt_y.setDouble(pose.getY());
     nt_heading.setDouble(pose.getRotation().getDegrees());
 
-    // Move '0,0' to other position on field to get better looking start position?
-    // pose = new Pose2d(pose.getTranslation()
-    //                       .rotateBy(Rotation2d.fromDegrees(90))
-    //                       .plus(new Translation2d(6, 4)),
+    // Example for simulating different origin
+    // pose = new Pose2d(pose.getTranslation().rotateBy(Rotation2d.fromDegrees(90))
+    //                                        .plus(new Translation2d(6, 4)),
     //                   getHeading().plus(Rotation2d.fromDegrees(90)));
 
     field.setRobotPose(pose);

@@ -6,6 +6,8 @@ FRC Software manual: https://docs.wpilib.org/en/stable/index.html
 
 Game manual: https://www.firstinspires.org/resource-library/frc/competition-manual-qa-system
 
+Forum: https://www.chiefdelphi.com/
+
 Done:
   * Kickoff: January 7, 2023, https://efcms.engr.utk.edu/efp/first-kickoff/2023/welcome.php
   * Swervebot: Manual and basic auto

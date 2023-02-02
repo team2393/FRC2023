@@ -20,6 +20,7 @@ import frc.robot.swervelib.StayPutCommand;
 import frc.robot.swervelib.SwerveDrivetrain;
 import frc.robot.swervelib.SwerveToPositionCommand;
 import frc.robot.swervelib.TimedDriveCommand;
+import frc.robot.swervelib.VariableWaitCommand;
 
 /** Auto-no-mouse routines */
 public class AutoNoMouse {
@@ -161,6 +162,7 @@ public class AutoNoMouse {
       // from current location on
       SequentialCommandGroup auto = new SequentialCommandGroup();
       // auto.addCommands(new ResetPositionCommand(drivetrain));
+      auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectRelativeTrajectoryCommand(drivetrain));
       Trajectory forward = createTrajectory(true,
           0.0, 0.0, 0.0,

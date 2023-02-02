@@ -288,6 +288,16 @@ abstract public class SwerveDrivetrain extends SubsystemBase
    */
   public Command createTrajectoryCommand(Trajectory trajectory, double end_angle)
   {
+    return createTrajectoryCommand(trajectory, end_angle, true);
+  }
+
+  /** @param trajectory Trajectory to follow
+   *  @param end_angle Final heading angle
+   *  @param require_drivetrain Command should require drivetrain unless it's inside a proxy that already holds the drivetrain
+   *  @return Command that follows the trajectory
+   */
+  public Command createTrajectoryCommand(Trajectory trajectory, double end_angle, boolean require_drivetrain)
+  {
     // SwerveControllerCommand will basically send the speed at each point of the
     // trajectory to the serve modules, using many little helpers
 
@@ -325,8 +335,11 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     Supplier<Rotation2d> desiredRotation = () -> Rotation2d.fromDegrees(end_angle);
 
     // Create command that follows the trajectory
-    return new SwerveControllerCommand(trajectory, pose_getter, kinematics,
-                                       x_pid, y_pid, angle_pid,
-                                       desiredRotation, module_setter, this);
+    SwerveControllerCommand follower =  new SwerveControllerCommand(trajectory, pose_getter, kinematics,
+                                                                    x_pid, y_pid, angle_pid,
+                                                                    desiredRotation, module_setter);
+    if (require_drivetrain)
+      follower.addRequirements(this);
+    return follower;
   }
 }

@@ -5,8 +5,8 @@ package frc.robot.swervelib;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import frc.robot.AutoNoMouse;
 
 /** Command for swerving to a desired location
@@ -16,11 +16,8 @@ import frc.robot.AutoNoMouse;
  *   Schedules a new trajectory following command
  *   for that path and then waits for it to finish.
  */
-public class SwerveToPositionCommand extends CommandBase
+public class SwerveToPositionCommand extends ProxyCommand
 {
-  private final SwerveDrivetrain drivetrain;
-  private final double target_x, target_y, final_angle;
-
   /** @param drivetrain
    *  @param Target Desired pose
    */
@@ -36,35 +33,33 @@ public class SwerveToPositionCommand extends CommandBase
    */
   public SwerveToPositionCommand(SwerveDrivetrain drivetrain, double x, double y, double angle)
   {
-    this.drivetrain = drivetrain;
-    target_x = x;
-    target_y = y;
-    final_angle = angle;
+    super(() ->
+    {
+      Pose2d current = drivetrain.getPose();
+      double dist = Math.hypot(x - current.getX(), y - current.getY());
+
+      double heading = Math.toDegrees(Math.atan2(y - current.getY(),
+                                                 x - current.getX()));
+
+      try
+      {
+            Trajectory path = AutoNoMouse.createTrajectory(true,
+                                                          current.getX(), current.getY(), heading,
+                                                          x, y, heading);
+            // Proxied command does NOT hold drivetrain, we do.
+            // If the proxied command held the drivetrain, and this command was in a sequence,
+            // then starting the proxied command would stop the sequence and thus this command?!
+            return drivetrain.createTrajectoryCommand(path, angle, false);
+      }
+      catch (Exception ex)
+      {
+        System.err.println("Cannot create trajectory for distance of " + dist + " meters");
+      }
+
+      return new PrintCommand("Trajectory Error");
+    });
+
+    // Hold drivetrain
     addRequirements(drivetrain);
- }
-
-  @Override
-  public void initialize()
-  {
-    Pose2d current = drivetrain.getPose();
-    double dist = Math.hypot(target_x - current.getX(), target_y - current.getY());
-
-    double heading = Math.toDegrees(Math.atan2(target_y - current.getY(),
-                                               target_x - current.getX()));
-    
-    try
-    {
-      Trajectory path = AutoNoMouse.createTrajectory(true,
-                                                     current.getX(), current.getY(), heading,
-                                                     target_x, target_y, heading);
-      Command follower = drivetrain.createTrajectoryCommand(path, final_angle);
-      // Scheduling the follower cancels this command because follower uses drivetrain
-      follower.schedule();
-    }
-    catch (Exception ex)
-    {
-      System.err.println("Cannot create trajectory for distance of " + dist + " meters");
-      ex.printStackTrace();
-    }
   }
 }

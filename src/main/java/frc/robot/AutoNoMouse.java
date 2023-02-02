@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.swervelib.ResetPositionCommand;
+import frc.robot.swervelib.SelectAbsoluteTrajectoryCommand;
 import frc.robot.swervelib.SelectRelativeTrajectoryCommand;
 import frc.robot.swervelib.StayPutCommand;
 import frc.robot.swervelib.SwerveDrivetrain;
@@ -179,6 +180,17 @@ public class AutoNoMouse {
       auto.addCommands(drivetrain.createTrajectoryCommand(back2, 0.0));
       auto.addCommands(new StayPutCommand(drivetrain, 0.0));
       auto.setName("|----");
+      autos.add(auto);
+    }
+
+    {
+      SequentialCommandGroup auto = new SequentialCommandGroup();
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      auto.addCommands(new SwerveToPositionCommand(drivetrain, 1, 1, 45));
+      auto.addCommands(new SwerveToPositionCommand(drivetrain, 2, 2, 90));
+      auto.addCommands(new SwerveToPositionCommand(drivetrain, 3, 3, 180));
+      auto.setName("Points");
       autos.add(auto);
     }
 

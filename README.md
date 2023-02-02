@@ -2,8 +2,11 @@ Team 2393 FRC Season 2023
 =========================
 
 FRC Software manual: https://docs.wpilib.org/en/stable/index.html
+ * Are there WPI updates https://github.com/wpilibsuite/allwpilib/releases ?
 
 Game manual: https://www.firstinspires.org/resource-library/frc/competition-manual-qa-system
+
+Forum: https://www.chiefdelphi.com/
 
 Done:
   * Kickoff: January 7, 2023, https://efcms.engr.utk.edu/efp/first-kickoff/2023/welcome.php
@@ -16,7 +19,6 @@ Done:
       * https://www.chiefdelphi.com/t/list-of-apriltag-3d-positions
   * Install 2023 WPILib on robot laptop
     * Settings: Editor Tab Size 2, Detect indentation off, minimap disabled, inlay hints off
-    
   * Get 3rd party libraries for CTRE, Vec, ...
     * https://github.com/CrossTheRoadElec/Phoenix-Releases/releases
     * https://www.revrobotics.com/software

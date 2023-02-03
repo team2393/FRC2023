@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.swervelib.ResetPositionCommand;
 import frc.robot.swervelib.SelectAbsoluteTrajectoryCommand;
 import frc.robot.swervelib.SelectRelativeTrajectoryCommand;
@@ -26,7 +27,7 @@ import frc.robot.swervelib.VariableWaitCommand;
 /** Auto-no-mouse routines */
 public class AutoNoMouse {
   // Run at up to 1.0m/s, accelerate by 0.5ms per second
-  private static final TrajectoryConfig config = new TrajectoryConfig(1.0, 0.5);
+  private static final TrajectoryConfig config = new TrajectoryConfig(1.5, 1);
 
   /**
    * Create trajectory from points
@@ -50,7 +51,8 @@ public class AutoNoMouse {
   }
 
   /** Create all our auto-no-mouse commands */
-  public static List<Command> createAutoCommands(SwerveDrivetrain drivetrain) {
+  public static List<Command> createAutoCommands(SwerveDrivetrain drivetrain)
+  {
     List<Command> autos = new ArrayList<>();
 
     {
@@ -191,6 +193,58 @@ public class AutoNoMouse {
       auto.addCommands(new SwerveToPositionCommand(drivetrain, 2, 2, 90));
       auto.addCommands(new SwerveToPositionCommand(drivetrain, 3, 3, 180));
       auto.setName("Points");
+      autos.add(auto);
+    }
+
+    {
+      SequentialCommandGroup auto = new SequentialCommandGroup();
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      Trajectory path = createTrajectory(true, 1.85, 5.05, 0,
+                                               5.00, 4.70, 0);
+      auto.addCommands(drivetrain.createTrajectoryCommand(path, 0));
+      auto.setName("BTE");
+      autos.add(auto);
+    }
+
+    {
+      SequentialCommandGroup auto = new SequentialCommandGroup();
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      Trajectory path = createTrajectory(true, 1.85, 2.75, 45,
+                                               2.50, 4.60, 0,
+                                               6.43, 4.60, 0);
+      auto.addCommands(drivetrain.createTrajectoryCommand(path, 0));
+      auto.addCommands(new PrintCommand("Pickup"));
+      auto.addCommands(new WaitCommand(2));
+      path = createTrajectory(true, 6.43, 4.60, 180,
+                                    3.80, 4.60, 180,
+                                    1.90, 4.45, 180);
+      auto.addCommands(drivetrain.createTrajectoryCommand(path, 180));
+      auto.setName("BMR");
+      autos.add(auto);
+    }
+
+    {
+      SequentialCommandGroup auto = new SequentialCommandGroup();
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new PrintCommand("Dropping..."));
+      auto.addCommands(new WaitCommand(2));
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      Trajectory path = createTrajectory(true, 1.93, 0.50, 0,
+                                               5.42, 0.9, 0,
+                                               6.39, 2.14, 0);
+      auto.addCommands(drivetrain.createTrajectoryCommand(path, 0));
+      auto.setName("BBDR");
+      autos.add(auto);
+    }
+
+    {
+      SequentialCommandGroup auto = new SequentialCommandGroup();
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+
+      auto.setName("Another");
       autos.add(auto);
     }
 

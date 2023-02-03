@@ -29,6 +29,9 @@ public class AutoNoMouse {
   // Run at up to 1.0m/s, accelerate by 0.5ms per second
   private static final TrajectoryConfig config = new TrajectoryConfig(1.5, 1);
 
+  /** Width of field */
+  private static final double WIDTH = 16.541748046875;
+
   /**
    * Create trajectory from points
    *
@@ -230,12 +233,26 @@ public class AutoNoMouse {
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new PrintCommand("Dropping..."));
       auto.addCommands(new WaitCommand(2));
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain, 1.93, 0.5, 180));
       Trajectory path = createTrajectory(true, 1.93, 0.50, 0,
                                                5.42, 0.9, 0,
                                                6.39, 2.14, 0);
       auto.addCommands(drivetrain.createTrajectoryCommand(path, 0));
       auto.setName("BBDR");
+      autos.add(auto);
+    }
+
+    { // 'Mirrored' sequence: X   -->  WIDTH-X,   heading --> 180-heading.  Y stays.
+      SequentialCommandGroup auto = new SequentialCommandGroup();
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new PrintCommand("Dropping..."));
+      auto.addCommands(new WaitCommand(2));
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain, WIDTH-1.93, 0.5, 180-180));
+      Trajectory path = createTrajectory(true, WIDTH-1.93, 0.50, 180-0,
+                                               WIDTH-5.42, 0.9,  180-0,
+                                               WIDTH-6.39, 2.14, 180-0);
+      auto.addCommands(drivetrain.createTrajectoryCommand(path, 180-0));
+      auto.setName("RBDR");
       autos.add(auto);
     }
 

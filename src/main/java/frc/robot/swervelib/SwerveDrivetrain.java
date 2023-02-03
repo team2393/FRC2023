@@ -143,6 +143,16 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     trajectory_origin = new Pose2d();
   }
 
+  /** Set odometry to position
+   *  @param x [m]
+   *  @param y [m]
+   *  @param heading [degrees]
+   */
+  public void setOdometry(double x, double y, double heading)
+  {
+    odometry.resetPosition(getHeading(), getPositions(), new Pose2d(x, y, Rotation2d.fromDegrees(heading)));
+  }
+
   /** @param brake Enable brake (if supported by motors) */
   public void brake(boolean brake)
   {
@@ -250,12 +260,7 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     { // Pushing the "SetPose" button updates pose to entered values
       if (nt_set_pose.getBoolean(false))
       {
-        double x = nt_set_x.getDouble(0.0);
-        double y = nt_set_y.getDouble(0.0);
-        double h = nt_set_heading.getDouble(0.0);
-        System.out.println("Setting pose to X " + x + " m, Y " + y + " m, Heading " + h + " deg");
-        odometry.resetPosition(getHeading(), getPositions(), new Pose2d(x, y, Rotation2d.fromDegrees(h)));
-
+        setOdometry(nt_set_x.getDouble(0.0), nt_set_y.getDouble(0.0), nt_set_heading.getDouble(0.0));
         // Reset the button to "acknowledge" and only set position once
         nt_set_pose.setBoolean(false);
       }

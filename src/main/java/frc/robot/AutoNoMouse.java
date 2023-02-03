@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -259,11 +262,35 @@ public class AutoNoMouse {
     {
       SequentialCommandGroup auto = new SequentialCommandGroup();
       auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain, 1.66, 4.47, 0));
+
+      Path file = Filesystem.getDeployDirectory().toPath().resolve("output/Circle.wpilib.json");
+      try
+      {
+        Trajectory trajectory = TrajectoryUtil.fromPathweaverJson(file);
+        auto.addCommands(drivetrain.createTrajectoryCommand(trajectory, 0));
+      }
+      catch (Exception ex)
+      {
+        System.err.println("Cannot load " + file);
+        ex.printStackTrace();
+      }
+
+      auto.setName("PWCircle");
+      autos.add(auto);
+    }
+
+    {
+      SequentialCommandGroup auto = new SequentialCommandGroup();
+      auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
 
       auto.setName("Another");
       autos.add(auto);
     }
+
+
+
 
     return autos;
   }

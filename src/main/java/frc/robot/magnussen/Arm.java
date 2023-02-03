@@ -5,6 +5,9 @@ package frc.robot.magnussen;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -17,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Arm extends SubsystemBase
 {
   /** Motor controller */
-  private WPI_TalonSRX motor = new WPI_TalonSRX(RobotMap.ARM_ID);
+  private CANSparkMax motor = new CANSparkMax(RobotMap.ARM_ID, MotorType.kBrushless);
 
   /** Through Bore Encoder to measure angle
    *  Absolute readout uses (white, red, black) into DI
@@ -28,8 +31,8 @@ public class Arm extends SubsystemBase
 
   public Arm()
   {
-    motor.configFactoryDefault();
-    motor.setNeutralMode(NeutralMode.Brake);
+    motor.restoreFactoryDefaults();
+    motor.setIdleMode(IdleMode.kBrake);
 
     encoder.reset();
 

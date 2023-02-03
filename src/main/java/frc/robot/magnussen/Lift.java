@@ -6,6 +6,9 @@ package frc.robot.magnussen;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,9 +21,10 @@ public class Lift extends SubsystemBase
   private static final int TICKS_PER_METER = 1;
 
   /** Motor controller with mag encoder */
-  private WPI_TalonSRX primary_motor = new WPI_TalonSRX(RobotMap.LIFT1_ID);
+  private CANSparkMax primary_motor = new CANSparkMax(RobotMap.LIFT1_ID, MotorType.kBrushless);
+  
   /** Other motor */
-  private WPI_TalonSRX secondary_motor = new WPI_TalonSRX(RobotMap.LIFT2_ID);
+  private CANSparkMax secondary_motor = new CANSparkMax(RobotMap.LIFT2_ID, MotorType.kBrushless);
 
   /** At-bottom switch */
   private DigitalInput at_bottom = new DigitalInput(RobotMap.LIFT_BOTTOM);
@@ -30,13 +34,12 @@ public class Lift extends SubsystemBase
   public Lift()
   {
     // Primary motor has sensor and is the one we control
-    primary_motor.configFactoryDefault();
-    primary_motor.setNeutralMode(NeutralMode.Brake);
-    primary_motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+    primary_motor.restoreFactoryDefaults();
+    primary_motor.setIdleMode(IdleMode.kBrake);
 
     // Secondary motor set to follow the primary
-    secondary_motor.configFactoryDefault();
-    secondary_motor.setNeutralMode(NeutralMode.Brake);
+    secondary_motor.restoreFactoryDefaults();
+    secondary_motor.setIdleMode(IdleMode.kBrake);
     secondary_motor.follow(primary_motor);
 
 
@@ -54,7 +57,7 @@ public class Lift extends SubsystemBase
 
     // Reset encoder's zero offset?
     if (is_at_bottom)
-      bottom_offset = primary_motor.getSelectedSensorPosition();
+      bottom_offset = primary_motor.getEncoder().getPosition();
 
     return is_at_bottom;
   }
@@ -62,7 +65,7 @@ public class Lift extends SubsystemBase
   /** @return Lift height in meters */
   public double getHeight()
   {
-    return (primary_motor.getSelectedSensorPosition() - bottom_offset) / TICKS_PER_METER;
+    return (primary_motor.getEncoder().getPosition() - bottom_offset) / TICKS_PER_METER;
   }
 
   @Override

@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.swervelib.ResetPositionCommand;
 import frc.robot.swervelib.SelectAbsoluteTrajectoryCommand;
 import frc.robot.swervelib.SelectRelativeTrajectoryCommand;
 import frc.robot.swervelib.StayPutCommand;
@@ -28,23 +27,24 @@ import frc.robot.swervelib.TimedDriveCommand;
 import frc.robot.swervelib.VariableWaitCommand;
 
 /** Auto-no-mouse routines */
-public class AutoNoMouse {
+public class AutoNoMouse
+{
   // Run at up to 1.0m/s, accelerate by 0.5ms per second
   private static final TrajectoryConfig config = new TrajectoryConfig(1.5, 1);
 
   /** Width of field */
   private static final double WIDTH = 16.541748046875;
 
-  /**
-   * Create trajectory from points
+  /** Create trajectory from points
    *
-   * Given list of points must contain entries x, y, h,
-   * i.e., total length of x_y_h array must be a multiple of 3.
+   *  Given list of points must contain entries x, y, h,
+   *  i.e., total length of x_y_h array must be a multiple of 3.
    *
-   * @param forward Are we driving forward?
-   * @param x_y_z   Sequence of points { X, Y, Heading }
+   *  @param forward Are we driving forward?
+   *  @param x_y_z   Sequence of points { X, Y, Heading }
    */
-  public static Trajectory createTrajectory(final boolean forward, final double... x_y_h) {
+  public static Trajectory createTrajectory(final boolean forward, final double... x_y_h)
+  {
     if (x_y_h.length % 3 != 0)
       throw new IllegalArgumentException("List of { X, Y, Heading } contains " + x_y_h.length + " entries?!");
 
@@ -56,27 +56,43 @@ public class AutoNoMouse {
     return TrajectoryGenerator.generateTrajectory(waypoints, config);
   }
 
+  /** Create command that follows a PathWeaver path 
+   *  @param drivetrain Drivetrain to use
+   *  @param pathname Base name "XXX" for "deploy/output.XXX.wpilib.json"
+   *  @param final_heading .. of robot
+   *  @return Command that follows the path
+   */
+  public static Command followPathWeaver(SwerveDrivetrain drivetrain, String pathname, double final_heading)
+  {
+    Path file = Filesystem.getDeployDirectory().toPath().resolve("output").resolve(pathname + ".wpilib.json");
+    try
+    {
+      Trajectory trajectory = TrajectoryUtil.fromPathweaverJson(file);
+      return drivetrain.createTrajectoryCommand(trajectory, final_heading);
+    }
+    catch (Exception ex)
+    {
+      System.err.println("Cannot load " + file);
+      ex.printStackTrace();
+    }
+    return new PrintCommand("Error loading ");
+  }
+
   /** Create all our auto-no-mouse commands */
   public static List<Command> createAutoCommands(SwerveDrivetrain drivetrain)
   {
-    List<Command> autos = new ArrayList<>();
+    final List<Command> autos = new ArrayList<>();
 
     {
-      Command auto = new StayPutCommand(drivetrain, 0.0);
-      auto.setName("Stay");
-      autos.add(auto);
-    }
-
-    {
-      Command auto = new SwerveToPositionCommand(drivetrain, 0, 0, 0)
-          .andThen(new PrintCommand("Back HOME!"));
-      auto.setName("Home");
-      autos.add(auto);
+      autos.add(new SwerveToPositionCommand(drivetrain, 0, 0, 0)
+                    .andThen(new PrintCommand("Back HOME!"))
+                    .withName("Home"));
     }
 
     {
       SequentialCommandGroup auto = new SequentialCommandGroup();
-      for (int i = 0; i < 5; ++i) {
+      for (int i = 0; i < 5; ++i)
+      {
         auto.addCommands(new TimedDriveCommand(drivetrain, 0, 0, 3));
         auto.addCommands(new TimedDriveCommand(drivetrain, 15, 0, 3));
       }
@@ -85,67 +101,16 @@ public class AutoNoMouse {
     }
 
     {
-      SequentialCommandGroup auto = new SequentialCommandGroup();
-      for (int i = 0; i < 5; ++i) {
-        auto.addCommands(new TimedDriveCommand(drivetrain, 0, 0, 3));
-        auto.addCommands(new TimedDriveCommand(drivetrain, 90, 0, 3));
-      }
-      auto.setName("Wiggle 90");
-      autos.add(auto);
-    }
-
-    {
-      SequentialCommandGroup auto = new SequentialCommandGroup();
-      for (int i = 0; i < 5; ++i) {
-        auto.addCommands(new TimedDriveCommand(drivetrain, 0, 0, 3));
-        auto.addCommands(new TimedDriveCommand(drivetrain, 180, 0, 3));
-      }
-      auto.setName("Wiggle 180");
-      autos.add(auto);
-    }
-
-    {
-      Trajectory trajectory = createTrajectory(true,
-          0.0, 0.0, 0.0,
-          3.9, 0.0, 45.0,
-          4.5, 1.3, 90.0,
-          3.5, 2.3, 180.0,
-          1.9, 1.9, 180.0);
-      Command auto = new SelectRelativeTrajectoryCommand(drivetrain)
-          .andThen(drivetrain.createTrajectoryCommand(trajectory, 180.0))
-          .andThen(new PrintCommand("Done"))
-          .andThen(new StayPutCommand(drivetrain, 0.0));
-      auto.setName("U-Cube");
-      autos.add(auto);
-    }
-
-    {
-      // Forward and right
-      Trajectory trajectory = createTrajectory(true,
-          0.0, 0.0, 0.0,
-          3.2, 2.0, 0.0,
-          4.5, 1.5, -90.0,
-          3.5, -0.5, -90.0);
-      Command auto = new ResetPositionCommand(drivetrain)
-          .andThen(drivetrain.createTrajectoryCommand(trajectory, -90.0))
-          .andThen(new PrintCommand("Done"))
-          .andThen(new StayPutCommand(drivetrain, 0.0));
-      auto.setName("Test Trajectory");
-      autos.add(auto);
-    }
-
-    {
-      // Forward 2m, rotating to 45 degrees while moving
-      // Wheels in the end stay at -45 deg
-      Trajectory trajectory = createTrajectory(true,
-          0.0, 0.0, 0.0,
-          2.0, 0.0, 0.0);
-      Command auto = new ResetPositionCommand(drivetrain)
-          .andThen(drivetrain.createTrajectoryCommand(trajectory, 45.0))
-          .andThen(new PrintCommand("Done"))
-          .andThen(new StayPutCommand(drivetrain, -45.0));
-      auto.setName("Forward 2m");
-      autos.add(auto);
+      Trajectory trajectory = createTrajectory(true,  0.0, 0.0, 0.0,
+                                                      3.9, 0.0, 45.0,
+                                                      4.5, 1.3, 90.0,
+                                                      3.5, 2.3, 180.0,
+                                                      1.9, 1.9, 180.0);
+      autos.add(new SelectRelativeTrajectoryCommand(drivetrain)
+                    .andThen(drivetrain.createTrajectoryCommand(trajectory, 180.0))
+                    .andThen(new PrintCommand("Done"))
+                    .andThen(new StayPutCommand(drivetrain, 0.0))
+                    .withName("U-Cube"));
     }
 
     {
@@ -153,13 +118,11 @@ public class AutoNoMouse {
       SequentialCommandGroup auto = new SequentialCommandGroup();
       // auto.addCommands(new ResetPositionCommand(drivetrain));
       auto.addCommands(new SelectRelativeTrajectoryCommand(drivetrain));
-      Trajectory forward = createTrajectory(true,
-          0.0, 0.0, 0.0,
-          1.0, 0.0, 0.0);
+      Trajectory forward = createTrajectory(true, 0.0, 0.0, 0.0,
+                                                  1.0, 0.0, 0.0);
       auto.addCommands(drivetrain.createTrajectoryCommand(forward, 0.0));
-      Trajectory back = createTrajectory(false,
-          1.0, 0.0, 0.0,
-          0.0, 0.0, 0.0);
+      Trajectory back = createTrajectory(false, 1.0, 0.0, 0.0,
+                                                0.0, 0.0, 0.0);
       auto.addCommands(drivetrain.createTrajectoryCommand(back, 0.0));
       auto.addCommands(new StayPutCommand(drivetrain, 180.0));
       auto.setName("Fw 1 and back");
@@ -173,18 +136,15 @@ public class AutoNoMouse {
       // auto.addCommands(new ResetPositionCommand(drivetrain));
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectRelativeTrajectoryCommand(drivetrain));
-      Trajectory forward = createTrajectory(true,
-          0.0, 0.0, 0.0,
-          0.7, -0.7, -45.0,
-          0.9, -2.7, -90);
+      Trajectory forward = createTrajectory(true, 0.0, 0.0, 0.0,
+                                                  0.7, -0.7, -45.0,
+                                                  0.9, -2.7, -90);
       auto.addCommands(drivetrain.createTrajectoryCommand(forward, -90.0));
-      Trajectory back = createTrajectory(false,
-          0.9, -2.7, -90.0,
-          0.9, 0.0, -90.0);
+      Trajectory back = createTrajectory(false, 0.9, -2.7, -90.0,
+                                                0.9, 0.0, -90.0);
       auto.addCommands(drivetrain.createTrajectoryCommand(back, 0.0));
-      Trajectory back2 = createTrajectory(false,
-          0.9, 0.0, 0.0,
-          0.0, 0.0, 0.0);
+      Trajectory back2 = createTrajectory(false,  0.9, 0.0, 0.0,
+                                                  0.0, 0.0, 0.0);
       auto.addCommands(drivetrain.createTrajectoryCommand(back2, 0.0));
       auto.addCommands(new StayPutCommand(drivetrain, 0.0));
       auto.setName("|----");
@@ -196,7 +156,9 @@ public class AutoNoMouse {
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
       auto.addCommands(new SwerveToPositionCommand(drivetrain, 1, 1, 45));
+      auto.addCommands(new PrintCommand("Pretend we do something"));
       auto.addCommands(new SwerveToPositionCommand(drivetrain, 2, 2, 90));
+      auto.addCommands(new PrintCommand("Pretend we do something else"));
       auto.addCommands(new SwerveToPositionCommand(drivetrain, 3, 3, 180));
       auto.setName("Points");
       autos.add(auto);
@@ -231,7 +193,7 @@ public class AutoNoMouse {
       autos.add(auto);
     }
 
-    {
+    { // Blue Bottom Drop item then Retrieve another
       SequentialCommandGroup auto = new SequentialCommandGroup();
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new PrintCommand("Dropping..."));
@@ -259,28 +221,16 @@ public class AutoNoMouse {
       autos.add(auto);
     }
 
-    {
+    { // Example for using PathWeaver
       SequentialCommandGroup auto = new SequentialCommandGroup();
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain, 1.66, 4.47, 0));
-
-      Path file = Filesystem.getDeployDirectory().toPath().resolve("output/Circle.wpilib.json");
-      try
-      {
-        Trajectory trajectory = TrajectoryUtil.fromPathweaverJson(file);
-        auto.addCommands(drivetrain.createTrajectoryCommand(trajectory, 0));
-      }
-      catch (Exception ex)
-      {
-        System.err.println("Cannot load " + file);
-        ex.printStackTrace();
-      }
-
+      auto.addCommands(followPathWeaver(drivetrain, "Circle", 0));
       auto.setName("PWCircle");
       autos.add(auto);
     }
 
-    {
+    { // Skeleton for another auto option
       SequentialCommandGroup auto = new SequentialCommandGroup();
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
@@ -288,9 +238,6 @@ public class AutoNoMouse {
       auto.setName("Another");
       autos.add(auto);
     }
-
-
-
 
     return autos;
   }

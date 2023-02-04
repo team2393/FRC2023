@@ -60,7 +60,7 @@ public class LimelightClient extends SubsystemBase
   public static double camera_left = 0.0;
   
   /** NT entries read from camera */
-  private final NetworkTableEntry nt_id, nt_data;
+  private final NetworkTableEntry nt_id, nt_data, nt_latency;
   
   /** NT entries updated with info obtained from camera */
   private final NetworkTableEntry nt_camera, nt_tagrel, nt_use_camera;
@@ -75,6 +75,7 @@ public class LimelightClient extends SubsystemBase
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-front");
     nt_id = table.getEntry("tid");
     nt_data = table.getEntry("targetpose_cameraspace");
+    nt_latency = table.getEntry("tl");
     nt_camera = SmartDashboard.getEntry("CameraTagView");
     nt_tagrel = SmartDashboard.getEntry("PosFromTag");
     nt_use_camera = SmartDashboard.getEntry("UseCamera");
@@ -113,10 +114,12 @@ public class LimelightClient extends SubsystemBase
   private static Pose2d computeRobotPose(CameraInfo info)
   {
     // Correct tag_view.translation by tag's rotation
-    // to get the tag's view of the robot, looking straight from the tag
+    // to get the tag's view of the robot, looking straight from the tag.
+    // Tag's rotation consists of original tag heading minus how robot sees it.
     Translation2d tags_robot_view = info.tag_view
                                         .getTranslation()
-                                        .rotateBy(info.tag_view.getRotation().unaryMinus());
+                                        .rotateBy(info.tag_position.getRotation()
+                                                                   .minus(info.tag_view.getRotation()));
 
     // Get from tag's position to the robot's position 
     Translation2d camera_position = info.tag_position.getTranslation()
@@ -142,6 +145,7 @@ public class LimelightClient extends SubsystemBase
     {
       nt_camera.setString("?");
       nt_tagrel.setString("?");
+      nt_use_camera.setBoolean(false);
     }
     else
     {
@@ -149,30 +153,32 @@ public class LimelightClient extends SubsystemBase
       nt_camera.setString(String.format("%d @ %s",
                                         info.tag_id,
                                         FieldInfo.format(info.tag_view)));
-                                        
+
+      // Camera's estimate of the robot location
       Pose2d camera_robot_pose = computeRobotPose(info);
 
-      // Only use robot_position if it is within 1 meter of the current estimate?
-      // Compare where we thought we were with where the camera tells us we are
-      // Pose2d estimated_pose = drivetrain.getPose();
-      // double dx = camera_robot_pose.getX() - estimated_pose.getX();
-      // double dy = camera_robot_pose.getY() - estimated_pose.getY();
+      // Compare where we thought we were vs. camera's estimate
+      // Pose2d expected_pose = drivetrain.getPose();
+      // double dx = camera_robot_pose.getX() - expected_pose.getX();
+      // double dy = camera_robot_pose.getY() - expected_pose.getY();
       // double distance = Math.sqrt(dx*dx + dy*dy);
+      // Ignore camera when its estimate is too far from where
+      // we thought we were? But maybe the camera knows better?!
 
       // Check how far the tag was from the camera
       double dx = info.tag_view.getX();
       double dy = info.tag_view.getY();
       double distance = Math.sqrt(dx*dx + dy*dy);
-
-      boolean use_camera =distance < 1.0;
+      // Use that as long as the tag was close to the camera
+      boolean use_camera = distance < 1.5;
       nt_use_camera.setBoolean(use_camera);
       if (use_camera) 
       {
         // Update estimated field location
-        // TODO Check https://docs.limelightvision.io/en/latest/networktables_api.html
+        // Check https://docs.limelightvision.io/en/latest/networktables_api.html
         // tl - "The pipeline’s latency contribution (ms)"
         // " Add at least 11ms for image capture latency."
-        double timestamp = Timer.getFPGATimestamp() - 0.011;
+        double timestamp = Timer.getFPGATimestamp() - 0.011 - nt_latency.getDouble(0.0)/1000;
         drivetrain.updateLocationFromCamera(camera_robot_pose, timestamp);
       }
 
@@ -187,7 +193,7 @@ public class LimelightClient extends SubsystemBase
     CameraInfo info = new CameraInfo(6,
                                      new Pose2d(1, 4.4, Rotation2d.fromDegrees(0)),
                                      new Pose2d(1.4, 0, Rotation2d.fromDegrees(-20)));
-    
+
     System.out.println(info);
 
     Pose2d robot_pose = computeRobotPose(info);

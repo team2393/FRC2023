@@ -230,6 +230,15 @@ public class AutoNoMouse
       autos.add(auto);
     }
 
+    {
+      SequentialCommandGroup auto = new SequentialCommandGroup();
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain, 1.66, 4.47, 0));
+      auto.addCommands(followPathWeaver(drivetrain, "Test", 0));
+      auto.setName("PWTest");
+      autos.add(auto);
+    }
+
     { // Skeleton for another auto option
       SequentialCommandGroup auto = new SequentialCommandGroup();
       auto.addCommands(new VariableWaitCommand());

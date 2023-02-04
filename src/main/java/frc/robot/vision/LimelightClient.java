@@ -54,16 +54,16 @@ public class LimelightClient extends SubsystemBase
   private static final double[] NOTHING = new double[] { 0, 0, 0, 0, 0, 0 };
 
   /** How far is camera mounted 'forward' from the center of the robot? */
-  public static double camera_forward = 0.4;
+  public static double camera_forward = 0.32;
 
   /** How far is camera mounted 'left' from the center of the robot? */
-  public static double camera_left = -0.1;
+  public static double camera_left = 0.0;
   
   /** NT entries read from camera */
   private final NetworkTableEntry nt_id, nt_data;
   
   /** NT entries updated with info obtained from camera */
-  private final NetworkTableEntry nt_camera, nt_tagrel;
+  private final NetworkTableEntry nt_camera, nt_tagrel, nt_use_camera;
   
   private final SwerveDrivetrain drivetrain;
 
@@ -77,6 +77,7 @@ public class LimelightClient extends SubsystemBase
     nt_data = table.getEntry("targetpose_cameraspace");
     nt_camera = SmartDashboard.getEntry("CameraTagView");
     nt_tagrel = SmartDashboard.getEntry("PosFromTag");
+    nt_use_camera = SmartDashboard.getEntry("UseCamera");
     
     this.drivetrain = drivetrain;
   }
@@ -148,18 +149,35 @@ public class LimelightClient extends SubsystemBase
       nt_camera.setString(String.format("%d @ %s",
                                         info.tag_id,
                                         FieldInfo.format(info.tag_view)));
-      // Update estimated field location
-      // TODO Only use robot_position if it is within 1 meter of the current estimate?
+                                        
+      Pose2d camera_robot_pose = computeRobotPose(info);
 
-      Pose2d robot_pose = computeRobotPose(info);
-      // TODO Check https://docs.limelightvision.io/en/latest/networktables_api.html
-      // tl - "The pipeline’s latency contribution (ms)"
-      // " Add at least 11ms for image capture latency."
-      double timestamp = Timer.getFPGATimestamp() - 0.011;
-      drivetrain.updateLocationFromCamera(robot_pose, timestamp);
+      // Only use robot_position if it is within 1 meter of the current estimate?
+      // Compare where we thought we were with where the camera tells us we are
+      // Pose2d estimated_pose = drivetrain.getPose();
+      // double dx = camera_robot_pose.getX() - estimated_pose.getX();
+      // double dy = camera_robot_pose.getY() - estimated_pose.getY();
+      // double distance = Math.sqrt(dx*dx + dy*dy);
+
+      // Check how far the tag was from the camera
+      double dx = info.tag_view.getX();
+      double dy = info.tag_view.getY();
+      double distance = Math.sqrt(dx*dx + dy*dy);
+
+      boolean use_camera =distance < 1.0;
+      nt_use_camera.setBoolean(use_camera);
+      if (use_camera) 
+      {
+        // Update estimated field location
+        // TODO Check https://docs.limelightvision.io/en/latest/networktables_api.html
+        // tl - "The pipeline’s latency contribution (ms)"
+        // " Add at least 11ms for image capture latency."
+        double timestamp = Timer.getFPGATimestamp() - 0.011;
+        drivetrain.updateLocationFromCamera(camera_robot_pose, timestamp);
+      }
 
       // Robot pos relative to tag
-      nt_tagrel.setString(FieldInfo.format(robot_pose.relativeTo(info.tag_position)));
+      nt_tagrel.setString(FieldInfo.format(camera_robot_pose.relativeTo(info.tag_position)));
     }
   }
 

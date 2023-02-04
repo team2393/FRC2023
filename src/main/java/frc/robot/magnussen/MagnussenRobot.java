@@ -17,6 +17,7 @@ import frc.robot.swervelib.FixedSpeedCommand;
 import frc.robot.swervelib.RelativeSwerveCommand;
 import frc.robot.swervelib.ResetPositionCommand;
 import frc.robot.swervelib.SwerveOI;
+import frc.robot.vision.LimelightClient;
 
 // TODO:
 //
@@ -40,6 +41,8 @@ public class MagnussenRobot extends CommandBaseRobot
 
   private final SendableChooser<Command> autos = new SendableChooser<>();
 
+  private LimelightClient camera;
+
   @Override
   public void robotInit()
   {
@@ -52,11 +55,13 @@ public class MagnussenRobot extends CommandBaseRobot
       autos.addOption(auto.getName(), auto);
     SmartDashboard.putData("Auto Options", autos);
 
-    // Configure power dist. & publish power info
-    PowerDistribution power = new PowerDistribution(1, ModuleType.kRev);
-    power.clearStickyFaults();
-    power.setSwitchableChannel(false);
-    SmartDashboard.putData(power);
+    // TODO Configure power dist. & publish power info
+    // PowerDistribution power = new PowerDistribution(1, ModuleType.kRev);
+    // power.clearStickyFaults();
+    // power.setSwitchableChannel(false);
+    // SmartDashboard.putData(power);
+
+    camera = new LimelightClient(drivetrain);
   }
 
   @Override

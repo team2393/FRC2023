@@ -53,8 +53,7 @@ public class RobotMap
    */
 
   /** Name of CANivore */
-  // public static final String CANIVORE = "CANivore2393";
-  public static final String CANIVORE = "rio";
+  public static final String CANIVORE = "CANivore2393";
 
   // Following CAN devices are on CANIVORE
   // (but keep unique IDs so they can move)

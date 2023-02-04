@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 public class SwerveOI
 {
   /** Use correct stick setup, or the wrong one? */
-  private static final boolean CORRECT = true;
+  private static final boolean CORRECT = false;
 
   /** Maximum swerve speed sent from joystick input */
   public static double MAX_METERS_PER_SEC = 2.0;

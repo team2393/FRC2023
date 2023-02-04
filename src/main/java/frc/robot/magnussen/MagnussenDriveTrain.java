@@ -10,7 +10,7 @@ import frc.robot.swervelib.SwerveModule;
 /** Rotator using SparkMini for rotation, Falcon to drive, older pigeon as gyro */
 public class MagnussenDriveTrain extends SwerveDrivetrain
 {
-  private final Pigeon2 gyro = new Pigeon2(0, "rio");
+  private final Pigeon2 gyro = new Pigeon2(0, RobotMap.CANIVORE);
 
   public MagnussenDriveTrain()
   {

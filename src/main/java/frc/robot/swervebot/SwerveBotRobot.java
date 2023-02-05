@@ -19,6 +19,7 @@ import frc.robot.swervelib.ResetPositionCommand;
 import frc.robot.swervelib.SwerveOI;
 import frc.robot.vision.Drive2GridCommand;
 import frc.robot.vision.LimelightClient;
+import frc.robot.vision.TargetLockedDriveCommand;
 
 /** ServeBot */
 public class SwerveBotRobot extends CommandBaseRobot
@@ -28,6 +29,7 @@ public class SwerveBotRobot extends CommandBaseRobot
   private final CommandBase drive_relative = new RelativeSwerveCommand(drivetrain);
   private final CommandBase drive_absolute = new AbsoluteSwerveCommand(drivetrain);
   private final CommandBase drive_straight = new DriveStraightCommand(drivetrain);
+  private final CommandBase drive_rod = new TargetLockedDriveCommand(drivetrain);
   // private final CommandBase fixed_fwd = new FixedSpeedCommand(drivetrain, 0.2);
   // private final CommandBase fixed_back = new FixedSpeedCommand(drivetrain, -0.2);
   private final CommandBase drive2grid = new Drive2GridCommand(drivetrain);
@@ -72,10 +74,10 @@ public class SwerveBotRobot extends CommandBaseRobot
     if (SwerveOI.resetOrigin())
       reset.schedule();
     if (SwerveOI.selectFixedForward())
-      drive_straight.schedule();
+      drive_rod.schedule();
       
-    if (SwerveOI.joystick.getLeftStickButtonPressed())
-      drive2grid.schedule();
+    // if (SwerveOI.joystick.getLeftStickButtonPressed())
+    //   drive2grid.schedule();
 
     //     fixed_fwd.schedule();
     // else if (SwerveOI.selectFixedBack())

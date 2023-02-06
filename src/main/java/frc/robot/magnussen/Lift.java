@@ -20,6 +20,9 @@ public class Lift extends SubsystemBase
   /** Height encoder calibration */
   private static final int TICKS_PER_METER = 1;
 
+  /** TODO Configure suitable voltage for homing */
+  private static final double HOMING_VOLTAGE = -0.0001;
+
   /** Motor controller with mag encoder */
   private CANSparkMax primary_motor = new CANSparkMax(RobotMap.LIFT1_ID, MotorType.kBrushless);
   
@@ -60,6 +63,21 @@ public class Lift extends SubsystemBase
       bottom_offset = primary_motor.getEncoder().getPosition();
 
     return is_at_bottom;
+  }
+
+  /** Move lift down until it hits the bottom switch
+   *  @return Has lift been homed?
+   */
+  public boolean home()
+  {
+    if (atBottom())
+    {
+      setVoltage(0);
+      return true;
+    }
+    // else
+    setVoltage(HOMING_VOLTAGE);
+    return false;
   }
 
   /** @return Lift height in meters */

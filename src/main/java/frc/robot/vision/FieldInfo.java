@@ -24,7 +24,7 @@ public class FieldInfo
     }
     catch (Exception ex)
     {
-      throw new IllegalStateException("Missing build-in field layout?!", ex);
+      throw new IllegalStateException("Missing built-in field layout?!", ex);
     }
   }
 

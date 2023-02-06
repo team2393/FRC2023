@@ -25,12 +25,7 @@ public class TimedDriveCommand extends CommandBase
   @Override
   public void initialize()
   {
-    // In case we ever want to re-use
-    // an instance of this command several times,
-    // make sure the timer really starts over each time.
-    timer.stop();
-    timer.reset();
-    timer.start();
+    timer.restart();
   }
 
   public void execute()

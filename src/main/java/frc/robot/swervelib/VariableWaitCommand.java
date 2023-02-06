@@ -35,8 +35,7 @@ public class VariableWaitCommand extends CommandBase
   @Override
   public void initialize()
   {
-    timer.reset();
-    timer.start();
+    timer.restart();
     System.out.println(nt_entry.getName() + " = " + nt_entry.getDouble(0.0) + " seconds");
   }
 

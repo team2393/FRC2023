@@ -20,11 +20,11 @@ public class FieldInfo
   {
     try
     {
-      april_tags = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
+      april_tags = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField();
     }
     catch (Exception ex)
     {
-      throw new IllegalStateException(ex);
+      throw new IllegalStateException("Missing build-in field layout?!", ex);
     }
   }
 

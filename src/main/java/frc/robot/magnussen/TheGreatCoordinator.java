@@ -39,13 +39,12 @@ public class TheGreatCoordinator extends SubsystemBase
     arm_angle = degrees;
   }
 
-    /** @param degrees Desired intake angle */
-    public void setIntakeAngle(double degrees)
-    {
-      intake_angle = degrees;
-    }
+  /** @param degrees Desired intake angle */
+  public void setIntakeAngle(double degrees)
+  {
+    intake_angle = degrees;
+  }
   
-
   @Override
   public void periodic()
   {
@@ -55,34 +54,35 @@ public class TheGreatCoordinator extends SubsystemBase
       // TODO Before moving the lift down, do arm and intake
       // need to be in a certain position?
       lift_homed = lift.home();
+      arm.setAngle(-90);
+      // intake.setAngle(45);
     }
     else
     {
-      // keep lift at desired position
+      // Lift has been homed, now keep at desired position
       lift.setHeight(lift_height);
-    }
-
-    /*
-    if (intake_angle > 90)
-    {
-      // To pull intake in, arm needs to be out of the way
-      arm.setAngle(-100.0);
-      if (arm.getAngle() < 90)
+      /*
+      if (intake_angle > 90)
       {
-        // Once arm is stored, we can move intake to desired location
-        intake.setAngle(intake_angle);
+        // To pull intake in, arm needs to be out of the way
+        arm.setAngle(-100.0);
+        if (arm.getAngle() < 90)
+        {
+          // Once arm is stored, we can move intake to desired location
+          intake.setAngle(intake_angle);
+        }
+        else
+        {
+          // Keep intake just before 90 until arm has been stored
+          intake.setAngle(85);
+        }
       }
       else
-      {
-        // Keep intake just before 90 until arm has been stored
-        intake.setAngle(85);
+      { // Intake is 'out', so arm can move as desired
+        arm.setAngle(arm_angle);
+        intake.setAngle(intake_angle);
       }
+      */
     }
-    else
-    { // Intake is 'out', so arm can move as desired
-      arm.setAngle(arm_angle);
-      intake.setAngle(intake_angle);
-    }
-    */
   }
 }

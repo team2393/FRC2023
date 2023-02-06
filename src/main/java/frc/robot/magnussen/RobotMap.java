@@ -4,7 +4,8 @@
 package frc.robot.magnussen;
 
 /** Map of all inputs and outputs: CAN IDs etc. */
-public class RobotMap {
+public class RobotMap
+{
   /**
    * Power Distribution Module
    *

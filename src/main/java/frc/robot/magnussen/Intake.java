@@ -12,11 +12,13 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Intake extends SubsystemBase {
+public class Intake extends SubsystemBase
+{
   private CANSparkMax motor = new CANSparkMax(RobotMap.INTAKE_ANGLE, MotorType.kBrushless);
   private DutyCycleEncoder encoder = new DutyCycleEncoder(new DigitalInput(RobotMap.INTAKE_ANGLE));
 
-  public Intake() {
+  public Intake()
+  {
     motor.restoreFactoryDefaults();
     motor.setIdleMode(IdleMode.kBrake);
 
@@ -28,12 +30,14 @@ public class Intake extends SubsystemBase {
   }
 
   /** @return Intake angle in degrees */
-  public double getAngle() {
+  public double getAngle()
+  {
     return encoder.getAbsolutePosition() - SmartDashboard.getNumber("Intake Offset", 0.0);
   }
 
   /** @param voltage Arm voltage, positive for "up" */
-  public void setVoltage(double voltage) {
+  public void setVoltage(double voltage)
+  {
     motor.setVoltage(voltage);
     SmartDashboard.putNumber("Intake Voltage", voltage);
   }

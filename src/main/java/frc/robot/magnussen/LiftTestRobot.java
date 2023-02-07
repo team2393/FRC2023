@@ -19,7 +19,7 @@ import frc.robot.CommandBaseRobot;
  * Teleop, right stick:
  * - Disconnect secondary motor from speed controller
  * - Check if moving 'up' with positive voltage indeed moves primary motor 'up'.
- *   If not, reverse primary motor wiring.
+ *   If not, invert both motors.
  * - Check if moving 'down' stops when hitting bottom switch,
  *   and then only 'up' is possible until clearing the switch?
  * - Check if indicated "Height" zeroes when hitting bottom switch

@@ -43,7 +43,9 @@ public class Lift extends SubsystemBase
     // Secondary motor set to follow the primary
     secondary_motor.restoreFactoryDefaults();
     secondary_motor.setIdleMode(IdleMode.kBrake);
+    secondary_motor.setInverted(true);
     secondary_motor.follow(primary_motor);
+    
 
 
     // TODO SmartDashboard.getEntry(..

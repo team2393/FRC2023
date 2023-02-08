@@ -41,23 +41,29 @@ public class SwerveOI
   public static double getForwardSpeed()
   {
     double stick = CORRECT ? joystick.getRightY() : joystick.getLeftY();
-    return -MAX_METERS_PER_SEC * MathUtil.applyDeadband(x_throttle.calculate(stick), 0.1);
+    stick = MathUtil.applyDeadband(stick, 0.1);
+    stick = x_throttle.calculate(stick);
+    return -MAX_METERS_PER_SEC * stick;
   }
 
   /** @return Left/right speed [m/s] */
   public static double getLeftSpeed()
   {
     double stick = CORRECT ? joystick.getRightX() : joystick.getLeftX();
-    return -MAX_METERS_PER_SEC * MathUtil.applyDeadband(y_throttle.calculate(stick), 0.1);
+    stick = MathUtil.applyDeadband(stick, 0.1);
+    stick = y_throttle.calculate(stick);
+    return -MAX_METERS_PER_SEC * stick;
   }
 
   /** @return Rotational speed, counter-clockwise [rad/s] */
   public static double getRotationSpeed()
   {
     double stick = CORRECT ? joystick.getLeftX() : joystick.getRightX();
+    stick = MathUtil.applyDeadband(stick, 0.1);
     // Square output (keeping sign) for more sensitive center moves
     stick *= Math.abs(stick);
-    return -MAX_RAD_PER_SEC * MathUtil.applyDeadband(rot_throttle.calculate(stick), 0.1);
+    stick = rot_throttle.calculate(stick);
+    return -MAX_RAD_PER_SEC * stick;
   }
 
   public static boolean selectAbsoluteMode()

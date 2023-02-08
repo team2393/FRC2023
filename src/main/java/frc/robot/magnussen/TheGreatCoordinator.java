@@ -40,6 +40,7 @@ public class TheGreatCoordinator extends SubsystemBase
 
   private double lift_height = 0.1;
   private double arm_angle = 0.0;
+  private boolean arm_extended = false;
   private double intake_angle = 0.0;
 
   /** @param meters Desired lift height */
@@ -52,6 +53,12 @@ public class TheGreatCoordinator extends SubsystemBase
   public void setArmAngle(double degrees)
   {
     arm_angle = degrees;
+  }
+
+  /** @param extend Extend arm? */
+  public void setArmExtension(boolean extend)
+  {
+    arm_extended = extend;
   }
 
   /** @param degrees Desired intake angle */
@@ -67,16 +74,16 @@ public class TheGreatCoordinator extends SubsystemBase
       handleDisabled();
     else
     {
-      // No 'else' here so we could go right away from
-      // for example pre-home to home 
+      // No 'else' here so we can go right away from
+      // pre-home to home to normal to clear-intake 
       if (state == State.PRE_HOME_LIFT)
         handlePreHome();
       if (state == State.HOME_LIFT)
         handleHome();
-      if (state == State.CLEAR_INTAKE)
-        handleClearIntake();
       if (state == State.NORMAL)
         handleNormal();
+      if (state == State.CLEAR_INTAKE)
+        handleClearIntake();
     }
   }
 
@@ -85,6 +92,7 @@ public class TheGreatCoordinator extends SubsystemBase
     // No motors are moving anyway, but just in case set all voltages to zero
     lift.setVoltage(0);
     arm.setVoltage(0);
+    arm.extend(false);
     // TODO intake.setVoltage(0);
 
     // Once we re-enable, start over by homing the lift? 
@@ -96,46 +104,25 @@ public class TheGreatCoordinator extends SubsystemBase
     // Pre-home lift, move on when done
     if (lift.pre_home())
       state = State.HOME_LIFT;
-
-    // Leave other systems wherever they are without voltage
-    arm.setVoltage(0);
-    // TODO intake.setVoltage(0);
+    else
+    {
+      // Leave other systems wherever they are without voltage
+      arm.setVoltage(0);
+      // TODO intake.setVoltage(0);
+    }
   }
 
   private void handleHome()
   {
     // Home lift, move on when done
     if (lift.home())
-      state = State.CLEAR_INTAKE;
-
-    // Leave other systems wherever they are without voltage
-    arm.setVoltage(0);
-    // TODO intake.setVoltage(0);
-  }
-
-  private void handleClearIntake()
-  {
-      state = State.NORMAL;
-/*
-    // Is intake outside of the interference zone
-    // and that's where it should be?
-    if (intake_angle < 90  && intake.getAngle() < 90)
       state = State.NORMAL;
     else
     {
-      // Intake is or should be in the interference zone.
-      // Move everything else out of the way
-      arm.setAngle(0);
-      arm.extend(false);
-
-      if (arm.getAngle() < -45)
-      { // While arm is still getting out of the way, keep intake out
-        intake.setAngle(0);
-      }
-      else // Allow intake to desired position
-        intake.setAngle(intake_angle);
+      // Leave other systems wherever they are without voltage
+      arm.setVoltage(0);
+      // TODO intake.setVoltage(0);
     }
-*/
   }
 
   private void handleNormal()
@@ -149,9 +136,44 @@ public class TheGreatCoordinator extends SubsystemBase
 */
       lift.setHeight(lift_height);
       arm.setAngle(arm_angle);
+      arm.extend(arm_extended);
 /*
       intake.setAngle(intake_angle);
     }
  */
+  }
+
+  private void handleClearIntake()
+  {
+/*
+    // Is intake outside of the interference zone
+    // and that's where it should be?
+    if (intake.getAngle() < 90  &&  intake_angle < 90)
+    {
+      // All can move as desired ...
+      lift.setHeight(lift_height);
+      arm.setAngle(arm_angle);
+      arm.extend(arm_extended);
+      intake.setAngle(intake_angle);
+      // .. and next period we'll be in normal state
+      state = State.NORMAL;
+    }
+    else
+    {
+      // Intake is or should be in the interference zone.
+      // Move everything else out of the way
+      arm.setAngle(0);
+      arm.extend(false);
+      // Lift can move as desired?
+      lift.setHeight(lift_height);
+
+      if (arm.getAngle() < -45)
+      { // While arm is still getting out of the way, keep intake out
+        intake.setAngle(0);
+      }
+      else // Allow intake to desired position
+        intake.setAngle(intake_angle);
+    }
+*/
   }
 }

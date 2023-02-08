@@ -3,9 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.magnussen;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -20,8 +17,11 @@ public class Lift extends SubsystemBase
   /** Height encoder calibration */
   private static final int TICKS_PER_METER = 1;
 
-  /** TODO Configure suitable voltage for homing */
-  private static final double HOMING_VOLTAGE = -0.0001;
+  /** TODO Configure suitable voltage for pre-homing, slowly "up" */
+  private static final double PRE_HOMING_VOLTAGE = 0.2;
+
+  /** TODO Configure suitable voltage for homing, very slowly "down" */
+  private static final double HOMING_VOLTAGE = -0.1;
 
   /** Motor controller with mag encoder */
   private CANSparkMax primary_motor = new CANSparkMax(RobotMap.LIFT1_ID, MotorType.kBrushless);
@@ -43,10 +43,13 @@ public class Lift extends SubsystemBase
     // Secondary motor set to follow the primary
     secondary_motor.restoreFactoryDefaults();
     secondary_motor.setIdleMode(IdleMode.kBrake);
-    secondary_motor.setInverted(true);
-    secondary_motor.follow(primary_motor);
-    
 
+    // Motors need to run in opposite direction,
+    // so _one_(!) of them must be inverted    
+    secondary_motor.setInverted(true);
+
+    // We commmand the primary, secondary follows
+    secondary_motor.follow(primary_motor);
 
     // TODO SmartDashboard.getEntry(..
     SmartDashboard.setDefaultNumber("Lift kg", 0.0);
@@ -65,6 +68,21 @@ public class Lift extends SubsystemBase
       bottom_offset = primary_motor.getEncoder().getPosition();
 
     return is_at_bottom;
+  }
+
+  /** Move lift up until it clears the bottom switch
+   *  @return Has lift been pre-homed?
+   */
+  public boolean pre_home()
+  {
+    if (atBottom())
+    { // Move up, not pre-homed
+      setVoltage(PRE_HOMING_VOLTAGE);
+      return false;
+    }
+    // else: Cleared the switch, done
+    setVoltage(0);
+    return true;
   }
 
   /** Move lift down until it hits the bottom switch

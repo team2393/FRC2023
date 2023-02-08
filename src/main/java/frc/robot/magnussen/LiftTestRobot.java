@@ -26,9 +26,10 @@ import frc.robot.CommandBaseRobot;
  * - Calibrate height encoder
  * - Connect secondary motor to speed controller and check that it moves
  *   the same direction as primary. If not, reverse secondary  wiring.
- * - Find a good small negative voltage for the Lift.HOMING_VOLTAGE
- * - Test homing: Move lift up, then hold 'A'.
- *   Does it slowly move down until hitting the switch?
+ * - Find good small positive voltage for Lift.PRE_HOMING_VOLTAGE
+ *   and negative voltage for Lift.HOMING_VOLTAGE
+ * - Test homing: Does holding 'Y' move lift up to pre-home, then stop?
+ *   Does then holding 'A' slowly move down until hitting the switch?
  * 
  * Autonomouse:
  * - Start with "Setpoint" = 0.0, assert that motor is not powered
@@ -55,12 +56,16 @@ public class LiftTestRobot extends CommandBaseRobot
   @Override
   public void teleopPeriodic()
   {
-    if (OI.joystick.getAButton())
+    if (OI.joystick.getYButton())
+      lift.pre_home();
+    else if (OI.joystick.getAButton())
       lift.home();
     else
     {
       // For 'up', send position voltage
-      lift.setVoltage(-5.0 * OI.joystick.getRightY());
+      double voltage = -5.0 * OI.joystick.getRightY();
+      lift.setVoltage(voltage);
+      SmartDashboard.putNumber("Voltage", voltage);
     }
   }
 

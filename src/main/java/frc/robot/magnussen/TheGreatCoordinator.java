@@ -27,7 +27,7 @@ public class TheGreatCoordinator extends SubsystemBase
   enum State
   {
     /** Prepare to home lift by moving it slightly 'up' off the switch */
-    PREP_LIFT,
+    PRE_HOME_LIFT,
     /** Home lift */
     HOME_LIFT,
     /** Move arm etc. out of the way to provide intake with a clear path */
@@ -36,7 +36,7 @@ public class TheGreatCoordinator extends SubsystemBase
     NORMAL
   }
 
-  private State state = State.PREP_LIFT;
+  private State state = State.PRE_HOME_LIFT;
 
   private double lift_height = 0.1;
   private double arm_angle = 0.0;
@@ -66,36 +66,92 @@ public class TheGreatCoordinator extends SubsystemBase
     if (RobotState.isDisabled())
       handleDisabled();
     else
-      handleEnabled();
+    {
+      // No 'else' here so we could go right away from
+      // for example pre-home to home 
+      if (state == State.PRE_HOME_LIFT)
+        handlePreHome();
+      if (state == State.HOME_LIFT)
+        handleHome();
+      if (state == State.CLEAR_INTAKE)
+        handleClearIntake();
+      if (state == State.NORMAL)
+        handleNormal();
+    }
   }
 
   private void handleDisabled()
   {
-    // No motors are moving.
+    // No motors are moving anyway, but just in case set all voltages to zero
+    lift.setVoltage(0);
+    arm.setVoltage(0);
+    // TODO intake.setVoltage(0);
+
     // Once we re-enable, start over by homing the lift? 
-    state = State.PREP_LIFT;
+    state = State.PRE_HOME_LIFT;
   }
 
-  private void handleEnabled()
+  private void handlePreHome()
   {
-    if (state == State.PREP_LIFT)
-    {
+    // Pre-home lift, move on when done
+    if (lift.pre_home())
+      state = State.HOME_LIFT;
 
-    }
-    if (state == State.HOME_LIFT)
-    {
-      arm.setAngle(-90);
-      // intake.setAngle(45);
-      if (lift.home())
-        state = State.NORMAL;
-    }
-    if (state == State.NORMAL)
-    {
+    // Leave other systems wherever they are without voltage
+    arm.setVoltage(0);
+    // TODO intake.setVoltage(0);
+  }
 
-    }
-    if (state == State.CLEAR_INTAKE)
-    {
+  private void handleHome()
+  {
+    // Home lift, move on when done
+    if (lift.home())
+      state = State.CLEAR_INTAKE;
 
+    // Leave other systems wherever they are without voltage
+    arm.setVoltage(0);
+    // TODO intake.setVoltage(0);
+  }
+
+  private void handleClearIntake()
+  {
+      state = State.NORMAL;
+/*
+    // Is intake outside of the interference zone
+    // and that's where it should be?
+    if (intake_angle < 90  && intake.getAngle() < 90)
+      state = State.NORMAL;
+    else
+    {
+      // Intake is or should be in the interference zone.
+      // Move everything else out of the way
+      arm.setAngle(0);
+      arm.extend(false);
+
+      if (arm.getAngle() < -45)
+      { // While arm is still getting out of the way, keep intake out
+        intake.setAngle(0);
+      }
+      else // Allow intake to desired position
+        intake.setAngle(intake_angle);
     }
+*/
+  }
+
+  private void handleNormal()
+  {
+/*
+    // Are we trying to move the intake into the interference zone?
+    if (intake_angle > 90)
+      state = State.CLEAR_INTAKE;
+    else
+    {
+*/
+      lift.setHeight(lift_height);
+      arm.setAngle(arm_angle);
+/*
+      intake.setAngle(intake_angle);
+    }
+ */
   }
 }

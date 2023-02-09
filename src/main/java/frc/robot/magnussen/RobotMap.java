@@ -6,50 +6,52 @@ package frc.robot.magnussen;
 /** Map of all inputs and outputs: CAN IDs etc. */
 public class RobotMap
 {
-  /** Power Distribution Module
+  /**
+   * Power Distribution Module
    *
-   *  See https://docs.wpilib.org/en/stable/docs/controls-overviews/control-system-hardware.html
+   * See
+   * https://docs.wpilib.org/en/stable/docs/controls-overviews/control-system-hardware.html
    *
-   *  TODO Check actual fuse assignments
-   *  REV Power Distribution Hub
-   *  ==========================
-   *  10 -                                     9 - 
-   *  11 -                                     8 - 
-   *  12 -                                     7 - 
-   *  13 -                                     6 - 
-   *  14 - 20 Amp back right encoder           5 - 20 Amp back left encoder
-   *  15 - 40 Amp back right driver            4 - 40 Amp back left rotator
-   *  16 - 40 Amp back right rotator           3 - 40 Amp back left driver
-   *  17 - 20 Amp front right encoder          2 - 20 Amp front left encoder
-   *  18 - 40 Amp front right driver           1 - 40 Amp front left rotator
-   *  19 - 40 Amp front right rotator          0 - 40 Amp front left driver
-   *  20 - 10 Amp RoboRIO
-   *  21 - 10 Amp Radio power
-   *  22 - 10 Amp Pigeon 2.0
-   *  23 - 10 Amp Camera LED ring (switched)
+   * TODO Check actual fuse assignments
+   * REV Power Distribution Hub
+   * ==========================
+   * 10 - 9 -
+   * 11 - 8 -
+   * 12 - 7 -
+   * 13 - 6 -
+   * 14 - 20 Amp back right encoder 5 - 20 Amp back left encoder
+   * 15 - 40 Amp back right driver 4 - 40 Amp back left rotator
+   * 16 - 40 Amp back right rotator 3 - 40 Amp back left driver
+   * 17 - 20 Amp front right encoder 2 - 20 Amp front left encoder
+   * 18 - 40 Amp front right driver 1 - 40 Amp front left rotator
+   * 19 - 40 Amp front right rotator 0 - 40 Amp front left driver
+   * 20 - 10 Amp RoboRIO
+   * 21 - 10 Amp Radio power
+   * 22 - 10 Amp Pigeon 2.0
+   * 23 - 10 Amp Camera LED ring (switched)
    *
-   *  REV Mini Power Module
-   *  =====================
-   *  0 - 3 Amp CanCoder
-   *  1 - 3 Amp CanCoder
-   *  2 - 3 Amp CanCoder
-   *  3 - 3 Amp CanCoder
-   *  4 -
-   *  5 -
+   * REV Mini Power Module
+   * =====================
+   * 0 - 3 Amp CanCoder
+   * 1 - 3 Amp CanCoder
+   * 2 - 3 Amp CanCoder
+   * 3 - 3 Amp CanCoder
+   * 4 -
+   * 5 -
    * 
-   *  Remaining devices to be powered:
+   * Remaining devices to be powered:
    *
-   *  40 Amp Lift1
-   *  40 Amp Lift2
-   *  40 Amp Arm angle
-   *  40 Amp Spinner
+   * 40 Amp Lift1
+   * 40 Amp Lift2
+   * 40 Amp Arm angle
+   * 40 Amp Spinner
    *
-   *  20 Amp Pneumatic hub -> Compressor
+   * 20 Amp Pneumatic hub -> Compressor
    * 
-   *  10 Amp CANivore (optional?)
-   *  5 Amp Pigeon (or plug into a nearby TalonFX?)
-   *  10 Amp Limelight
-   *  10 Amp Camera LED ring
+   * 10 Amp CANivore (optional?)
+   * 5 Amp Pigeon (or plug into a nearby TalonFX?)
+   * 10 Amp Limelight
+   * 10 Amp Camera LED ring
    */
 
   /** Name of CANivore */
@@ -87,4 +89,10 @@ public class RobotMap
 
   /** CAN ID for Spinner */
   public static final int SPINNER_ID = 16;
+
+  /** CAN ID for Intake motor */
+  public static final int INTAKE_ID = -1;
+
+  /** DIO Intake angle sensor */
+  public static final int INTAKE_ANGLE = -1;
 }

@@ -29,4 +29,14 @@ public class MagnussenDriveTrain extends SwerveDrivetrain
   {
     return gyro.getYaw();
   }
+
+  public double getPitch()
+  {
+    return gyro.getPitch();
+  }
+
+  public double getRoll()
+  {
+    return gyro.getRoll();
+  }
 }

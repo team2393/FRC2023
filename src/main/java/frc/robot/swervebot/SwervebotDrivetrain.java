@@ -29,4 +29,14 @@ public class SwervebotDrivetrain extends SwerveDrivetrain
   {
     return gyro.getFusedHeading();
   }
+
+  public double getPitch()
+  {
+    return gyro.getPitch();
+  }
+
+  public double getRoll()
+  {
+    return gyro.getRoll();
+  }
 }

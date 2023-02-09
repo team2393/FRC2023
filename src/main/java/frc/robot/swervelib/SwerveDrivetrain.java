@@ -160,8 +160,14 @@ abstract public class SwerveDrivetrain extends SubsystemBase
       module.brake(brake);
   }
 
-  /** @return Heading of gyro in degrees, not corrected for zero heading */
+  /** @return Heading of gyro in degrees, counter-clockwise, not corrected for zero heading */
   abstract public double getRawHeading();
+
+  /** @return Pitch angle, i.e., angle of robot being "nose up" in degrees */
+  abstract public double getPitch();
+
+  /** @return Roll angle, i.e., angle of "left" side of robot being "up" in degrees */
+  abstract public double getRoll();
 
   /** @return Heading of robot on field (relative to last "reset") */
   public Rotation2d getHeading()

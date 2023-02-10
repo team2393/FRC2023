@@ -15,11 +15,8 @@ public class AutoDriveUphillCommand extends CommandBase
   /** Start position */
   private Translation2d start;
 
-  /** How long have we been trying? */
-  private Timer timer = new Timer();
-
-  /** Are we moving? */
-  private boolean moving = false;
+  /** How long have we been stable? */
+  private Timer stable_timer = new Timer();
 
   public AutoDriveUphillCommand(SwerveDrivetrain drivetrain)
   {
@@ -30,7 +27,6 @@ public class AutoDriveUphillCommand extends CommandBase
   @Override
   public void initialize()
   {
-    timer.restart();
     // Remember where we think we are
     start = drivetrain.getPose().getTranslation();
   }
@@ -49,8 +45,9 @@ public class AutoDriveUphillCommand extends CommandBase
 
     drivetrain.swerve(vx, vy, vr);
 
-    // Are we actually moving?
-    moving = (vx*vx + vy+vy) > 0.2;
+    // Are we moving, i.e., not stable?
+    if ((vx*vx + vy+vy) > 0.2)
+      stable_timer.restart();
   }
 
   @Override
@@ -59,14 +56,14 @@ public class AutoDriveUphillCommand extends CommandBase
     // Start position may not be the correct field location,
     // but should be good enough to check how far we have moved since then.
     double distance = drivetrain.getPose().getTranslation().getDistance(start);
-    // If we went more than 2 meters, assume something's wrong
+    // If we moved more than 2 meters, assume something's wrong
     if (distance > 2.0)
     {
       System.out.println("Aborting AutoDriveUphillCommand, moved " + distance + " meters");
       return true;
     }
-    // Are we not moving, and it's been a while, so we probably leveled out?
-    if (! moving  &&  timer.hasElapsed(3.0))
+    // Have we been standing still for a while, likely leveled out?
+    if (stable_timer.hasElapsed(1.5))
     {
       System.out.println("AutoDriveUphillCommand believes that we did it!");
       return true;

@@ -13,6 +13,7 @@ import frc.robot.AutoNoMouse;
 import frc.robot.CommandBaseRobot;
 import frc.robot.swervelib.AbsoluteSwerveCommand;
 import frc.robot.swervelib.DriveStraightCommand;
+import frc.robot.swervelib.DriveUphillCommand;
 import frc.robot.swervelib.FixedSpeedCommand;
 import frc.robot.swervelib.RelativeSwerveCommand;
 import frc.robot.swervelib.ResetPositionCommand;
@@ -33,6 +34,7 @@ public class SwerveBotRobot extends CommandBaseRobot
   // private final CommandBase fixed_fwd = new FixedSpeedCommand(drivetrain, 0.2);
   // private final CommandBase fixed_back = new FixedSpeedCommand(drivetrain, -0.2);
   private final CommandBase drive2grid = new Drive2GridCommand(drivetrain);
+  private final CommandBase driveuphill = new DriveUphillCommand(drivetrain);
   private final CommandBase reset = new ResetPositionCommand(drivetrain);
 
   private final SendableChooser<Command> autos = new SendableChooser<>();
@@ -74,7 +76,9 @@ public class SwerveBotRobot extends CommandBaseRobot
     if (SwerveOI.resetOrigin())
       reset.schedule();
     if (SwerveOI.selectFixedForward())
-      drive_rod.schedule();
+      // drive_straight.schedule();
+      driveuphill.schedule();
+      // drive_rod.schedule();
       
     // if (SwerveOI.joystick.getLeftStickButtonPressed())
     //   drive2grid.schedule();

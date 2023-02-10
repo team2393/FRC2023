@@ -32,11 +32,11 @@ public class SwervebotDrivetrain extends SwerveDrivetrain
 
   public double getPitch()
   {
-    return gyro.getPitch();
+    return -gyro.getPitch();
   }
 
   public double getRoll()
   {
-    return gyro.getRoll();
+    return -gyro.getRoll();
   }
 }

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.swervelib.AutoDriveUphillCommand;
 import frc.robot.swervelib.SelectAbsoluteTrajectoryCommand;
 import frc.robot.swervelib.SelectRelativeTrajectoryCommand;
 import frc.robot.swervelib.StayPutCommand;
@@ -236,6 +237,23 @@ public class AutoNoMouse
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain, 1.66, 4.47, 0));
       auto.addCommands(followPathWeaver(drivetrain, "Test", 0));
       auto.setName("PWTest");
+      autos.add(auto);
+    }
+
+    {
+      SequentialCommandGroup auto = new SequentialCommandGroup();
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain, 1.84, 1.12, 180));
+      auto.addCommands(new PrintCommand("Driving to charge station..."));
+      Trajectory path = createTrajectory(true, 1.84, 1.12,  0,
+                                               6,    1.1,  45,
+                                               6,    2.4,  135,
+                                               4.5,  2.85, 180);
+      auto.addCommands(drivetrain.createTrajectoryCommand(path, 180));
+      auto.addCommands(new PrintCommand("Driving uphill .."));
+      auto.addCommands(new AutoDriveUphillCommand(drivetrain));
+      auto.addCommands(new PrintCommand("Done!"));
+      auto.setName("BalanceTest");
       autos.add(auto);
     }
 

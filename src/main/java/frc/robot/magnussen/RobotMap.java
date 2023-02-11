@@ -75,24 +75,25 @@ public class RobotMap
   public static final int LIFT_BOTTOM = 1;
 
   /** CAN ID for Lift motor */
-  public static final int LIFT1_ID = 13;
-  public static final int LIFT2_ID = 14;
+  //skipped that number
+  public static final int LIFT1_ID = 14;
+  public static final int LIFT2_ID = 15;
 
   /** DIO Arm angle sensor */
   public static final int ARM_ANGLE = 2;
 
   /** CAN ID for Arm motor */
-  public static final int ARM_ID = 15;
+  public static final int ARM_ID = 16;
 
   /** Pneumatic for Arm extender */
   public static final int ARM_EXTENDER = 0;
 
   /** CAN ID for Spinner */
-  public static final int SPINNER_ID = 16;
+  public static final int SPINNER_ID = 17;
 
   /** CAN ID for Intake motor */
-  public static final int INTAKE_ID = -1;
+  public static final int INTAKE_ID = 18;
 
   /** DIO Intake angle sensor */
-  public static final int INTAKE_ANGLE = -1;
+  public static final int INTAKE_ANGLE = 19;
 }

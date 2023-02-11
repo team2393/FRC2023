@@ -41,4 +41,22 @@ public class Intake extends SubsystemBase
     motor.setVoltage(voltage);
     SmartDashboard.putNumber("Intake Voltage", voltage);
   }
+
+  /** @param angle Intake angle, positive for "up" */
+  public void setAngle(double desired_angle)
+  {
+    // Static gain, minimum voltage to get moving
+    double ks = SmartDashboard.getNumber("Arm ks", 0.0);
+    // Propotional gain to correct angle error
+    double P  = SmartDashboard.getNumber("Arm P", 0.0);
+
+    // If arm is horizontal, cos(0) = 1 --> Apply full kg
+    // If arm is down, cos(-90 deg) = 0 --> No kg
+    double current_angle = getAngle();
+    double error = desired_angle - current_angle;
+    double voltage = ks * Math.signum(error) 
+                   + Math.cos(Math.toRadians(current_angle))
+                   + P * error;
+    setVoltage(voltage);
+  }
 }

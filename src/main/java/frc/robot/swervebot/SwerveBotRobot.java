@@ -12,15 +12,11 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.AutoNoMouse;
 import frc.robot.CommandBaseRobot;
 import frc.robot.swervelib.AbsoluteSwerveCommand;
-import frc.robot.swervelib.DriveStraightCommand;
 import frc.robot.swervelib.DriveUphillCommand;
-import frc.robot.swervelib.FixedSpeedCommand;
 import frc.robot.swervelib.RelativeSwerveCommand;
 import frc.robot.swervelib.ResetPositionCommand;
 import frc.robot.swervelib.SwerveOI;
-import frc.robot.vision.Drive2GridCommand;
 import frc.robot.vision.LimelightClient;
-import frc.robot.vision.TargetLockedDriveCommand;
 
 /** ServeBot */
 public class SwerveBotRobot extends CommandBaseRobot
@@ -29,11 +25,11 @@ public class SwerveBotRobot extends CommandBaseRobot
   // private final CommandBase drive = new DriveCommand(drivetrain);
   private final CommandBase drive_relative = new RelativeSwerveCommand(drivetrain);
   private final CommandBase drive_absolute = new AbsoluteSwerveCommand(drivetrain);
-  private final CommandBase drive_straight = new DriveStraightCommand(drivetrain);
-  private final CommandBase drive_rod = new TargetLockedDriveCommand(drivetrain);
+  // private final CommandBase drive_straight = new DriveStraightCommand(drivetrain);
+  // private final CommandBase drive_rod = new TargetLockedDriveCommand(drivetrain);
   // private final CommandBase fixed_fwd = new FixedSpeedCommand(drivetrain, 0.2);
   // private final CommandBase fixed_back = new FixedSpeedCommand(drivetrain, -0.2);
-  private final CommandBase drive2grid = new Drive2GridCommand(drivetrain);
+  // private final CommandBase drive2grid = new Drive2GridCommand(drivetrain);
   private final CommandBase driveuphill = new DriveUphillCommand(drivetrain);
   private final CommandBase reset = new ResetPositionCommand(drivetrain);
 

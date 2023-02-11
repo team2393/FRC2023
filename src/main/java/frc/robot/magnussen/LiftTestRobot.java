@@ -8,14 +8,14 @@ import frc.robot.CommandBaseRobot;
 
 /** Lift test robot
  *
- *  TODO Setup Procedure:
+ * Setup Procedure:
  * - Use correct motors and sensor types, ID, ..
  * 
  * Teleop, right stick:
  * - Disconnect both motors' power wires from speed controllers
  * - After bootup, briefly enable teleop. This first enablement
  *   should zero the height reading
- * - Calibrate height encoder TICKS_PER_METER and MAX_HEIGHT
+ * - Calibrate height encoder REV_PER_METER and MAX_HEIGHT
  * - Connect power wires for primary motor
  * - Enable teleop. Check if moving 'up' with positive voltage
  *   indeed moves primary motor 'up'.

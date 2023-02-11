@@ -60,7 +60,7 @@ public class AprilTagPipeline implements VisionPipeline
     detector.addFamily("tag16h5");
 
     // Set up Pose Estimator
-    // TODO Configure focal lengths
+    // Configure focal lengths
     // Compare PhotonVision calibration at 
     // "resolution" : { "width" : 320.0, "height" : 240.0 },
     // "cameraIntrinsics" : {
@@ -135,7 +135,7 @@ public class AprilTagPipeline implements VisionPipeline
 
         // Pose estimator
         var cfg = estimator.getConfig();
-        // TODO Pose coordinates:
+        // Pose coordinates:
         // Z = distance from camera,
         // X = "right",
         // Y = "down"?
@@ -147,7 +147,6 @@ public class AprilTagPipeline implements VisionPipeline
         cfg.cy = SmartDashboard.getNumber("CameraCY", height/2);
         estimator.setConfig(cfg);
         Transform3d pose = estimator.estimate(tag);
-        // TODO Lookup tag's position, then transform pose into absolute field position of robot
 
         String info = String.format("%d", tag.getId());
         Imgproc.putText(image, info,

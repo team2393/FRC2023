@@ -4,7 +4,6 @@
 package frc.robot.magnussen;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import frc.robot.swervelib.Driver;
@@ -12,7 +11,6 @@ import frc.robot.swervelib.Driver;
 /** Driver using Falcon */
 public class FalconDriver extends Driver
 {
-  // TODO Calibrate distance
   private final static double TICKS_PER_METER = 44696.7;
 
   private final WPI_TalonFX motor;

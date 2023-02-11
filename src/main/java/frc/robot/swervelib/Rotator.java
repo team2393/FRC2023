@@ -5,9 +5,7 @@ package frc.robot.swervelib;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,9 +23,6 @@ abstract public class Rotator extends SubsystemBase
   private final NetworkTableEntry nt_angle;
   private final NetworkTableEntry nt_desired;
   private final PIDController pid = new PIDController(0,0,0);
-  // TODO Use profiled PID?
-  // private final ProfiledPIDController pid = new ProfiledPIDController(0,0,0,
-  //                     new TrapezoidProfile.Constraints(180, 180));
   private boolean initialized = false;
   private double simulated_angle = 0.0;
 
@@ -83,11 +78,7 @@ abstract public class Rotator extends SubsystemBase
   public void setAngle(double desired)
   {
     if (! initialized)
-    {
-      // TODO Use profiled PID?
-      // pid.reset(getAngle().getDegrees());
       initialized = true;
-    }
 
     // PID control, with error normalized to -180..180
     double angle = getRawDegrees() - nt_offset.getDouble(0.0);

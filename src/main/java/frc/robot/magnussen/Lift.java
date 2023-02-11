@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Lift extends SubsystemBase
 {
   /** Height encoder calibration */
-  private static final int TICKS_PER_METER = 1;
+  private static final double REV_PER_METER = 1;
 
   /** Maximum permitted height */
   private static final double MAX_HEIGHT = 1.5;
@@ -43,7 +43,7 @@ public class Lift extends SubsystemBase
 
   private double bottom_offset = 0.0;
 
-  private NetworkTableEntry nt_kg, nt_ks, nt_p;
+  private NetworkTableEntry nt_height, nt_kg, nt_ks;
 
   private PIDController pid = new PIDController(0, 0, 0);
 
@@ -64,6 +64,7 @@ public class Lift extends SubsystemBase
     // We commmand the primary motor, let secondary follow
     secondary_motor.follow(primary_motor);
 
+    nt_height = SmartDashboard.getEntry("Lift Height");
     nt_kg = SmartDashboard.getEntry("Lift kg");
     nt_ks = SmartDashboard.getEntry("Lift ks");
     nt_kg.setDefaultDouble(0.0);
@@ -80,14 +81,14 @@ public class Lift extends SubsystemBase
       // Reset encoder zero/bottom position
       bottom_offset = primary_motor.getEncoder().getPosition();
       calibrated = true;
-    }  
-    SmartDashboard.putNumber("Height", getHeight());
+    }
+    nt_height.setDouble(getHeight());
   }  
 
   /** @return Lift height in meters */
   public double getHeight()
   {
-    return (primary_motor.getEncoder().getPosition() - bottom_offset) / TICKS_PER_METER;
+    return (primary_motor.getEncoder().getPosition() - bottom_offset) / REV_PER_METER;
   }
 
   /** @param voltage Lift voltage, positive for "up" */

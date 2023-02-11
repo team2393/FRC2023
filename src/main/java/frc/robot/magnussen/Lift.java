@@ -7,21 +7,31 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-/** Lift that moves arm and grabber up/down */
+/** Lift that moves arm and grabber up/down
+ * 
+ *  When unpowered, lift settles down at bottom because of its weight.
+ *  We read that zero position from the encoder when first enabled.
+ * 
+ *  Move to requested height using feed forward and PID,
+ *  except for moving to "zero" which moves to a certain height above zero
+ *  and then simply lets lift settle by unpowering the motors. 
+ */
 public class Lift extends SubsystemBase
 {
   /** Height encoder calibration */
   private static final int TICKS_PER_METER = 1;
 
-  /** TODO Configure suitable voltage for pre-homing, slowly "up" */
-  private static final double PRE_HOMING_VOLTAGE = 0.2;
+  /** Maximum permitted height */
+  private static final double MAX_HEIGHT = 1.5;
 
-  /** TODO Configure suitable voltage for homing, very slowly "down" */
-  private static final double HOMING_VOLTAGE = -0.1;
+  /** Height below which we let the lift settle on its own */
+  private static final double SETTLE_THRESHOLD = 0.1;
 
   /** Motor controller with mag encoder */
   private CANSparkMax primary_motor = new CANSparkMax(RobotMap.LIFT1_ID, MotorType.kBrushless);
@@ -29,76 +39,50 @@ public class Lift extends SubsystemBase
   /** Other motor */
   private CANSparkMax secondary_motor = new CANSparkMax(RobotMap.LIFT2_ID, MotorType.kBrushless);
 
-  /** At-bottom switch */
-  private DigitalInput at_bottom = new DigitalInput(RobotMap.LIFT_BOTTOM);
+  private boolean calibrated = false;
 
   private double bottom_offset = 0.0;
+
+  private NetworkTableEntry nt_kg, nt_ks, nt_p;
+
+  private PIDController pid = new PIDController(0, 0, 0);
 
   public Lift()
   {
     // Primary motor has sensor and is the one we control
     primary_motor.restoreFactoryDefaults();
-    primary_motor.setIdleMode(IdleMode.kBrake);
+    primary_motor.setIdleMode(IdleMode.kCoast);
 
     // Secondary motor set to follow the primary
     secondary_motor.restoreFactoryDefaults();
-    secondary_motor.setIdleMode(IdleMode.kBrake);
+    secondary_motor.setIdleMode(IdleMode.kCoast);
 
     // Motors need to run in opposite direction,
     // so _one_(!) of them must be inverted    
     secondary_motor.setInverted(true);
 
-    // We commmand the primary, secondary follows
+    // We commmand the primary motor, let secondary follow
     secondary_motor.follow(primary_motor);
 
-    // TODO SmartDashboard.getEntry(..
-    SmartDashboard.setDefaultNumber("Lift kg", 0.0);
-    SmartDashboard.setDefaultNumber("Lift ks", 0.0);
-    SmartDashboard.setDefaultNumber("Lift P", 0.0);
+    nt_kg = SmartDashboard.getEntry("Lift kg");
+    nt_ks = SmartDashboard.getEntry("Lift ks");
+    nt_kg.setDefaultDouble(0.0);
+    nt_ks.setDefaultDouble(0.0);
+    SmartDashboard.putData("Lift PID", pid);
   }
 
-  /** @return Is lift at bottom? */
-  public boolean atBottom()
+  @Override
+  public void periodic()
   {
-    // Must be 'true' when at bottom
-    boolean is_at_bottom = at_bottom.get();
-
-    // Reset encoder's zero offset?
-    if (is_at_bottom)
-      bottom_offset = primary_motor.getEncoder().getPosition();
-
-    return is_at_bottom;
-  }
-
-  /** Move lift up until it clears the bottom switch
-   *  @return Has lift been pre-homed?
-   */
-  public boolean pre_home()
-  {
-    if (atBottom())
-    { // Move up, not pre-homed
-      setVoltage(PRE_HOMING_VOLTAGE);
-      return false;
-    }
-    // else: Cleared the switch, done
-    setVoltage(0);
-    return true;
-  }
-
-  /** Move lift down until it hits the bottom switch
-   *  @return Has lift been homed?
-   */
-  public boolean home()
-  {
-    if (atBottom())
+    // Enabled for the first time, never calibrated?
+    if (! calibrated  &&  RobotState.isEnabled())
     {
-      setVoltage(0);
-      return true;
-    }
-    // else
-    setVoltage(HOMING_VOLTAGE);
-    return false;
-  }
+      // Reset encoder zero/bottom position
+      bottom_offset = primary_motor.getEncoder().getPosition();
+      calibrated = true;
+    }  
+    SmartDashboard.putNumber("Height", getHeight());
+  }  
 
   /** @return Lift height in meters */
   public double getHeight()
@@ -106,47 +90,48 @@ public class Lift extends SubsystemBase
     return (primary_motor.getEncoder().getPosition() - bottom_offset) / TICKS_PER_METER;
   }
 
-  @Override
-  public void periodic()
-  {
-    SmartDashboard.putBoolean("At Bottom", atBottom());
-    SmartDashboard.putNumber("Height", getHeight());
-  }
-
   /** @param voltage Lift voltage, positive for "up" */
   public void setVoltage(double voltage)
   {
-    // Don't go below the bottom!
-    if (atBottom()  &&  voltage < 0)
-      voltage = 0.0;
-
     primary_motor.setVoltage(voltage);
-    SmartDashboard.putNumber("Lift Voltage", voltage);
   }
 
   public void setHeight(double desired_height)
   {
+    double height = getHeight();
+
+    // Don't run above top position
+    if (desired_height >= MAX_HEIGHT)
+      desired_height = MAX_HEIGHT;
+
+    // Trying to move to bottom?
+    if (desired_height <= SETTLE_THRESHOLD)
+    {
+      // Don't "run" into the bottom.
+      // Move to lower threshold
+      desired_height = SETTLE_THRESHOLD;
+      // If we are within 5 cm, simply let lift settle
+      if (height <= SETTLE_THRESHOLD + 0.05)
+      {
+        primary_motor.setIdleMode(IdleMode.kCoast);
+        secondary_motor.setIdleMode(IdleMode.kCoast);
+        setVoltage(0.0);
+        return;
+      }
+      // else: Move down to SETTLE_THRESHOLD..
+    }
+
+    // Not settling to bottom but actively moving to position, so enable brake
+    primary_motor.setIdleMode(IdleMode.kBrake);
+    secondary_motor.setIdleMode(IdleMode.kBrake);
+
     // Compare w/ ElevatorFeedforward
-    // Gravity gain, always applied to counteract gravity
-    // unless at bottom
-    double kg = SmartDashboard.getNumber("Lift kg", 0.0);
-    // Static gain, minimum voltage to get moving
-    double ks = SmartDashboard.getNumber("Lift ks", 0.0);
-    // Propotional gain to correct height error
-    double P  = SmartDashboard.getNumber("Lift P", 0.0);
-
-    double error = desired_height - getHeight();
-    double voltage;
-
-    // Don't run motor below the bottom position!
-    // Are we at the bottom, and
-    // a) We want to be at zero height or below?
-    // b) We want to move 'down' (which we can't)?
-    if (atBottom() &&
-        (desired_height <= 0.0  ||  desired_height < getHeight()))
-      voltage = 0.0;
-    else
-      voltage = kg  +  ks * Math.signum(error)  +  P * error;
+    // kg - Gravity gain, always applied to counteract gravity
+    // ks - Static gain, minimum voltage to get moving
+    // PID - .. to correct height error
+    double error = desired_height - height;
+    double voltage = nt_kg.getDouble(0.0)  +  nt_ks.getDouble(0.0) * Math.signum(error)  +
+                     pid.calculate(height, desired_height);
     setVoltage(voltage);
   }
 }

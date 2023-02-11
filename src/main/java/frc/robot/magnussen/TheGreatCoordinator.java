@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** The great arm/lift/grabber/intake coordinator
  * 
- *  At startup, the lift needs to be 'homed' via the bottom switch.
- * 
  *  When moving the various components, there are some constraints.
  *  For example, the intake can only move all the way "in"
  *  when the arm is inside the lift.
@@ -26,17 +24,13 @@ public class TheGreatCoordinator extends SubsystemBase
 
   enum State
   {
-    /** Prepare to home lift by moving it slightly 'up' off the switch */
-    PRE_HOME_LIFT,
-    /** Home lift */
-    HOME_LIFT,
     /** Move arm etc. out of the way to provide intake with a clear path */
     CLEAR_INTAKE,
     /** Everything can move */
     NORMAL
   }
 
-  private State state = State.PRE_HOME_LIFT;
+  private State state = State.NORMAL;
 
   private double lift_height = 0.1;
   private double arm_angle = 0.0;
@@ -74,12 +68,6 @@ public class TheGreatCoordinator extends SubsystemBase
       handleDisabled();
     else
     {
-      // No 'else' here so we can go right away from
-      // pre-home to home to normal to clear-intake 
-      if (state == State.PRE_HOME_LIFT)
-        handlePreHome();
-      if (state == State.HOME_LIFT)
-        handleHome();
       if (state == State.NORMAL)
         handleNormal();
       if (state == State.CLEAR_INTAKE)
@@ -95,34 +83,8 @@ public class TheGreatCoordinator extends SubsystemBase
     arm.extend(false);
     // TODO intake.setVoltage(0);
 
-    // Once we re-enable, start over by homing the lift? 
-    state = State.PRE_HOME_LIFT;
-  }
-
-  private void handlePreHome()
-  {
-    // Pre-home lift, move on when done
-    if (lift.pre_home())
-      state = State.HOME_LIFT;
-    else
-    {
-      // Leave other systems wherever they are without voltage
-      arm.setVoltage(0);
-      // TODO intake.setVoltage(0);
-    }
-  }
-
-  private void handleHome()
-  {
-    // Home lift, move on when done
-    if (lift.home())
-      state = State.NORMAL;
-    else
-    {
-      // Leave other systems wherever they are without voltage
-      arm.setVoltage(0);
-      // TODO intake.setVoltage(0);
-    }
+    // Once we re-enable, start over in NORMAL?
+    state = State.NORMAL;
   }
 
   private void handleNormal()

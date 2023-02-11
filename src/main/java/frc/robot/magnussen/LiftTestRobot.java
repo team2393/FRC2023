@@ -10,37 +10,30 @@ import frc.robot.CommandBaseRobot;
  *
  *  TODO Setup Procedure:
  * - Use correct motors and sensor types, ID, ..
- *
- * Disabled:
- * - Check if "At Bottom" is correctly indicated,
- *   'true' when at bottom.abstract.
- *   Ideally, wiring could be fail-safe..
  * 
  * Teleop, right stick:
- * - Disconnect secondary motor from speed controller
- * - Check if moving 'up' with positive voltage indeed moves primary motor 'up'.
- *   If not, invert both motors.
- * - Check if moving 'down' stops when hitting bottom switch,
- *   and then only 'up' is possible until clearing the switch?
- * - Check if indicated "Height" zeroes when hitting bottom switch
- * - Calibrate height encoder
+ * - Disconnect both motors' power wires from speed controllers
+ * - After bootup, briefly enable teleop. This first enablement
+ *   should zero the height reading
+ * - Calibrate height encoder TICKS_PER_METER and MAX_HEIGHT
+ * - Connect power wires for primary motor
+ * - Enable teleop. Check if moving 'up' with positive voltage
+ *   indeed moves primary motor 'up'.
+ *   If not, switch inversion of both motors.
  * - Connect secondary motor to speed controller and check that it moves
- *   the same direction as primary. If not, reverse secondary  wiring.
- * - Find good small positive voltage for Lift.PRE_HOMING_VOLTAGE
- *   and negative voltage for Lift.HOMING_VOLTAGE
- * - Test homing: Does holding 'Y' move lift up to pre-home, then stop?
- *   Does then holding 'A' slowly move down until hitting the switch?
+ *   in correct direction with primary. If not, update its inversion setting.
+ * - Moving lift up and down, check that it stops at bottom (zero) and MAX_HEIGHT.
  * 
- * Autonomouse:
+ * Auto-no-mouse:
  * - Start with "Setpoint" = 0.0, assert that motor is not powered
  * - Enter negative setpoint, assert that motor is not powered
  * - Disable, move lift halfway up, enter halfway Setpoint, enable auto.
  *   Adjust kg such that motor counteracts gravity and lift stays put
- * - Enter a setpoint above current height and
- *   adjust ks such that motor just barely starts moving 'up'
- * - Enter different setpoints and adjust P such that lift gets there
+ * - Enter a setpoint above current height (or let lift settle below setpoint)
+ *   and adjust ks such that motor just barely starts moving 'up'
+ * - Enter different setpoints and adjust P(ID) such that lift gets there
  * 
- * .. then update to PID, then ProfiledPID?
+ * .. then update to ProfiledPID?
  */
 public class LiftTestRobot extends CommandBaseRobot
 {
@@ -56,17 +49,10 @@ public class LiftTestRobot extends CommandBaseRobot
   @Override
   public void teleopPeriodic()
   {
-    if (OI.joystick.getYButton())
-      lift.pre_home();
-    else if (OI.joystick.getAButton())
-      lift.home();
-    else
-    {
-      // For 'up', send position voltage
-      double voltage = -5.0 * OI.joystick.getRightY();
-      lift.setVoltage(voltage);
-      SmartDashboard.putNumber("Voltage", voltage);
-    }
+    // For 'up', send position voltage
+    double voltage = -5.0 * OI.joystick.getRightY();
+    lift.setVoltage(voltage);
+    SmartDashboard.putNumber("Lift Voltage", voltage);
   }
 
   @Override

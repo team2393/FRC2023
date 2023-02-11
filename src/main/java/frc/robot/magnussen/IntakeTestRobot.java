@@ -24,11 +24,11 @@ public class IntakeTestRobot extends CommandBaseRobot
   @Override
   public void teleopPeriodic() {
     // TODO: Figure out how to alternate between different angles (0 degrees, 45 degrees, 90 degrees)
-    if (OI.joystick.getRightBumper())
+    if (OI.joystick.getRightBumper() && intake.getAngle() < 90)
     {
       intake.setAngle(intake.getAngle() + 45);
     }
-    else if (OI.joystick.getLeftBumper())
+    else if (OI.joystick.getLeftBumper() && intake.getAngle() > 0)
     {
       intake.setAngle(intake.getAngle() - 45);
     }

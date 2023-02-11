@@ -46,7 +46,7 @@ public class AutoDriveUphillCommand extends CommandBase
     drivetrain.swerve(vx, vy, vr);
 
     // Are we moving, i.e., not stable?
-    if ((vx*vx + vy+vy) > 0.2)
+    if ((vx*vx + vy*vy) > 0.2)
       stable_timer.restart();
   }
 

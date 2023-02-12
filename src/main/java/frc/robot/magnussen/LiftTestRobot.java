@@ -12,27 +12,28 @@ import frc.robot.CommandBaseRobot;
  * - Use correct motors and sensor types, ID, ..
  * 
  * Teleop, right stick:
- * - Disconnect both motors' power wires from speed controllers
+ * - Disconnect both motors' power wires from speed controllers.
  * - After bootup, briefly enable teleop. This first enablement
- *   should zero the height reading
- * - Calibrate height encoder REV_PER_METER and MAX_HEIGHT
- * - Connect power wires for primary motor
+ *   should zero the height reading.
+ * - Calibrate height encoder, set REVS_PER_METER and MAX_HEIGHT.
+ * - Connect power wires for primary motor.
  * - Enable teleop. Check if moving 'up' with positive voltage
  *   indeed moves primary motor 'up'.
- *   If not, switch inversion of both motors.
+ *   If not, switch motor inversion.
  * - Connect secondary motor to speed controller and check that it moves
  *   in correct direction with primary. If not, update its inversion setting.
- * - Moving lift up and down, check that it stops at bottom (zero) and MAX_HEIGHT.
  * 
  * Auto-no-mouse:
- * - Start with "Setpoint" = 0.0, assert that motor is not powered
- * - Enter negative setpoint, assert that motor is not powered
+ * - Start with "Setpoint" = 0.0, assert that motors are not powered.
+ * - Enter negative setpoint, assert that motors are not powered.
  * - Disable, move lift halfway up, enter halfway Setpoint, enable auto.
- *   Adjust kg such that motor counteracts gravity and lift stays put
+ *   Adjust kg such that motors counteract gravity and lift stays put.
  * - Enter a setpoint above current height (or let lift settle below setpoint)
- *   and adjust ks such that motor just barely starts moving 'up'
- * - Enter different setpoints and adjust P(ID) such that lift gets there
+ *   and adjust ks such that motors just barely start moving 'up'.
+ * - Enter different setpoints and adjust P(ID) such that lift gets there.
  * 
+ * .. only apply ks when moving up, since motors need no get-going voltage
+ *    to move down?
  * .. then update to ProfiledPID?
  */
 public class LiftTestRobot extends CommandBaseRobot

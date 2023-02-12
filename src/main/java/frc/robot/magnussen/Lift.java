@@ -17,6 +17,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * 
  *  When unpowered, lift settles down at bottom because of its weight.
  *  We read that zero position from the encoder when first enabled.
+ *  During tests, first enablement is likely teleop.
+ *  In competition, first enablement is auto, and by the time
+ *  we enable teleop the lift may already have moved up.
+ *  Using first enablement after bootup should cover both cases.
  * 
  *  Move to requested height using feed forward and PID,
  *  except for moving to "zero" which moves to a certain height above zero
@@ -25,7 +29,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Lift extends SubsystemBase
 {
   /** Height encoder calibration */
-  private static final double REV_PER_METER = 1;
+  private static final double REVS_PER_METER = 1;
 
   /** Maximum permitted height */
   private static final double MAX_HEIGHT = 1.5;
@@ -33,28 +37,36 @@ public class Lift extends SubsystemBase
   /** Height below which we let the lift settle on its own */
   private static final double SETTLE_THRESHOLD = 0.1;
 
-  /** Motor controller with mag encoder */
+  /** Motor controller with encoder */
   private CANSparkMax primary_motor = new CANSparkMax(RobotMap.LIFT1_ID, MotorType.kBrushless);
   
   /** Other motor */
   private CANSparkMax secondary_motor = new CANSparkMax(RobotMap.LIFT2_ID, MotorType.kBrushless);
 
+  /** Has position be calibrated? */
   private boolean calibrated = false;
 
+  /** Raw encoder reading at bottom position */
   private double bottom_offset = 0.0;
 
+  /** Network table entries */
   private NetworkTableEntry nt_height, nt_kg, nt_ks;
 
+  /** PID */
   private PIDController pid = new PIDController(0, 0, 0);
 
   public Lift()
   {
-    // Primary motor has sensor and is the one we control
+    // Primary motor is the one we control
     primary_motor.restoreFactoryDefaults();
+    primary_motor.clearFaults();
+    primary_motor.setSmartCurrentLimit(20);
     primary_motor.setIdleMode(IdleMode.kCoast);
 
     // Secondary motor set to follow the primary
     secondary_motor.restoreFactoryDefaults();
+    secondary_motor.clearFaults();
+    secondary_motor.setSmartCurrentLimit(20);
     secondary_motor.setIdleMode(IdleMode.kCoast);
 
     // Motors need to run in opposite direction,
@@ -81,6 +93,7 @@ public class Lift extends SubsystemBase
       // Reset encoder zero/bottom position
       bottom_offset = primary_motor.getEncoder().getPosition();
       calibrated = true;
+      System.err.println("Calibrated lift bottom at " + bottom_offset + " revs");
     }
     nt_height.setDouble(getHeight());
   }  
@@ -88,7 +101,7 @@ public class Lift extends SubsystemBase
   /** @return Lift height in meters */
   public double getHeight()
   {
-    return (primary_motor.getEncoder().getPosition() - bottom_offset) / REV_PER_METER;
+    return (primary_motor.getEncoder().getPosition() - bottom_offset) / REVS_PER_METER;
   }
 
   /** @param voltage Lift voltage, positive for "up" */
@@ -127,12 +140,13 @@ public class Lift extends SubsystemBase
     secondary_motor.setIdleMode(IdleMode.kBrake);
 
     // Compare w/ ElevatorFeedforward
-    // kg - Gravity gain, always applied to counteract gravity
-    // ks - Static gain, minimum voltage to get moving
+    // kg  - Gravity gain, always applied to counteract gravity
+    // ks  - Static gain, minimum voltage to get moving
     // PID - .. to correct height error
     double error = desired_height - height;
-    double voltage = nt_kg.getDouble(0.0)  +  nt_ks.getDouble(0.0) * Math.signum(error)  +
-                     pid.calculate(height, desired_height);
+    double voltage = nt_kg.getDouble(0.0)
+                   + nt_ks.getDouble(0.0) * Math.signum(error)
+                   + pid.calculate(height, desired_height);
     setVoltage(voltage);
   }
 }

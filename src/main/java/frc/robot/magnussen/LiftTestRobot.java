@@ -51,7 +51,7 @@ public class LiftTestRobot extends CommandBaseRobot
   public void teleopPeriodic()
   {
     // For 'up', send position voltage
-    double voltage = -5.0 * OI.joystick.getRightY();
+    double voltage = -3.0 * OI.joystick.getRightY();
     lift.setVoltage(voltage);
     SmartDashboard.putNumber("Lift Voltage", voltage);
   }

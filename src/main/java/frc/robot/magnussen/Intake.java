@@ -35,10 +35,26 @@ public class Intake extends SubsystemBase
     return encoder.getAbsolutePosition() - SmartDashboard.getNumber("Intake Offset", 0.0);
   }
 
-  /** @param voltage Arm voltage, positive for "up" */
+  /** @param voltage Intake voltage, positive for "up" */
   public void setVoltage(double voltage)
   {
     motor.setVoltage(voltage);
     SmartDashboard.putNumber("Intake Voltage", voltage);
+  }
+
+  /** @param angle Intake angle, positive for "up" */
+  public void setAngle(double desired_angle)
+  {
+    // Static gain, minimum voltage to get moving
+    double ks = SmartDashboard.getNumber("Intake ks", 0.0);
+    // Propotional gain to correct angle error
+    double P  = SmartDashboard.getNumber("Intake P", 0.0);
+
+    double current_angle = getAngle();
+    double error = desired_angle - current_angle;
+    double voltage = ks * Math.signum(error) 
+                   + Math.cos(Math.toRadians(current_angle))
+                   + P * error;
+    setVoltage(voltage);
   }
 }

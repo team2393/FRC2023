@@ -32,8 +32,8 @@ public class LiftArmDummyRobot extends CommandBaseRobot
   @Override
   public void teleopPeriodic()
   {
-    adjust("Lift Height", -0.1*OI.joystick.getRightY(),    0.0, 1.5);
-    adjust("Arm Angle",    1.0*OI.joystick.getLeftY(),  -180.0, 0.0);
+    adjust("Lift Height", -0.02*MathUtil.applyDeadband(OI.joystick.getRightY(), 0.1),    0.0, 0.7);
+    adjust("Arm Angle",    1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),  0.1), -180.0, 0.0);
 
     if (OI.joystick.getAButtonPressed())
     {

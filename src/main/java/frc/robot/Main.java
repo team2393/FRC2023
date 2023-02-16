@@ -13,6 +13,7 @@ public final class Main
   public static void main(String... args)
   {
     // RobotBase.startRobot(frc.robot.magnussen.MagnussenRobot::new);
-    RobotBase.startRobot(frc.robot.swervebot.SwerveBotRobot::new);
+    // RobotBase.startRobot(frc.robot.swervebot.SwerveBotRobot::new);
+    RobotBase.startRobot(frc.robot.magnussen.LiftArmDummyRobot::new);
   }
 }

@@ -19,6 +19,7 @@ public class LiftArmDummyRobot extends CommandBaseRobot
     super.robotInit();
     SmartDashboard.putNumber("Lift Height", 0.0);
     SmartDashboard.putNumber("Arm Angle", -90.0);
+    SmartDashboard.putNumber("Intake Angle", 90.0);
     SmartDashboard.putBoolean("Arm Extended", false);
   }
 
@@ -34,6 +35,8 @@ public class LiftArmDummyRobot extends CommandBaseRobot
   {
     adjust("Lift Height", -0.02*MathUtil.applyDeadband(OI.joystick.getRightY(), 0.1),    0.0, 0.7);
     adjust("Arm Angle",    1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),  0.1), -180.0, 0.0);
+    double intake = OI.joystick.getRightTriggerAxis() - OI.joystick.getLeftTriggerAxis();
+    adjust("Intake Angle",-1.00*MathUtil.applyDeadband(intake,                  0.1),    0.0, 120.0);
 
     if (OI.joystick.getAButtonPressed())
     {

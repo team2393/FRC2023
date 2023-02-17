@@ -79,10 +79,7 @@ public class RobotMap
   public static final int LIFT1_ID = 14;
   public static final int LIFT2_ID = 15;
 
-  /** DIO Arm angle sensor */
-  public static final int ARM_ANGLE = 2;
-
-  /** CAN ID for Arm motor */
+  /** CAN ID for Arm motor (also connected to arm angle encoder) */
   public static final int ARM_ID = 16;
 
   /** Pneumatic for Arm extender */

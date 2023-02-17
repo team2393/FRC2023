@@ -4,11 +4,11 @@
 package frc.robot.magnussen;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,21 +18,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Arm extends SubsystemBase
 {
   /** Motor controller */
-  private CANSparkMax motor = new CANSparkMax(RobotMap.ARM_ID, MotorType.kBrushless);
+  private final CANSparkMax motor = new CANSparkMax(RobotMap.ARM_ID, MotorType.kBrushless);
 
-  /** Through Bore Encoder to measure angle
-   *  Absolute readout uses (white, red, black) into DI
+  /** Through Bore Encoder to measure angle.
+   *  'A'/'S' switch on side of encoder must be in 'A' position.
+   *  Absolute readout can use (white, red, black) into DI,
+   *  but we have it plugged into the motor's SparkMax
    */
-  private DutyCycleEncoder encoder = new DutyCycleEncoder(new DigitalInput(RobotMap.ARM_ANGLE));
+  private final SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(Type.kDutyCycle);
 
-  private Solenoid extender = new Solenoid(PneumaticsModuleType.REVPH, RobotMap.ARM_EXTENDER);
+  private final Solenoid extender = new Solenoid(PneumaticsModuleType.REVPH, RobotMap.ARM_EXTENDER);
 
   public Arm()
   {
     motor.restoreFactoryDefaults();
     motor.setIdleMode(IdleMode.kBrake);
-
-    encoder.reset();
 
     extender.set(false);
 
@@ -47,7 +47,7 @@ public class Arm extends SubsystemBase
   /** @return Arm angle in degrees, zero = horizontal, -90 = vertical down */
   public double getAngle()
   {
-    return encoder.getAbsolutePosition() - SmartDashboard.getNumber("Arm Offset", 0.0);
+    return encoder.getPosition() - SmartDashboard.getNumber("Arm Offset", 0.0);
   }
 
   @Override

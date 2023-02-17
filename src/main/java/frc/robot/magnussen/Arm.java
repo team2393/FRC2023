@@ -33,6 +33,7 @@ public class Arm extends SubsystemBase
   {
     motor.restoreFactoryDefaults();
     motor.setIdleMode(IdleMode.kBrake);
+    motor.setSmartCurrentLimit(20); // TODO current limit?
 
     extender.set(false);
 

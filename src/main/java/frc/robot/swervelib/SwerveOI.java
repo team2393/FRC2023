@@ -66,6 +66,12 @@ public class SwerveOI
     return -MAX_RAD_PER_SEC * stick;
   }
 
+  /** @return Value -1..1 based on both triggers */
+  public static double getCombinedTriggerValue()
+  {
+     return joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis();
+  }
+
   public static boolean selectAbsoluteMode()
   {
     return joystick.getLeftBumperPressed();

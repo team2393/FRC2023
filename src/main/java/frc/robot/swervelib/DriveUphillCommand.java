@@ -27,7 +27,7 @@ public class DriveUphillCommand extends CommandBase
 
     // Check how fast we want to drive 'up/downhill':
     // Right trigger to move uphill, left trigger to move downhill
-    double uphill = SwerveOI.joystick.getRightTriggerAxis() - SwerveOI.joystick.getLeftTriggerAxis();
+    double uphill = SwerveOI.getCombinedTriggerValue();
 
     // Angles are reported in degrees.
     // If we're tilted 45 degrees, and the left or right trigger is pulled all the way in (uphill = -1 or 1),

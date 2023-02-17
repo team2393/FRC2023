@@ -47,10 +47,9 @@ public class LiftArmDummyRobot extends CommandBaseRobot
   /** Directly control each device */
   private void directControl()
   {
-    adjust("Lift Height", -0.02*MathUtil.applyDeadband(OI.joystick.getRightY(), 0.1),    0.0, 0.7);
-    adjust("Arm Angle",    1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),  0.1), -180.0, 0.0);
-    double intake = OI.joystick.getRightTriggerAxis() - OI.joystick.getLeftTriggerAxis();
-    adjust("Intake Angle",-1.00*MathUtil.applyDeadband(intake,                  0.1),    0.0, 120.0);
+    adjust("Lift Height", -0.02*MathUtil.applyDeadband(OI.joystick.getRightY(),      0.1),    0.0, 0.7);
+    adjust("Arm Angle",    1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),       0.1), -180.0, 0.0);
+    adjust("Intake Angle",-1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1),    0.0, 120.0);
 
     if (OI.joystick.getAButtonPressed())
     {
@@ -99,8 +98,7 @@ public class LiftArmDummyRobot extends CommandBaseRobot
     SmartDashboard.putNumber("Lift Height", 0.0);
 
     // Move intake
-    double intake = OI.joystick.getRightTriggerAxis() - OI.joystick.getLeftTriggerAxis();
-    double intake_angle = adjust("Intake Angle",-1.00*MathUtil.applyDeadband(intake,                  0.1),    0.0, 120.0);
+    double intake_angle = adjust("Intake Angle",-1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), 0.0, 120.0);
 
     // Arm angle follows intake
     double arm_angle = -intake_angle;
@@ -118,7 +116,7 @@ public class LiftArmDummyRobot extends CommandBaseRobot
     SmartDashboard.putNumber("Lift Height", 0.0);
 
     // Move arm angle
-    double arm_angle = adjust("Arm Angle",    1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),  0.1), -180.0, 0.0);
+    double arm_angle = adjust("Arm Angle", 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0);
 
     // Extend when arm is sticking outside the back,
     // or out front yet not too far up (to prevent topping)
@@ -140,7 +138,7 @@ public class LiftArmDummyRobot extends CommandBaseRobot
     SmartDashboard.putBoolean("Arm Extended", false);
 
     // Move arm angle
-    adjust("Arm Angle",    1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),  0.1), -180.0, 0.0);
+    adjust("Arm Angle", 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0);
 
     // Move to other mode?
     if (OI.joystick.getXButtonPressed())
@@ -157,7 +155,7 @@ public class LiftArmDummyRobot extends CommandBaseRobot
     SmartDashboard.putBoolean("Arm Extended", SmartDashboard.getNumber("Lift Height", 0.0) > 0.4);
 
     // Move arm angle
-    adjust("Arm Angle",    1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),  0.1), -180.0, 0.0);
+    adjust("Arm Angle", 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0);
 
     // Move to other mode?
     if (OI.joystick.getXButtonPressed())

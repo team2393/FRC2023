@@ -41,6 +41,8 @@ public class MagnussenRobot extends CommandBaseRobot
 
   private final SendableChooser<Command> autos = new SendableChooser<>();
 
+  private final Pneumatics pneumatics = new Pneumatics();
+
   private LimelightClient camera;
 
   @Override

@@ -26,7 +26,7 @@ public class MagnussenRobot extends CommandBaseRobot
 
   private final SendableChooser<Command> autos = new SendableChooser<>();
 
-  // TODO private final TheGreatCoordinator coordinator = new TheGreatCoordinator(true);
+  private final TheGreatCoordinator coordinator = new TheGreatCoordinator(true);
 
   private final Pneumatics pneumatics = new Pneumatics();
 
@@ -77,7 +77,7 @@ public class MagnussenRobot extends CommandBaseRobot
     if (SwerveOI.resetOrigin())
         reset.schedule();
 
-    // TODO coordinator.run();
+    coordinator.run();
   }
 
   @Override

@@ -28,7 +28,7 @@ public class Arm extends SubsystemBase
    */
   private final SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(Type.kDutyCycle);
 
-  private final Solenoid extender = new Solenoid(PneumaticsModuleType.REVPH, RobotMap.ARM_EXTENDER);
+  // TODO private final Solenoid extender = new Solenoid(PneumaticsModuleType.REVPH, RobotMap.ARM_EXTENDER);
 
   private double simulated_angle = -90.0;
 
@@ -36,12 +36,14 @@ public class Arm extends SubsystemBase
   {
     motor.restoreFactoryDefaults();
     motor.setIdleMode(IdleMode.kBrake);
+    // Positive voltage moves to positive angles, "up"
+    motor.setInverted(true);
     motor.setSmartCurrentLimit(20); // TODO current limit?
 
-    extender.set(false);
+    // TODO extender.set(false);
 
     // TODO SmartDashboard.getEntry(..
-    SmartDashboard.setDefaultNumber("Arm Offset", 0.0);
+    SmartDashboard.setDefaultNumber("Arm Offset", 91.25);
     SmartDashboard.setDefaultNumber("Arm kg in", 0.0);
     SmartDashboard.setDefaultNumber("Arm kg out", 0.0);
     SmartDashboard.setDefaultNumber("Arm ks", 0.0);
@@ -53,14 +55,16 @@ public class Arm extends SubsystemBase
   {
     if (RobotBase.isSimulation())
       return simulated_angle;
-    return encoder.getPosition() - SmartDashboard.getNumber("Arm Offset", 0.0);
+    // Change 'turns' into degrees,
+    // fix offset, bracked to -180..+180
+    return Math.IEEEremainder(encoder.getPosition()*360 - SmartDashboard.getNumber("Arm Offset", 0.0), 360);
   }
 
   @Override
   public void periodic()
   {
     SmartDashboard.putNumber("Arm Angle", getAngle());
-    SmartDashboard.putBoolean("Arm Extended", extender.get());
+   // TODO SmartDashboard.putBoolean("Arm Extended", extender.get());
   }
 
   /** @param voltage Arm voltage, positive for "up" */
@@ -73,13 +77,13 @@ public class Arm extends SubsystemBase
   /** @return Is arm extended? */
   public boolean isExtended()
   {
-    return extender.get();
+    return false; // TODO extender.get();
   }
 
   /** @param out Extend arm out, or pull in? */
   public void extend(boolean out)
   {
-    extender.set(out);
+    // TODO extender.set(out);
   }
 
   public void setAngle(double desired_angle)
@@ -93,9 +97,9 @@ public class Arm extends SubsystemBase
     // Gravity gain, always applied to counteract gravity,
     // but different for extension in/out
     double kg;
-    if (extender.get())
-      kg = SmartDashboard.getNumber("Arm kg out", 0.0);
-    else
+    // TODO if (extender.get())
+    //   kg = SmartDashboard.getNumber("Arm kg out", 0.0);
+    // else
       kg = SmartDashboard.getNumber("Arm kg in", 0.0);
     // Static gain, minimum voltage to get moving
     double ks = SmartDashboard.getNumber("Arm ks", 0.0);

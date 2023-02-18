@@ -3,139 +3,160 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.magnussen;
 
-import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/** The great arm/lift/grabber/intake coordinator
- * 
- *  When moving the various components, there are some constraints.
- *  For example, the intake can only move all the way "in"
- *  when the arm is inside the lift.
- * 
- *  This helper allows setting the desired lift height etc
- *  and then tries to get there.
- */
-public class TheGreatCoordinator extends SubsystemBase
+/** The great arm/lift/grabber/intake coordinator */
+public class TheGreatCoordinator
 {
-  // Devices that we handle
+  // Components that we handle
   private final Lift lift = new Lift();
   private final Arm arm = new Arm();
-  // private final Intake intake = new Intake();
+  private final Intake intake = new Intake();
 
-  enum State
+  /** Modes:
+   *  DIRECT is for initial testing.
+   *  Driver has to directly control the lift, arm and intake,
+   *  no smarts at all
+   * 
+   *  Remaining modes control all components
+   *  based on a single joystick input
+   */
+  public enum Mode
   {
-    /** Move arm etc. out of the way to provide intake with a clear path */
-    CLEAR_INTAKE,
-    /** Everything can move */
-    NORMAL
+    /** Directly control each component */
+    DIRECT,
+    /** Move intake */
+    INTAKE,
+    /** Position grabber for a "near" node */
+    NEAR,
+    /** Position grabber for a "mid-distance" node */
+    MID,
+    /** Position grabber for a "far" node */
+    FAR
   }
 
-  private State state = State.NORMAL;
+  private Mode mode;
 
-  private double lift_height = 0.1;
-  private double arm_angle = 0.0;
-  private boolean arm_extended = false;
-  private double intake_angle = 0.0;
-
-  /** @param meters Desired lift height */
-  public void setLiftHeight(double meters)
+  /** @param use_modes Use modes? */
+  public TheGreatCoordinator(boolean use_modes)
   {
-    lift_height = meters;
-  }
-
-  /** @param degrees Desired arm angle */
-  public void setArmAngle(double degrees)
-  {
-    arm_angle = degrees;
-  }
-
-  /** @param extend Extend arm? */
-  public void setArmExtension(boolean extend)
-  {
-    arm_extended = extend;
-  }
-
-  /** @param degrees Desired intake angle */
-  public void setIntakeAngle(double degrees)
-  {
-    intake_angle = degrees;
+    mode = use_modes ? Mode.INTAKE : Mode.DIRECT;
   }
   
-  @Override
-  public void periodic()
+  /** @param value Current value
+   *  @param rate Decrease/increase -1..1
+   *  @param min Minimum value
+   *  @param max Maximum value
+   *  @return Adjusted value
+   */
+  private double adjust(double value, double rate, double min, double max)
   {
-    if (RobotState.isDisabled())
-      handleDisabled();
-    else
+    value += rate;
+    return MathUtil.clamp(value, min, max);
+  }
+
+  public void run()
+  {
+    SmartDashboard.putString("Mode", mode.name());
+
+    // Really same as
+    //   if (mode == Mode.INTAKE)
+    //     handleIntake();
+    //   else if (mode == Mode.NEAR)
+    // except switch (..) will show a compiler warning
+    // if we forget to handle one of the options
+    switch (mode)
     {
-      if (state == State.NORMAL)
-        handleNormal();
-      if (state == State.CLEAR_INTAKE)
-        handleClearIntake();
+    case DIRECT: directControl(); break;
+    case INTAKE: handleIntake();  break;
+    case NEAR:   handleNear();    break;
+    case MID:    handleMid();     break;
+    case FAR:    handleFar();     break;
     }
   }
 
-  private void handleDisabled()
+  /** Directly control each device */
+  private void directControl()
   {
-    // No motors are moving anyway, but just in case set all voltages to zero
-    lift.setVoltage(0);
-    arm.setVoltage(0);
+    lift.setHeight (adjust(lift.getHeight(), -0.02*MathUtil.applyDeadband(OI.joystick.getRightY(),      0.1),    0.0, 0.7));
+    arm.setAngle   (adjust(arm.getAngle(),    1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),       0.1), -180.0, 0.0));
+    intake.setAngle(adjust(intake.getAngle(),-1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1),    0.0, 120.0));
+
+    if (OI.joystick.getAButtonPressed())
+      arm.extend(! arm.isExtended());
+  }
+
+  private void handleIntake()
+  {
+    // Arm in, lift at bottom
     arm.extend(false);
-    // TODO intake.setVoltage(0);
+    lift.setHeight(0.0);
 
-    // Once we re-enable, start over in NORMAL?
-    state = State.NORMAL;
+    // Move intake
+    double intake_angle = adjust(intake.getAngle(), -1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), 0.0, 120.0);
+    intake.setAngle(intake_angle);
+
+    // Arm angle follows intake
+    double arm_angle = -intake_angle;
+    arm.setAngle(arm_angle);
+
+    // Move to other mode?
+    if (OI.joystick.getYButtonPressed())
+      mode = Mode.NEAR;
   }
 
-  private void handleNormal()
+  private void handleNear()
   {
-/*
-    // Are we trying to move the intake into the interference zone?
-    if (intake_angle > 90)
-      state = State.CLEAR_INTAKE;
-    else
-    {
-*/
-      lift.setHeight(lift_height);
-      arm.setAngle(arm_angle);
-      arm.extend(arm_extended);
-/*
-      intake.setAngle(intake_angle);
-    }
- */
+    // Intake in, lift at bottom
+    intake.setAngle(120.0);
+    lift.setHeight(0.0);
+
+    // Move arm angle
+    double arm_angle = adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0);
+    arm.setAngle(arm_angle);
+
+    // Extend when arm is sticking outside the back,
+    // or out front yet not too far up (to prevent topping)
+    // This should keep arm pulled in while where "inside" the robot
+    arm.extend(arm_angle < -170  ||  (arm_angle > -80.0  &&  arm_angle < -40.0));
+
+    // Move to other mode?
+    if (OI.joystick.getXButtonPressed())
+      mode = Mode.INTAKE;
+    if (OI.joystick.getYButtonPressed())
+      mode = Mode.MID;
   }
 
-  private void handleClearIntake()
+  private void handleMid()
   {
-/*
-    // Is intake outside of the interference zone
-    // and that's where it should be?
-    if (intake.getAngle() < 90  &&  intake_angle < 90)
-    {
-      // All can move as desired ...
-      lift.setHeight(lift_height);
-      arm.setAngle(arm_angle);
-      arm.extend(arm_extended);
-      intake.setAngle(intake_angle);
-      // .. and next period we'll be in normal state
-      state = State.NORMAL;
-    }
-    else
-    {
-      // Intake is or should be in the interference zone.
-      // Move everything else out of the way
-      arm.setAngle(0);
-      arm.extend(false);
-      // Lift can move as desired?
-      lift.setHeight(lift_height);
+    // Intake in, lift at mid, arm in
+    intake.setAngle(120.0);
+    lift.setHeight(0.3);
+    arm.extend(false);
 
-      if (arm.getAngle() < -45)
-      { // While arm is still getting out of the way, keep intake out
-        intake.setAngle(0);
-      }
-      else // Allow intake to desired position
-        intake.setAngle(intake_angle);
-    }
-*/
+    // Move arm angle
+    arm.setAngle(adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0));
+
+    // Move to other mode?
+    if (OI.joystick.getXButtonPressed())
+      mode = Mode.NEAR;
+    if (OI.joystick.getYButtonPressed())
+      mode = Mode.FAR;
+  }
+
+  private void handleFar()
+  {
+    // Intake in, lift all up, arm out as soon as lift high enough
+    intake.setAngle(120.0);
+    lift.setHeight(0.7);
+    arm.extend(lift.getHeight() > 0.4);
+
+    // Move arm angle, but not too far out front
+    arm.setAngle(adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, -50.0));
+
+    // Move to other mode?
+    if (OI.joystick.getXButtonPressed())
+      mode = Mode.MID;
   }
 }

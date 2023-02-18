@@ -9,7 +9,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -40,7 +41,9 @@ public class Arm extends SubsystemBase
   private NetworkTableEntry nt_kg_in;
   private NetworkTableEntry nt_kg_out;
   private NetworkTableEntry nt_ks;
-  private PIDController pid = new PIDController(0.15, 0, 0);
+  // PID for angle, not adjusting faster than 90 deg/sec (same accel.)
+  private ProfiledPIDController pid = new ProfiledPIDController(0.15, 0, 0,
+                                          new TrapezoidProfile.Constraints(90, 90));
 
   public Arm()
   {
@@ -62,9 +65,10 @@ public class Arm extends SubsystemBase
     nt_kg_out.setDefaultDouble(0.3);
     nt_ks = SmartDashboard.getEntry("Arm ks");
     nt_ks.setDefaultDouble(0.07);
+    
     SmartDashboard.putData("Arm PID", pid);
-
-    pid.reset();
+    pid.enableContinuousInput(-180.0, 180.0);
+    pid.reset(getAngle());
   }
 
   /** @return Arm angle in degrees, zero = horizontal, -90 = vertical down */

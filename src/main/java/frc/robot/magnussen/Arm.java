@@ -115,4 +115,39 @@ public class Arm extends SubsystemBase
                    +  P * error;
     setVoltage(voltage);
   }
+
+/* Example for handling the -180..180 range
+  public static void main(String[] args)
+  {
+    double setpoint, readback, error;
+    
+    setpoint = -45;
+    readback = -30;
+    error = setpoint - readback;
+    System.out.println("Set " + setpoint + ", readb " + readback + " -> error " + error);
+
+    setpoint = -180;
+    readback = -175;
+    error = setpoint - readback;
+    System.out.println("Set " + setpoint + ", readb " + readback + " -> error " + error);
+
+    setpoint = -180;
+    readback = +175;
+    error = setpoint - readback;
+    System.out.println("Set " + setpoint + ", readb " + readback + " -> error " + error);
+
+    error = Math.IEEEremainder(setpoint - readback, 360);
+    System.out.println("Set " + setpoint + ", readb " + readback + " -> error " + error);
+
+    setpoint = 0;
+    readback = -5;
+    error = Math.IEEEremainder(setpoint - readback, 360);
+    System.out.println("Set " + setpoint + ", readb " + readback + " -> error " + error);
+
+    setpoint = 0;
+    readback = 5;
+    error = Math.IEEEremainder(setpoint - readback, 360);
+    System.out.println("Set " + setpoint + ", readb " + readback + " -> error " + error);
+  }
+*/
 }

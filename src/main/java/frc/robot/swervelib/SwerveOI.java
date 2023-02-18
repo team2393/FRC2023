@@ -15,7 +15,7 @@ public class SwerveOI
   private static final boolean CORRECT = false;
 
   /** Maximum swerve speed sent from joystick input */
-  public static double MAX_METERS_PER_SEC = 2.0;
+  public static double MAX_METERS_PER_SEC = 3.0;
 
   /** Maximum rotational speed sent from joystick input */
   public static double MAX_RAD_PER_SEC = Math.toRadians(180);

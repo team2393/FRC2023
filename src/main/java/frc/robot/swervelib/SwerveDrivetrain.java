@@ -39,9 +39,6 @@ abstract public class SwerveDrivetrain extends SubsystemBase
    */
   public static double MINIMUM_SPEED_THRESHOLD = .05;
 
-  /** Maximum drive speed to tame things down */
-  public static double MAXIMUM_SPEED = 2.0;
-
   /** Position on field */
   private final NetworkTableEntry nt_x = SmartDashboard.getEntry("X");
   private final NetworkTableEntry nt_y = SmartDashboard.getEntry("Y");
@@ -242,7 +239,7 @@ abstract public class SwerveDrivetrain extends SubsystemBase
           states[i] = new SwerveModuleState(0, modules[i].getAngle());
     }
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, MAXIMUM_SPEED);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveOI.MAX_METERS_PER_SEC);
 
     for (int i=0; i<modules.length; ++i)
       modules[i].drive(states[i].angle.getDegrees(),

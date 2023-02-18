@@ -27,7 +27,7 @@ public class Grabber extends SubsystemBase
   {
     spinner.restoreFactoryDefaults();
     spinner.setIdleMode(IdleMode.kCoast);
-    spinner.setSmartCurrentLimit(20); // TODO current limit?
+   spinner.setSmartCurrentLimit(30); // TODO current limit?
   }
 
   /** @param voltage Spinner voltage, positive for 'in' */

@@ -29,7 +29,7 @@ public class GrabberTestRobot extends CommandBaseRobot
   public void teleopPeriodic()
   {
       // For 'up', send position voltage
-      double voltage = -5.0 * OI.joystick.getRightY();
+      double voltage = -10.0 * OI.joystick.getRightY();
       grabber.setVoltage(voltage);
 
       SmartDashboard.putNumber("Voltage", voltage);

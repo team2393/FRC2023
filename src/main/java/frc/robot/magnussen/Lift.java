@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
@@ -30,13 +31,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Lift extends SubsystemBase
 {
   /** Height encoder calibration */
-  private static final double REVS_PER_METER = 1;
+  private static final double REVS_PER_METER =  41.35 / Units.inchesToMeters(28);
 
   /** Maximum permitted height */
-  private static final double MAX_HEIGHT = 1.5;
+  public static final double MAX_HEIGHT = 0.75;
 
   /** Height below which we let the lift settle on its own */
-  private static final double SETTLE_THRESHOLD = 0.1;
+  private static final double SETTLE_THRESHOLD = 0.03;
 
   /** Motor controller with encoder */
   private CANSparkMax primary_motor = new CANSparkMax(RobotMap.LIFT1_ID, MotorType.kBrushless);
@@ -54,7 +55,7 @@ public class Lift extends SubsystemBase
   private NetworkTableEntry nt_height, nt_kg, nt_ks;
 
   /** PID */
-  private PIDController pid = new PIDController(0, 0, 0);
+  private PIDController pid = new PIDController(20, 0, 0);
 
   private double simulated_height = 0.0;
 
@@ -64,26 +65,25 @@ public class Lift extends SubsystemBase
     primary_motor.restoreFactoryDefaults();
     primary_motor.clearFaults();
     primary_motor.setSmartCurrentLimit(20);
-    primary_motor.setIdleMode(IdleMode.kCoast);
+    primary_motor.setIdleMode(IdleMode.kBrake);
 
     // Secondary motor set to follow the primary
     secondary_motor.restoreFactoryDefaults();
     secondary_motor.clearFaults();
     secondary_motor.setSmartCurrentLimit(20);
-    secondary_motor.setIdleMode(IdleMode.kCoast);
+    secondary_motor.setIdleMode(IdleMode.kBrake);
 
-    // Motors need to run in opposite direction,
-    // so _one_(!) of them must be inverted    
-    secondary_motor.setInverted(true);
+    // Make 'up' go up
+    primary_motor.setInverted(true);
 
     // We commmand the primary motor, let secondary follow
-    secondary_motor.follow(primary_motor);
+    secondary_motor.follow(primary_motor, true);
 
     nt_height = SmartDashboard.getEntry("Lift Height");
     nt_kg = SmartDashboard.getEntry("Lift kg");
     nt_ks = SmartDashboard.getEntry("Lift ks");
-    nt_kg.setDefaultDouble(0.0);
-    nt_ks.setDefaultDouble(0.0);
+    nt_kg.setDefaultDouble(0.3);
+    nt_ks.setDefaultDouble(0.06);
     SmartDashboard.putData("Lift PID", pid);
   }
 

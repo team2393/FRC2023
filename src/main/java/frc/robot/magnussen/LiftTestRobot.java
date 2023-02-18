@@ -52,6 +52,8 @@ public class LiftTestRobot extends CommandBaseRobot
   {
     // For 'up', send position voltage
     double voltage = -3.0 * OI.joystick.getRightY();
+    if (lift.getHeight() >= Lift.MAX_HEIGHT)
+      voltage = 0;
     lift.setVoltage(voltage);
     SmartDashboard.putNumber("Lift Voltage", voltage);
   }

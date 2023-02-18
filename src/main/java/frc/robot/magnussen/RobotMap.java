@@ -85,8 +85,8 @@ public class RobotMap
   /** Pneumatic for Arm extender */
   public static final int ARM_EXTENDER = 0;
 
-  /** CAN ID for Spinner */
-  public static final int SPINNER_ID = 17;
+  /** CAN ID for Spinner on grabber */
+  public static final int GRABBER_ID = 17;
 
   /** CAN ID for Intake motor */
   public static final int INTAKE_ID = 18;

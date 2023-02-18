@@ -17,7 +17,7 @@ public class Grabber extends SubsystemBase
   public static final double RELEASE_VOLTAGE = -1.5;
 
   /** Motor controller */
-  private CANSparkMax spinner = new CANSparkMax(RobotMap.SPINNER_ID, MotorType.kBrushless);
+  private CANSparkMax spinner = new CANSparkMax(RobotMap.GRABBER_ID, MotorType.kBrushless);
 
   // TODO Proximity sensor to stop when game piece is in grabber?
   // TODO Methods pullIn() until something's captures,

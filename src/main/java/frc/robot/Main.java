@@ -14,6 +14,6 @@ public final class Main
   {
     // RobotBase.startRobot(frc.robot.magnussen.MagnussenRobot::new);
     // RobotBase.startRobot(frc.robot.swervebot.SwerveBotRobot::new);
-    RobotBase.startRobot(frc.robot.magnussen.LiftArmDummyRobot::new);
+    RobotBase.startRobot(frc.robot.magnussen.LiftTestRobot::new);
   }
 }

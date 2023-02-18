@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -39,7 +40,7 @@ public class Arm extends SubsystemBase
   private NetworkTableEntry nt_kg_in;
   private NetworkTableEntry nt_kg_out;
   private NetworkTableEntry nt_ks;
-  private NetworkTableEntry nt_p;
+  private PIDController pid = new PIDController(0.15, 0, 0);
 
   public Arm()
   {
@@ -61,8 +62,9 @@ public class Arm extends SubsystemBase
     nt_kg_out.setDefaultDouble(0.3);
     nt_ks = SmartDashboard.getEntry("Arm ks");
     nt_ks.setDefaultDouble(0.07);
-    nt_p = SmartDashboard.getEntry("Arm P");
-    nt_p.setDefaultDouble(0.15);
+    SmartDashboard.putData("Arm PID", pid);
+
+    pid.reset();
   }
 
   /** @return Arm angle in degrees, zero = horizontal, -90 = vertical down */
@@ -117,8 +119,6 @@ public class Arm extends SubsystemBase
       kg = nt_kg_in.getDouble(0.0);
     // Static gain, minimum voltage to get moving
     double ks = nt_ks.getDouble(0.0);
-    // Propotional gain to correct angle error
-    double P  = nt_p.getDouble(0.0);
 
     // If arm is horizontal, cos(0) = 1 --> Apply full kg
     // If arm is down, cos(-90 deg) = 0 --> No kg
@@ -126,7 +126,7 @@ public class Arm extends SubsystemBase
     double error = Math.IEEEremainder(desired_angle - current_angle, 360.0);
     double voltage = ks * Math.signum(error) 
                    + kg * Math.cos(Math.toRadians(current_angle))
-                   +  P * error;
+                   + pid.calculate(current_angle, desired_angle);
     setVoltage(voltage);
   }
 

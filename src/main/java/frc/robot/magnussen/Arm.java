@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,6 +29,8 @@ public class Arm extends SubsystemBase
   private final SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(Type.kDutyCycle);
 
   private final Solenoid extender = new Solenoid(PneumaticsModuleType.REVPH, RobotMap.ARM_EXTENDER);
+
+  private double simulated_angle = -90.0;
 
   public Arm()
   {
@@ -48,6 +51,8 @@ public class Arm extends SubsystemBase
   /** @return Arm angle in degrees, zero = horizontal, -90 = vertical down */
   public double getAngle()
   {
+    if (RobotBase.isSimulation())
+      return simulated_angle;
     return encoder.getPosition() - SmartDashboard.getNumber("Arm Offset", 0.0);
   }
 
@@ -65,6 +70,12 @@ public class Arm extends SubsystemBase
     SmartDashboard.putNumber("Arm Voltage", voltage);
   }
 
+  /** @return Is arm extended? */
+  public boolean isExtended()
+  {
+    return extender.get();
+  }
+
   /** @param out Extend arm out, or pull in? */
   public void extend(boolean out)
   {
@@ -73,6 +84,11 @@ public class Arm extends SubsystemBase
 
   public void setAngle(double desired_angle)
   {
+    if (RobotBase.isSimulation())
+    {
+      simulated_angle = desired_angle;
+      return;
+    }
     // Compare w/ ArmFeedforward
     // Gravity gain, always applied to counteract gravity,
     // but different for extension in/out

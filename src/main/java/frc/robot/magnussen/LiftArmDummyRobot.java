@@ -3,6 +3,9 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.magnussen;
 
+import java.util.function.DoubleConsumer;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.CommandBaseRobot;
@@ -13,27 +16,22 @@ import frc.robot.CommandBaseRobot;
  */
 public class LiftArmDummyRobot extends CommandBaseRobot
 {
-  @Override
-  public void robotInit()
-  {
-    super.robotInit();
-    SmartDashboard.putNumber("Lift Height", 0.0);
-    SmartDashboard.putNumber("Arm Angle", -90.0);
-    SmartDashboard.putNumber("Intake Angle", 90.0);
-    SmartDashboard.putBoolean("Arm Extended", false);
-  }
+  private final Lift lift = new Lift();
+  private final Arm arm = new Arm();
+  private final Intake intake = new Intake();
 
-  /** @param setting Network table number to adjust
+  /** @param getter How to read the current value
+   *  @param setter How to set the desired value
    *  @param rate Decrease/increase -1..1
    *  @param min Minimum value
    *  @param max Maximum value
    *  @return Value that we set
    */
-  private double adjust(String setting, double rate, double min, double max)
+  private double adjust(DoubleSupplier getter, DoubleConsumer setter, double rate, double min, double max)
   {
-    double value = SmartDashboard.getNumber(setting, 0.0);
+    double value = getter.getAsDouble();
     value += rate;
-    SmartDashboard.putNumber(setting, MathUtil.clamp(value, min, max));
+    setter.accept(MathUtil.clamp(value, min, max));
     return value;
   }
 
@@ -47,15 +45,12 @@ public class LiftArmDummyRobot extends CommandBaseRobot
   /** Directly control each device */
   private void directControl()
   {
-    adjust("Lift Height", -0.02*MathUtil.applyDeadband(OI.joystick.getRightY(),      0.1),    0.0, 0.7);
-    adjust("Arm Angle",    1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),       0.1), -180.0, 0.0);
-    adjust("Intake Angle",-1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1),    0.0, 120.0);
+    adjust(lift::getHeight, lift::setHeight,  -0.02*MathUtil.applyDeadband(OI.joystick.getRightY(),      0.1),    0.0, 0.7);
+    adjust(arm::getAngle,   arm::setAngle,     1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),       0.1), -180.0, 0.0);
+    adjust(intake::getAngle, intake::setAngle,-1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1),    0.0, 120.0);
 
     if (OI.joystick.getAButtonPressed())
-    {
-      boolean extended = SmartDashboard.getBoolean("Arm Extended", false);
-      SmartDashboard.putBoolean("Arm Extended", ! extended);
-    }
+      arm.extend(! arm.isExtended());
   }
 
   private enum Mode
@@ -94,15 +89,15 @@ public class LiftArmDummyRobot extends CommandBaseRobot
   private void handleIntake()
   {
     // Fix: Arm in, lift at bottom
-    SmartDashboard.putBoolean("Arm Extended", false);
-    SmartDashboard.putNumber("Lift Height", 0.0);
+    arm.extend(false);
+    lift.setHeight(0.0);
 
     // Move intake
-    double intake_angle = adjust("Intake Angle",-1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), 0.0, 120.0);
+    double intake_angle = adjust(intake::getAngle, intake::setAngle, -1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), 0.0, 120.0);
 
     // Arm angle follows intake
     double arm_angle = -intake_angle;
-    SmartDashboard.putNumber("Arm Angle", arm_angle);
+    arm.setAngle(arm_angle);
 
     // Move to other mode?
     if (OI.joystick.getYButtonPressed())
@@ -112,16 +107,16 @@ public class LiftArmDummyRobot extends CommandBaseRobot
   private void handleNear()
   {
     // Fix: Intake, lift at bottom
-    SmartDashboard.putNumber("Intake Angle", 120.0);
-    SmartDashboard.putNumber("Lift Height", 0.0);
+    intake.setAngle(120.0);
+    lift.setHeight(0.0);
 
     // Move arm angle
-    double arm_angle = adjust("Arm Angle", 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0);
+    double arm_angle = adjust(arm::getAngle, arm::setAngle, 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0);
 
     // Extend when arm is sticking outside the back,
     // or out front yet not too far up (to prevent topping)
     // This should keep arm pulled in while where "inside" the robot
-    SmartDashboard.putBoolean("Arm Extended", arm_angle < -170  ||  (arm_angle > -80.0  &&  arm_angle < -40.0));
+    arm.extend(arm_angle < -170  ||  (arm_angle > -80.0  &&  arm_angle < -40.0));
 
     // Move to other mode?
     if (OI.joystick.getXButtonPressed())
@@ -133,12 +128,12 @@ public class LiftArmDummyRobot extends CommandBaseRobot
   private void handleMid()
   {
     // Fix: Intake, lift at mid, arm in
-    SmartDashboard.putNumber("Intake Angle", 120.0);
-    SmartDashboard.putNumber("Lift Height", 0.35);
-    SmartDashboard.putBoolean("Arm Extended", false);
+    intake.setAngle(120.0);
+    lift.setHeight(0.35);
+    arm.extend(false);
 
     // Move arm angle
-    adjust("Arm Angle", 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0);
+    adjust(arm::getAngle, arm::setAngle, 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0);
 
     // Move to other mode?
     if (OI.joystick.getXButtonPressed())
@@ -150,12 +145,12 @@ public class LiftArmDummyRobot extends CommandBaseRobot
   private void handleFar()
   {
     // Fix: Intake, lift all up, arm out as soon as lift high enough
-    SmartDashboard.putNumber("Intake Angle", 120.0);
-    SmartDashboard.putNumber("Lift Height", 0.7);
-    SmartDashboard.putBoolean("Arm Extended", SmartDashboard.getNumber("Lift Height", 0.0) > 0.4);
+    intake.setAngle(120.0);
+    lift.setHeight(0.7);
+    arm.extend(lift.getHeight() > 0.4);
 
-    // Move arm angle
-    adjust("Arm Angle", 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0);
+    // Move arm angle, but not too far out front
+    adjust(arm::getAngle, arm::setAngle, 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, -50.0);
 
     // Move to other mode?
     if (OI.joystick.getXButtonPressed())

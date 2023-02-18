@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -54,6 +55,8 @@ public class Lift extends SubsystemBase
 
   /** PID */
   private PIDController pid = new PIDController(0, 0, 0);
+
+  private double simulated_height = 0.0;
 
   public Lift()
   {
@@ -101,6 +104,8 @@ public class Lift extends SubsystemBase
   /** @return Lift height in meters */
   public double getHeight()
   {
+    if (RobotBase.isSimulation())
+      return simulated_height;
     return (primary_motor.getEncoder().getPosition() - bottom_offset) / REVS_PER_METER;
   }
 
@@ -112,6 +117,12 @@ public class Lift extends SubsystemBase
 
   public void setHeight(double desired_height)
   {
+    if (RobotBase.isSimulation())
+    {
+      simulated_height = desired_height;
+      return;
+    }
+
     double height = getHeight();
 
     // Don't run above top position

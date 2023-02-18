@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -16,6 +17,7 @@ public class Intake extends SubsystemBase
 {
   private CANSparkMax motor = new CANSparkMax(RobotMap.INTAKE_ANGLE, MotorType.kBrushless);
   private DutyCycleEncoder encoder = new DutyCycleEncoder(new DigitalInput(RobotMap.INTAKE_ANGLE));
+  private double simulated_angle = 90.0;
 
   public Intake()
   {
@@ -26,12 +28,19 @@ public class Intake extends SubsystemBase
 
     // TODO SmartDashboard.getEntry(..
     SmartDashboard.setDefaultNumber("Intake Offset", 0.0);
-    SmartDashboard.setDefaultNumber("Intake Voltage", 0.0);
+  }
+
+  @Override
+  public void periodic()
+  {
+    SmartDashboard.putNumber("Intake Angle", getAngle());
   }
 
   /** @return Intake angle in degrees */
   public double getAngle()
   {
+    if (RobotBase.isSimulation())
+      return simulated_angle;
     return encoder.getAbsolutePosition() - SmartDashboard.getNumber("Intake Offset", 0.0);
   }
 
@@ -45,6 +54,12 @@ public class Intake extends SubsystemBase
   /** @param angle Intake angle, positive for "up" */
   public void setAngle(double desired_angle)
   {
+    if (RobotBase.isSimulation())
+    {
+      simulated_angle = desired_angle;
+      return;
+    }
+    
     // Static gain, minimum voltage to get moving
     double ks = SmartDashboard.getNumber("Intake ks", 0.0);
     // Propotional gain to correct angle error

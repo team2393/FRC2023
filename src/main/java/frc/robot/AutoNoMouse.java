@@ -20,11 +20,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.swervelib.AutoDriveUphillCommand;
 import frc.robot.swervelib.SelectAbsoluteTrajectoryCommand;
-import frc.robot.swervelib.SelectRelativeTrajectoryCommand;
-import frc.robot.swervelib.StayPutCommand;
 import frc.robot.swervelib.SwerveDrivetrain;
-import frc.robot.swervelib.SwerveToPositionCommand;
-import frc.robot.swervelib.TimedDriveCommand;
 import frc.robot.swervelib.VariableWaitCommand;
 
 /** Auto-no-mouse routines */
@@ -85,99 +81,17 @@ public class AutoNoMouse
     final List<Command> autos = new ArrayList<>();
 
     {
-      autos.add(new SwerveToPositionCommand(drivetrain, 0, 0, 0)
-                    .andThen(new PrintCommand("Back HOME!"))
-                    .withName("Home"));
-    }
-
-    {
-      SequentialCommandGroup auto = new SequentialCommandGroup();
-      for (int i = 0; i < 5; ++i)
-      {
-        auto.addCommands(new TimedDriveCommand(drivetrain, 0, 0, 3));
-        auto.addCommands(new TimedDriveCommand(drivetrain, 15, 0, 3));
-      }
-      auto.setName("Wiggle 15");
-      autos.add(auto);
-    }
-
-    {
-      Trajectory trajectory = createTrajectory(true,  0.0, 0.0, 0.0,
-                                                      3.9, 0.0, 45.0,
-                                                      4.5, 1.3, 90.0,
-                                                      3.5, 2.3, 180.0,
-                                                      1.9, 1.9, 180.0);
-      autos.add(new SelectRelativeTrajectoryCommand(drivetrain)
-                    .andThen(drivetrain.createTrajectoryCommand(trajectory, 180.0))
-                    .andThen(new PrintCommand("Done"))
-                    .andThen(new StayPutCommand(drivetrain, 0.0))
-                    .withName("U-Cube"));
-    }
-
-    {
-      // Forward 1m, then back
-      SequentialCommandGroup auto = new SequentialCommandGroup();
-      // auto.addCommands(new ResetPositionCommand(drivetrain));
-      auto.addCommands(new SelectRelativeTrajectoryCommand(drivetrain));
-      Trajectory forward = createTrajectory(true, 0.0, 0.0, 0.0,
-                                                  1.0, 0.0, 0.0);
-      auto.addCommands(drivetrain.createTrajectoryCommand(forward, 0.0));
-      Trajectory back = createTrajectory(false, 1.0, 0.0, 0.0,
-                                                0.0, 0.0, 0.0);
-      auto.addCommands(drivetrain.createTrajectoryCommand(back, 0.0));
-      auto.addCommands(new StayPutCommand(drivetrain, 180.0));
-      auto.setName("Fw 1 and back");
-      autos.add(auto);
-    }
-
-    {
-      // Little forward and to right, then back
-      // from current location on
-      SequentialCommandGroup auto = new SequentialCommandGroup();
-      // auto.addCommands(new ResetPositionCommand(drivetrain));
-      auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new SelectRelativeTrajectoryCommand(drivetrain));
-      Trajectory forward = createTrajectory(true, 0.0, 0.0, 0.0,
-                                                  0.7, -0.7, -45.0,
-                                                  0.9, -2.7, -90);
-      auto.addCommands(drivetrain.createTrajectoryCommand(forward, -90.0));
-      Trajectory back = createTrajectory(false, 0.9, -2.7, -90.0,
-                                                0.9, 0.0, -90.0);
-      auto.addCommands(drivetrain.createTrajectoryCommand(back, 0.0));
-      Trajectory back2 = createTrajectory(false,  0.9, 0.0, 0.0,
-                                                  0.0, 0.0, 0.0);
-      auto.addCommands(drivetrain.createTrajectoryCommand(back2, 0.0));
-      auto.addCommands(new StayPutCommand(drivetrain, 0.0));
-      auto.setName("|----");
-      autos.add(auto);
-    }
-
-    {
-      SequentialCommandGroup auto = new SequentialCommandGroup();
-      auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
-      auto.addCommands(new SwerveToPositionCommand(drivetrain, 1, 1, 45));
-      auto.addCommands(new PrintCommand("Pretend we do something"));
-      auto.addCommands(new SwerveToPositionCommand(drivetrain, 2, 2, 90));
-      auto.addCommands(new PrintCommand("Pretend we do something else"));
-      auto.addCommands(new SwerveToPositionCommand(drivetrain, 3, 3, 180));
-      auto.setName("Points");
-      autos.add(auto);
-    }
-
-    {
-      SequentialCommandGroup auto = new SequentialCommandGroup();
+      SequentialCommandGroup auto = new SequenceWithStart("BTE", 1.85, 5.05, 0);
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
       Trajectory path = createTrajectory(true, 1.85, 5.05, 0,
                                                5.00, 4.70, 0);
       auto.addCommands(drivetrain.createTrajectoryCommand(path, 0));
-      auto.setName("BTE");
       autos.add(auto);
     }
 
     {
-      SequentialCommandGroup auto = new SequentialCommandGroup();
+      SequentialCommandGroup auto = new SequenceWithStart("BMR", 1.85, 2.75, 0);
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
       Trajectory path = createTrajectory(true, 1.85, 2.75, 45,
@@ -190,60 +104,55 @@ public class AutoNoMouse
                                     3.80, 4.60, 180,
                                     1.90, 4.45, 180);
       auto.addCommands(drivetrain.createTrajectoryCommand(path, 180));
-      auto.setName("BMR");
       autos.add(auto);
     }
 
     { // Blue Bottom Drop item then Retrieve another
-      SequentialCommandGroup auto = new SequentialCommandGroup();
+      SequentialCommandGroup auto = new SequenceWithStart("BBDR", 1.93, 0.5, 180);
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new PrintCommand("Dropping..."));
       auto.addCommands(new WaitCommand(2));
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain, 1.93, 0.5, 180));
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
       Trajectory path = createTrajectory(true, 1.93, 0.50, 0,
                                                5.42, 0.9, 0,
                                                6.39, 2.14, 0);
       auto.addCommands(drivetrain.createTrajectoryCommand(path, 0));
-      auto.setName("BBDR");
       autos.add(auto);
     }
 
     { // 'Mirrored' sequence: X   -->  WIDTH-X,   heading --> 180-heading.  Y stays.
-      SequentialCommandGroup auto = new SequentialCommandGroup();
+      SequentialCommandGroup auto = new SequenceWithStart("RBDR", WIDTH-1.93, 0.5, 180-180);
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new PrintCommand("Dropping..."));
       auto.addCommands(new WaitCommand(2));
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain, WIDTH-1.93, 0.5, 180-180));
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
       Trajectory path = createTrajectory(true, WIDTH-1.93, 0.50, 180-0,
                                                WIDTH-5.42, 0.9,  180-0,
                                                WIDTH-6.39, 2.14, 180-0);
       auto.addCommands(drivetrain.createTrajectoryCommand(path, 180-0));
-      auto.setName("RBDR");
       autos.add(auto);
     }
 
     { // Example for using PathWeaver
-      SequentialCommandGroup auto = new SequentialCommandGroup();
+      SequentialCommandGroup auto = new SequenceWithStart("PWCircle", 1.66, 4.47, 0);
       auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain, 1.66, 4.47, 0));
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
       auto.addCommands(followPathWeaver(drivetrain, "Circle", 0));
-      auto.setName("PWCircle");
       autos.add(auto);
     }
 
     {
-      SequentialCommandGroup auto = new SequentialCommandGroup();
+      SequentialCommandGroup auto = new SequenceWithStart("PWTest", 1.66, 4.47, 0);
       auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain, 1.66, 4.47, 0));
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
       auto.addCommands(followPathWeaver(drivetrain, "Test", 0));
-      auto.setName("PWTest");
       autos.add(auto);
     }
 
     {
-      SequentialCommandGroup auto = new SequentialCommandGroup();
+      SequentialCommandGroup auto = new SequenceWithStart("BalanceTest", 1.84, 1.12, 180);
       auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain, 1.84, 1.12, 180));
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
       auto.addCommands(new PrintCommand("Driving to charge station..."));
       Trajectory path = createTrajectory(true, 1.84, 1.12,  0,
                                                6,    1.1,  45,
@@ -253,16 +162,13 @@ public class AutoNoMouse
       auto.addCommands(new PrintCommand("Driving uphill .."));
       auto.addCommands(new AutoDriveUphillCommand(drivetrain));
       auto.addCommands(new PrintCommand("Done!"));
-      auto.setName("BalanceTest");
       autos.add(auto);
     }
 
     { // Skeleton for another auto option
-      SequentialCommandGroup auto = new SequentialCommandGroup();
+      SequentialCommandGroup auto = new SequenceWithStart("Another", 1.84, 1.12, 0);
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
-
-      auto.setName("Another");
       autos.add(auto);
     }
 

@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.magnussen;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -12,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.AutoNoMouse;
 import frc.robot.CommandBaseRobot;
+import frc.robot.SequenceWithStart;
 import frc.robot.swervelib.RelativeSwerveCommand;
 import frc.robot.swervelib.ResetPositionCommand;
 import frc.robot.swervelib.SwerveOI;
@@ -58,6 +60,19 @@ public class MagnussenRobot extends CommandBaseRobot
   {
     // Make robot easier to move while disabled
     drivetrain.brake(false);
+  }
+
+  @Override
+  public void disabledPeriodic()
+  {
+    // Is an auto option selected that's of type
+    // SequenceWithStart?
+    Command auto = autos.getSelected();
+    if (auto instanceof SequenceWithStart)
+    { // If so, update odometry to show that
+      Pose2d start = ((SequenceWithStart) auto).getStart();
+      drivetrain.setOdometry(start.getX(), start.getY(), start.getRotation().getDegrees());
+    }
   }
 
   @Override

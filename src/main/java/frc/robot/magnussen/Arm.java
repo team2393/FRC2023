@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -31,6 +32,14 @@ public class Arm extends SubsystemBase
   private final Solenoid extender = new Solenoid(PneumaticsModuleType.REVPH, RobotMap.ARM_EXTENDER);
 
   private double simulated_angle = -90.0;
+  
+  private NetworkTableEntry nt_angle;
+  private NetworkTableEntry nt_extended;
+  private NetworkTableEntry nt_offset;
+  private NetworkTableEntry nt_kg_in;
+  private NetworkTableEntry nt_kg_out;
+  private NetworkTableEntry nt_ks;
+  private NetworkTableEntry nt_p;
 
   public Arm()
   {
@@ -42,12 +51,18 @@ public class Arm extends SubsystemBase
 
     extender.set(false);
 
-    // TODO SmartDashboard.getEntry(..
-    SmartDashboard.setDefaultNumber("Arm Offset", 91.25);
-    SmartDashboard.setDefaultNumber("Arm kg in", 0.3);
-    SmartDashboard.setDefaultNumber("Arm kg out", 0.3);
-    SmartDashboard.setDefaultNumber("Arm ks", 0.07);
-    SmartDashboard.setDefaultNumber("Arm P", 0.15);
+    nt_angle = SmartDashboard.getEntry("Arm Angle");
+    nt_extended = SmartDashboard.getEntry("Arm Extended");
+    nt_offset = SmartDashboard.getEntry("Arm Offset");
+    nt_offset.setDefaultDouble(91.25);
+    nt_kg_in = SmartDashboard.getEntry("Arm kg in");
+    nt_kg_in.setDefaultDouble(0.3);
+    nt_kg_out = SmartDashboard.getEntry("Arm kg out");
+    nt_kg_out.setDefaultDouble(0.3);
+    nt_ks = SmartDashboard.getEntry("Arm ks");
+    nt_ks.setDefaultDouble(0.07);
+    nt_p = SmartDashboard.getEntry("Arm P");
+    nt_p.setDefaultDouble(0.15);
   }
 
   /** @return Arm angle in degrees, zero = horizontal, -90 = vertical down */
@@ -57,21 +72,20 @@ public class Arm extends SubsystemBase
       return simulated_angle;
     // Change 'turns' into degrees,
     // fix offset, bracked to -180..+180
-    return Math.IEEEremainder(encoder.getPosition()*360 - SmartDashboard.getNumber("Arm Offset", 0.0), 360);
+    return Math.IEEEremainder(encoder.getPosition()*360 - nt_offset.getDouble(0.0), 360);
   }
 
   @Override
   public void periodic()
   {
-    SmartDashboard.putNumber("Arm Angle", getAngle());
-    SmartDashboard.putBoolean("Arm Extended", extender.get());
+    nt_angle.setNumber(getAngle());
+    nt_extended.setBoolean(extender.get());
   }
 
   /** @param voltage Arm voltage, positive for "up" */
   public void setVoltage(double voltage)
   {
     motor.setVoltage(voltage);
-    SmartDashboard.putNumber("Arm Voltage", voltage);
   }
 
   /** @return Is arm extended? */
@@ -98,13 +112,13 @@ public class Arm extends SubsystemBase
     // but different for extension in/out
     double kg;
     if (extender.get())
-      kg = SmartDashboard.getNumber("Arm kg out", 0.0);
+      kg = nt_kg_out.getDouble(0.0);
     else
-      kg = SmartDashboard.getNumber("Arm kg in", 0.0);
+      kg = nt_kg_in.getDouble(0.0);
     // Static gain, minimum voltage to get moving
-    double ks = SmartDashboard.getNumber("Arm ks", 0.0);
+    double ks = nt_ks.getDouble(0.0);
     // Propotional gain to correct angle error
-    double P  = SmartDashboard.getNumber("Arm P", 0.0);
+    double P  = nt_p.getDouble(0.0);
 
     // If arm is horizontal, cos(0) = 1 --> Apply full kg
     // If arm is down, cos(-90 deg) = 0 --> No kg

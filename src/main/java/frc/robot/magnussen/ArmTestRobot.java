@@ -59,7 +59,9 @@ public class ArmTestRobot extends CommandBaseRobot
       arm.extend(false);
     
       // For 'up', send position voltage
-    arm.setVoltage(-5.0 * OI.joystick.getRightY());
+    double voltage = -5.0 * OI.joystick.getRightY();
+    arm.setVoltage(voltage);
+    SmartDashboard.putNumber("Arm Voltage", voltage);
   }
 
   @Override

@@ -8,7 +8,7 @@ import frc.robot.CommandBaseRobot;
 
 /** Arm test robot
  *
- *  TODO Setup Procedure:
+ *  Setup Procedure:
  * - Use correct motor and sensor types, ID, pneumatics module type, ..
  *
  * Disabled:

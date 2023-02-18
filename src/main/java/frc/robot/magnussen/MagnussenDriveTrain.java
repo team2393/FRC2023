@@ -4,6 +4,9 @@
 package frc.robot.magnussen;
 
 import com.ctre.phoenix.sensors.Pigeon2;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.swervelib.SwerveDrivetrain;
 import frc.robot.swervelib.SwerveModule;
 
@@ -32,6 +35,23 @@ public class MagnussenDriveTrain extends SwerveDrivetrain
 
   public double getPitch()
   {
+    if (RobotBase.isSimulation())
+    {
+      Pose2d pose = getPose();
+      double x  = pose.getTranslation().getX();
+      double heading = pose.getRotation().getDegrees();
+
+      // Coming from the right, headed left, simulate driving 'up' and then 'down' the charge station
+      if (Math.abs(heading - -180.0) < 10.0)
+      { // From the right, go 'up'
+        if (4.03 < x  &&  x < 4.9)
+          return 30.0;
+        // Then flat from 4.03 to 3.66, then down
+        if (2.8  < x  &&   x < 3.66)
+          return -30.0;
+      }
+    }
+
     return -gyro.getPitch();
   }
 

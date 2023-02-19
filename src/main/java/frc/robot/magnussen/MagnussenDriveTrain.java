@@ -41,13 +41,22 @@ public class MagnussenDriveTrain extends SwerveDrivetrain
       double x  = pose.getTranslation().getX();
       double heading = pose.getRotation().getDegrees();
 
-      // Coming from the right, headed left, simulate driving 'up' and then 'down' the charge station
+      // Left charge station, coming from the right, headed left, simulate driving 'up' and then 'down' the charge station
       if (Math.abs(Math.IEEEremainder(heading - 180.0, 360)) < 10.0)
       { // From the right, go 'up'
         if (4.03 < x  &&  x < 4.9)
           return 30.0;
         // Then flat from 4.03 to 3.66, then down
         if (2.8  < x  &&   x < 3.66)
+          return -30.0;
+      }
+
+      // Right change station, coming from the left, headed right
+      if (Math.abs(heading) < 10.0)
+      {
+        if (11.40 < x  &&  x < 12.4)
+          return 30.0;
+        if (13.0  < x  &&   x < 13.9)
           return -30.0;
       }
     }

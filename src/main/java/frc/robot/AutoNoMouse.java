@@ -116,6 +116,18 @@ public class AutoNoMouse
       autos.add(auto);
     }
 
+    { // Red, Top node, drive out then Balance
+      SequentialCommandGroup auto = new SequenceWithStart("RTBalance",  WIDTH-1.84, 4.45, 0);
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      auto.addCommands(new PrintCommand("Driving to charge station..."));
+      auto.addCommands(followPathWeaver(drivetrain, "RTBalance", 0));
+      auto.addCommands(new PrintCommand("Driving uphill .."));
+      auto.addCommands(new AutoDriveUphillCommand(drivetrain));
+      auto.addCommands(new PrintCommand("Done!"));
+      autos.add(auto);
+    }
+
     { // Blue, Middle node, drive out then Balance
       SequentialCommandGroup auto = new SequenceWithStart("BMBalance",  1.84, 2.75, 180);
       auto.addCommands(new VariableWaitCommand());

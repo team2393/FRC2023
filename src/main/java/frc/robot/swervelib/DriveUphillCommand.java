@@ -18,12 +18,13 @@ public class DriveUphillCommand extends CommandBase
 
   public void execute()
   {
-    // Start out with the controller inputs to allow "normal" swerving,
+    // Start out with reduced controller inputs to allow "normal" swerving,
     // but their values would typically be zero since we're using the
     // up/down triggers
-    double vx = SwerveOI.getForwardSpeed();
-    double vy = SwerveOI.getLeftSpeed();
-    double vr = SwerveOI.getRotationSpeed();
+    double slowdown = 0.5;
+    double vx = slowdown * SwerveOI.getForwardSpeed();
+    double vy = slowdown * SwerveOI.getLeftSpeed();
+    double vr = slowdown * SwerveOI.getRotationSpeed();
 
     // Check how fast we want to drive 'up/downhill':
     // Right trigger to move uphill, left trigger to move downhill

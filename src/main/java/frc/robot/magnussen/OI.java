@@ -8,4 +8,8 @@ import frc.robot.swervelib.SwerveOI;
 /** Operator interface */
 public class OI extends SwerveOI
 {
+  public static boolean selectUphillMode()
+  {
+    return joystick.getLeftBumperPressed();
+  }
 }

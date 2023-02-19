@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.AutoNoMouse;
 import frc.robot.CommandBaseRobot;
 import frc.robot.SequenceWithStart;
+import frc.robot.swervelib.DriveUphillCommand;
 import frc.robot.swervelib.RelativeSwerveCommand;
 import frc.robot.swervelib.ResetPositionCommand;
 import frc.robot.swervelib.SwerveOI;
@@ -24,6 +25,7 @@ public class MagnussenRobot extends CommandBaseRobot
 {
   private final MagnussenDriveTrain drivetrain = new MagnussenDriveTrain();
   private final CommandBase drive_relative = new RelativeSwerveCommand(drivetrain, false);
+  private final CommandBase drive_uphill = new DriveUphillCommand(drivetrain);
   private final CommandBase reset = new ResetPositionCommand(drivetrain);
 
   private final SendableChooser<Command> autos = new SendableChooser<>();
@@ -87,8 +89,11 @@ public class MagnussenRobot extends CommandBaseRobot
   public void teleopPeriodic()
   {
     // Activate different drive mode?
-    if (SwerveOI.selectRelativeMode())
+    if (OI.selectRelativeMode())
       drive_relative.schedule();
+    else if (OI.selectUphillMode())
+      drive_uphill.schedule();
+    
     if (SwerveOI.resetOrigin())
         reset.schedule();
 

@@ -45,7 +45,7 @@ public class SwervebotDrivetrain extends SwerveDrivetrain
       // return 30;
 
       // Coming from the right, headed left, simulate driving 'up' and then 'down' the charge station
-      if (Math.abs(heading - 180.0) < 10.0)
+      if (Math.abs(Math.IEEEremainder(heading - 180.0, 360)) < 10.0)
       { // From the right, go 'up'
         if (4.03 < x  &&  x < 4.9)
           return 30.0;

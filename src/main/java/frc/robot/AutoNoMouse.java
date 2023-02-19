@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.swervelib.AutoDriveUphillCommand;
 import frc.robot.swervelib.SelectAbsoluteTrajectoryCommand;
+import frc.robot.swervelib.SelectRelativeTrajectoryCommand;
 import frc.robot.swervelib.SwerveDrivetrain;
 import frc.robot.swervelib.VariableWaitCommand;
 
@@ -80,16 +81,70 @@ public class AutoNoMouse
   {
     final List<Command> autos = new ArrayList<>();
 
-    {
-      SequentialCommandGroup auto = new SequenceWithStart("BTE", 1.85, 5.05, 0);
+    // ---------------------- Move out -----------------------------------
+
+    { // Simply drive forward 1.5 m, can be used from Blue or Red, Top or Bottom
+      SequentialCommandGroup auto = new SequentialCommandGroup();
+      auto.setName("Forward 1.5m");
       auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
-      Trajectory path = createTrajectory(true, 1.85, 5.05, 0,
-                                               5.00, 4.70, 0);
+      auto.addCommands(new SelectRelativeTrajectoryCommand(drivetrain));
+      Trajectory path = createTrajectory(true, 0, 0, 0,
+                                               1.50, 0, 0);
       auto.addCommands(drivetrain.createTrajectoryCommand(path, 0));
       autos.add(auto);
     }
 
+    { // Blue, Middle node, Exit
+      SequentialCommandGroup auto = new SequenceWithStart("BME",  1.84, 2.7, 180);
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      auto.addCommands(followPathWeaver(drivetrain, "BME", 0));
+      autos.add(auto);
+    }
+
+    // ---------------------- Move out and Balance -----------------------------------
+
+    { // Blue, Top node, drive out then Balance
+      SequentialCommandGroup auto = new SequenceWithStart("BTBalance",  1.84, 4.45, 180);
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      auto.addCommands(new PrintCommand("Driving to charge station..."));
+      auto.addCommands(followPathWeaver(drivetrain, "BTBalance", 180));
+      auto.addCommands(new PrintCommand("Driving uphill .."));
+      auto.addCommands(new AutoDriveUphillCommand(drivetrain));
+      auto.addCommands(new PrintCommand("Done!"));
+      autos.add(auto);
+    }
+
+    { // Blue, Middle node, drive out then Balance
+      SequentialCommandGroup auto = new SequenceWithStart("BMBalance",  1.84, 2.75, 180);
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      auto.addCommands(new PrintCommand("Driving to charge station..."));
+      auto.addCommands(followPathWeaver(drivetrain, "BMBalance", 180));
+      auto.addCommands(new PrintCommand("Driving uphill .."));
+      auto.addCommands(new AutoDriveUphillCommand(drivetrain));
+      auto.addCommands(new PrintCommand("Done!"));
+      autos.add(auto);
+    }
+
+    { // Blue, Bottom node, drive out then Balance
+      SequentialCommandGroup auto = new SequenceWithStart("BBBalance", 1.84, 1.12, 180);
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      auto.addCommands(new PrintCommand("Driving to charge station..."));
+      Trajectory path = createTrajectory(true, 1.84, 1.12,  0,
+                                               6,    1.3,  45,
+                                               6,    2.4,  135,
+                                               4.5,  2.85, 180);
+      auto.addCommands(drivetrain.createTrajectoryCommand(path, 180));
+      auto.addCommands(new PrintCommand("Driving uphill .."));
+      auto.addCommands(new AutoDriveUphillCommand(drivetrain));
+      auto.addCommands(new PrintCommand("Done!"));
+      autos.add(auto);
+    }
+
+    // ---------------------- Other -----------------------------------
     {
       SequentialCommandGroup auto = new SequenceWithStart("BMR", 1.85, 2.75, 0);
       auto.addCommands(new VariableWaitCommand());
@@ -146,34 +201,6 @@ public class AutoNoMouse
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
       auto.addCommands(followPathWeaver(drivetrain, "Test", 0));
-      autos.add(auto);
-    }
-
-    { // Blue, middle node, drive out then balance
-      SequentialCommandGroup auto = new SequenceWithStart("BMOutBalance",  1.84, 2.75, 180);
-      auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
-      auto.addCommands(new PrintCommand("Driving to charge station..."));
-      auto.addCommands(followPathWeaver(drivetrain, "BMOut2Balance", 180));
-      auto.addCommands(new PrintCommand("Driving uphill .."));
-      auto.addCommands(new AutoDriveUphillCommand(drivetrain));
-      auto.addCommands(new PrintCommand("Done!"));
-      autos.add(auto);
-    }
-
-    {
-      SequentialCommandGroup auto = new SequenceWithStart("BalanceTest", 1.84, 1.12, 180);
-      auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
-      auto.addCommands(new PrintCommand("Driving to charge station..."));
-      Trajectory path = createTrajectory(true, 1.84, 1.12,  0,
-                                               6,    1.3,  45,
-                                               6,    2.4,  135,
-                                               4.5,  2.85, 180);
-      auto.addCommands(drivetrain.createTrajectoryCommand(path, 180));
-      auto.addCommands(new PrintCommand("Driving uphill .."));
-      auto.addCommands(new AutoDriveUphillCommand(drivetrain));
-      auto.addCommands(new PrintCommand("Done!"));
       autos.add(auto);
     }
 

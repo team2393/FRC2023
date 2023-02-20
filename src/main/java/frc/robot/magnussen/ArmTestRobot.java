@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.magnussen;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.CommandBaseRobot;
 
@@ -55,18 +56,18 @@ public class ArmTestRobot extends CommandBaseRobot
   public void teleopPeriodic()
   {
     // Extend/retract arm    
-    if (OI.joystick.getYButtonPressed())
-      arm.extend(true);
     if (OI.joystick.getAButtonPressed())
+      arm.extend(true);
+    if (OI.joystick.getYButtonPressed())
       arm.extend(false);
     
       // For 'up', send position voltage
-    double voltage = -5.0 * OI.joystick.getRightY();
+    double voltage = -5.0 * MathUtil.applyDeadband(OI.joystick.getRightY(), 0.1);
     arm.setVoltage(voltage);
     SmartDashboard.putNumber("Arm Voltage", voltage);
 
     // 'up' to pull game piece in
-    voltage = -5.0 * OI.joystick.getLeftY();
+    voltage = -8.0 * MathUtil.applyDeadband(OI.joystick.getLeftY(), 0.1);
     grabber.setVoltage(voltage);
     SmartDashboard.putNumber("Grabber Voltage", voltage);
   }

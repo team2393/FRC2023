@@ -12,6 +12,7 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -86,6 +87,10 @@ public class Arm extends SubsystemBase
   {
     nt_angle.setNumber(getAngle());
     nt_extended.setBoolean(extender.get());
+
+    // TODO Remove after testing
+    SmartDashboard.putNumber("Current", motor.getOutputCurrent());
+    NetworkTableInstance.getDefault().flush();
   }
 
   /** @param voltage Arm voltage, positive for "up" */

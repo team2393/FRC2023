@@ -11,6 +11,7 @@ import frc.robot.CommandBaseRobot;
  *
  *  Setup Procedure:
  *  - Use correct motor and sensor IDs
+ *  - Enable default 'GrabberOffCommand'
  * 
  *  Disabled:
  *  - Do sensors detect "Cube" or "Cone"?

@@ -39,7 +39,9 @@ import frc.robot.CommandBaseRobot;
  */
 public class ArmTestRobot extends CommandBaseRobot
 {
+  private final Pneumatics pneumatics = new Pneumatics();
   private final Arm arm = new Arm();
+  private final Grabber grabber = new Grabber();
 
   @Override
   public void robotInit()
@@ -62,6 +64,11 @@ public class ArmTestRobot extends CommandBaseRobot
     double voltage = -5.0 * OI.joystick.getRightY();
     arm.setVoltage(voltage);
     SmartDashboard.putNumber("Arm Voltage", voltage);
+
+    // 'up' to pull game piece in
+    voltage = -5.0 * OI.joystick.getLeftY();
+    grabber.setVoltage(voltage);
+    SmartDashboard.putNumber("Grabber Voltage", voltage);
   }
 
   @Override

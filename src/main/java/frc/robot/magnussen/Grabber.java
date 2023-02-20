@@ -37,7 +37,7 @@ public class Grabber extends SubsystemBase
     nt_cube = SmartDashboard.getEntry("Cube");
     nt_cone = SmartDashboard.getEntry("Cone");
 
-    setDefaultCommand(new GrabberOffCommand(this));
+    // TODO setDefaultCommand(new GrabberOffCommand(this));
   }
 
   /** @return Do we sense a cube? */

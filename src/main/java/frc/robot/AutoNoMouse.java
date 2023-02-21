@@ -102,6 +102,8 @@ public class AutoNoMouse
       autos.add(auto);
     }
 
+    // TODO RTE
+
     { // Blue, Middle node, Exit
       SequentialCommandGroup auto = new SequenceWithStart("BME",  1.84, 2.7, 180);
       auto.addCommands(new VariableWaitCommand());
@@ -110,9 +112,10 @@ public class AutoNoMouse
       autos.add(auto);
     }
 
-    // TODO BBE
-    // TODO RBE
     // TODO RME
+
+    // TODO BBE
+
     // TODO RBE
 
     // ---------------------- Move out and Balance -----------------------------------
@@ -153,6 +156,8 @@ public class AutoNoMouse
       autos.add(auto);
     }
 
+    // TODO RMBalance
+
     { // Blue, Bottom node, drive out then Balance
       SequentialCommandGroup auto = new SequenceWithStart("BBBalance", 1.84, 1.12, 180);
       auto.addCommands(new VariableWaitCommand());
@@ -169,7 +174,14 @@ public class AutoNoMouse
       autos.add(auto);
     }
 
+    // TODO RBBalance
+
     // ---------------------- Other -----------------------------------
+
+    // TODO: Create copies of the 'balance' routines,
+    //       but start by dropping initial game piece,
+    //       then move out, pickup another game piece and balance
+
     {
       SequentialCommandGroup auto = new SequenceWithStart("BMR", 1.85, 2.75, 0);
       auto.addCommands(new VariableWaitCommand());

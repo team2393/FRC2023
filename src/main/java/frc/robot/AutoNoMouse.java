@@ -127,7 +127,7 @@ public class AutoNoMouse
     }
     
     { // Blue, Bottom node, Exit
-      SequentialCommandGroup auto = new SequenceWithStart("BBE",  1.84, 2.7, 180);
+      SequentialCommandGroup auto = new SequenceWithStart("BBE",  1.6, 1.03, 0);
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
       auto.addCommands(followPathWeaver(drivetrain, "BBE", 180));

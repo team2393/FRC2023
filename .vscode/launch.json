@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch Arm",
+      "request": "launch",
+      "mainClass": "frc.robot.magnussen.Arm",
+      "projectName": "FRC2023"
+    },
+    {
+      "type": "java",
       "name": "Launch FieldInfo",
       "request": "launch",
       "mainClass": "frc.robot.vision.FieldInfo",

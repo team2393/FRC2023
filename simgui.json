@@ -63,6 +63,7 @@
       "/LiveWindow/Ungrouped/Talon FX [4]": "Motor Controller",
       "/SmartDashboard/Auto Options": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Lift PID": "PIDController",
       "/SmartDashboard/ResetGyro": "Command",
       "/SmartDashboard/ResetPosition": "Command",
       "/SmartDashboard/Scheduler": "Scheduler"
@@ -99,9 +100,6 @@
       },
       "SmartDashboard": {
         "ResetPosition": {
-          "open": true
-        },
-        "Scheduler": {
           "open": true
         },
         "open": true

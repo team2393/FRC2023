@@ -102,7 +102,13 @@ public class AutoNoMouse
       autos.add(auto);
     }
 
-    // TODO RTE
+    { // Red, Top node, Exit
+      SequentialCommandGroup auto = new SequenceWithStart("RTE",  14.75, 4.45, 0);
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      auto.addCommands(followPathWeaver(drivetrain, "RTE", 180));
+      autos.add(auto);
+    }
 
     { // Blue, Middle node, Exit
       SequentialCommandGroup auto = new SequenceWithStart("BME",  1.84, 2.7, 180);

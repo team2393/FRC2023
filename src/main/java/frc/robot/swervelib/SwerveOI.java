@@ -15,17 +15,17 @@ public class SwerveOI
   private static final boolean CORRECT = false;
 
   /** Maximum swerve speed sent from joystick input */
-  public static double MAX_METERS_PER_SEC = 3.0;
+  public static double MAX_METERS_PER_SEC = 4.0;
 
   /** Maximum rotational speed sent from joystick input */
   public static double MAX_RAD_PER_SEC = Math.toRadians(180);
 
   public static final XboxController joystick = new XboxController(0);
 
-  // Limit joystick slew, go 0 to 1 in 1/4 second
-  private static final SlewRateLimiter x_throttle = new SlewRateLimiter(8.0);
-  private static final SlewRateLimiter y_throttle = new SlewRateLimiter(8.0);
-  private static final SlewRateLimiter rot_throttle = new SlewRateLimiter(16.0);
+  // Limit joystick slew, go to full speed in .. second
+  private static final SlewRateLimiter x_throttle = new SlewRateLimiter(MAX_METERS_PER_SEC/1.0);
+  private static final SlewRateLimiter y_throttle = new SlewRateLimiter(MAX_METERS_PER_SEC/1.0);
+  private static final SlewRateLimiter rot_throttle = new SlewRateLimiter(MAX_RAD_PER_SEC/0.5);
 
   public static void reset()
   {
@@ -40,30 +40,27 @@ public class SwerveOI
   /** @return Forward/backwards speed [m/s] */
   public static double getForwardSpeed()
   {
-    double stick = CORRECT ? joystick.getRightY() : joystick.getLeftY();
+    double stick = CORRECT ? -joystick.getRightY() : -joystick.getLeftY();
     stick = MathUtil.applyDeadband(stick, 0.1);
-    stick = x_throttle.calculate(stick);
-    return -MAX_METERS_PER_SEC * stick;
+    return x_throttle.calculate(MAX_METERS_PER_SEC * stick);
   }
 
   /** @return Left/right speed [m/s] */
   public static double getLeftSpeed()
   {
-    double stick = CORRECT ? joystick.getRightX() : joystick.getLeftX();
+    double stick = CORRECT ? -joystick.getRightX() : -joystick.getLeftX();
     stick = MathUtil.applyDeadband(stick, 0.1);
-    stick = y_throttle.calculate(stick);
-    return -MAX_METERS_PER_SEC * stick;
+    return y_throttle.calculate(MAX_METERS_PER_SEC * stick);
   }
 
   /** @return Rotational speed, counter-clockwise [rad/s] */
   public static double getRotationSpeed()
   {
-    double stick = CORRECT ? joystick.getLeftX() : joystick.getRightX();
+    double stick = CORRECT ? -joystick.getLeftX() : -joystick.getRightX();
     stick = MathUtil.applyDeadband(stick, 0.1);
     // Square output (keeping sign) for more sensitive center moves
     stick *= Math.abs(stick);
-    stick = rot_throttle.calculate(stick);
-    return -MAX_RAD_PER_SEC * stick;
+    return rot_throttle.calculate(MAX_RAD_PER_SEC * stick);
   }
 
   /** @return Value -1..1 based on both triggers */

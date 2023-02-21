@@ -126,7 +126,13 @@ public class AutoNoMouse
       autos.add(auto);
     }
     
-    // TODO BBE
+    { // Blue, Bottom node, Exit
+      SequentialCommandGroup auto = new SequenceWithStart("BBE",  1.84, 2.7, 180);
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      auto.addCommands(followPathWeaver(drivetrain, "BBE", 180));
+      autos.add(auto);
+    }
 
     // TODO RBE
 
@@ -168,8 +174,17 @@ public class AutoNoMouse
       autos.add(auto);
     }
 
-    // TODO RMBalance
-
+    { // Red, Middle node, drive out then Balance
+      SequentialCommandGroup auto = new SequenceWithStart("RMBalance",  14.9, 2.8, 0);
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      auto.addCommands(new PrintCommand("Driving to charge station..."));
+      auto.addCommands(followPathWeaver(drivetrain, "RMBalance", 0));
+      auto.addCommands(new PrintCommand("Driving uphill .."));
+      auto.addCommands(new AutoDriveUphillCommand(drivetrain));
+      auto.addCommands(new PrintCommand("Done!"));
+      autos.add(auto);
+    }
     { // Blue, Bottom node, drive out then Balance
       SequentialCommandGroup auto = new SequenceWithStart("BBBalance", 1.84, 1.12, 180);
       auto.addCommands(new VariableWaitCommand());
@@ -186,7 +201,17 @@ public class AutoNoMouse
       autos.add(auto);
     }
 
-    // TODO RBBalance
+    { // Red, Bottom node, drive out then Balance
+      SequentialCommandGroup auto = new SequenceWithStart("RBBalance",  14.78, 1.05, 0);
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      auto.addCommands(new PrintCommand("Driving to charge station..."));
+      auto.addCommands(followPathWeaver(drivetrain, "RBBalance", 0));
+      auto.addCommands(new PrintCommand("Driving uphill .."));
+      auto.addCommands(new AutoDriveUphillCommand(drivetrain));
+      auto.addCommands(new PrintCommand("Done!"));
+      autos.add(auto);
+    }
 
     // ---------------------- Other -----------------------------------
 

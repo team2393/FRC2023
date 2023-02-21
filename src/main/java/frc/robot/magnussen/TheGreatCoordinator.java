@@ -136,7 +136,7 @@ public class TheGreatCoordinator
     arm.extend(false);
 
     // Move arm angle
-    arm.setAngle(adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0));
+    arm.setAngle(adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -120.0, 0.0));
 
     // Move to other mode?
     if (OI.joystick.getXButtonPressed())
@@ -153,7 +153,7 @@ public class TheGreatCoordinator
     arm.extend(lift.getHeight() > 0.4);
 
     // Move arm angle, but not too far out front
-    arm.setAngle(adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, -50.0));
+    arm.setAngle(adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -120.0, -50.0));
 
     // Move to other mode?
     if (OI.joystick.getXButtonPressed())

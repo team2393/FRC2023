@@ -127,15 +127,20 @@ public class AutoNoMouse
     }
     
     { // Blue, Bottom node, Exit
-      SequentialCommandGroup auto = new SequenceWithStart("BBE",  1.6, 1.03, 0);
+      SequentialCommandGroup auto = new SequenceWithStart("BBE",  1.6, 1.03, 180);
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
       auto.addCommands(followPathWeaver(drivetrain, "BBE", 180));
       autos.add(auto);
     }
 
-    // TODO RBE
-
+     { // Red, Bottom node, Exit
+      SequentialCommandGroup auto = new SequenceWithStart("RBE",  14.9, 1.05, 0);
+      auto.addCommands(new VariableWaitCommand());
+      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      auto.addCommands(followPathWeaver(drivetrain, "RBE", 0));
+      autos.add(auto);
+    }
     // ---------------------- Move out and Balance -----------------------------------
 
     { // Blue, Top node, drive out then Balance

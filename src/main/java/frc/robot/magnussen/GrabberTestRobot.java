@@ -5,7 +5,10 @@ package frc.robot.magnussen;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.CommandBaseRobot;
+import frc.robot.util.CycleDelayFilter;
 
 /** Grabber test robot
  *
@@ -15,18 +18,18 @@ import frc.robot.CommandBaseRobot;
  * 
  *  Disabled:
  *  - Do sensors detect "Cube" or "Cone"?
+ *    NOTE THAT ONLY "CUBE" SENSOR IS USED IN AUTO TEST! 
  * 
  *  Teleop, right stick:
  *  - Check if moving 'up' with positive voltage moves
  *    all spinners to pull game piece 'in'.
  *    If not, reverse motor wiring.
  *  - Determine suitable voltages for pulling in
- *    and pushing out, set Grabber.xxxx_VOLTAGE
+ *    and pushing out, set GrabVoltage and Grabber.*_VOLTAGE
  * 
- *  - Does 'X' spin grabber slowly until cube is detected?
- *  - Does 'Y' eject until 1.5 secs after cube is gone?
- *  - Does 'B' spin grabber a bit fater until cone is detected?
- *  - Does 'Y' eject until 1.5 secs after cone is gone?
+ *  Auto:
+ *  - Tweak GrabVoltage and GrabDelay to capture a game piece,
+ *    hold for 2 secs, then release
  */
 public class GrabberTestRobot extends CommandBaseRobot
 {
@@ -49,27 +52,45 @@ public class GrabberTestRobot extends CommandBaseRobot
     }
   };
 
-  private final CommandBase manual = new ManualCommand();
-  private final CommandBase cone   = new GrabConeCommand(grabber);
-  private final CommandBase cube   = new GrabCubeCommand(grabber);
-  private final CommandBase eject  = new GrabberEjectCommand(grabber);
-
-  @Override
-  public void teleopInit()
+  private class GrabThingCommand extends CommandBase
   {
-    manual.schedule();
+    // Keep pulling game piece in a little longer?
+    private final CycleDelayFilter delay = new CycleDelayFilter((int)SmartDashboard.getNumber("GrabDelay", 0.0));
+    private boolean done;
+
+    public GrabThingCommand()
+    {
+      addRequirements(grabber);
+    }
+
+    @Override
+    public void execute()
+    {
+      done = delay.compute(grabber.haveCube());
+      grabber.setVoltage(done ? 0 : SmartDashboard.getNumber("GrabVoltage", 0.0));
+    }
+
+    @Override
+    public boolean isFinished()
+    {
+      return done;
+    }
+  };
+
+  GrabberTestRobot()
+  {
+    grabber.setDefaultCommand(new ManualCommand());
+
+    SmartDashboard.setDefaultNumber("GrabDelay", 0.0);
+    SmartDashboard.setDefaultNumber("GrabVoltage", 0.0);
   }
 
   @Override
-  public void teleopPeriodic()
+  public void autonomousInit()
   {
-    if (OI.joystick.getXButtonPressed())
-      cube.schedule();
-    if (OI.joystick.getBButtonPressed())
-      cone.schedule();
-    if (OI.joystick.getYButtonPressed())
-      eject.schedule();
-    // If those commands complete,
-    // Grabber's default GrabberOffCommand takes over
+    new SequentialCommandGroup(
+      new GrabThingCommand(),      
+      new WaitCommand(2.0),
+      new GrabberEjectCommand(grabber)).schedule();
   }
 }

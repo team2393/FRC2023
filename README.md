@@ -44,9 +44,10 @@ Next:
   * Test and calibrate intake
   * Test/adjust/update the great coordinator:
     * Intake and arm movement to take gamepieces
-    * Near/mid/far node placement of gamepieces
+    * Commands to move intake continuously? Or "out", "in", "stored"?
+    * Lift/arm/intake handling for near/mid/far node placement of gamepieces
   * Test 'DriveUphillCommand' with actual robot
-  * Test "middle node exit" and "..balance " auto moves with simplified field
+  * Test "middle node exit" and "..balance" auto moves with simplified field
   * Update OI, assign functions to joystick vs. buttonboard
   * Pack control system essentials: Spare RoboRIO, Radio, USB and network cable, ...
   * Test auto moves on actual field

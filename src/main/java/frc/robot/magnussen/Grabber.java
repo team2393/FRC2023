@@ -16,9 +16,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Grabber extends SubsystemBase
 {
   // TODO Pick suitable voltages
-  public static final double CUBE_VOLTAGE = 2.0;
-  public static final double CONE_VOLTAGE = 5.0;
-  public static final double EJECT_VOLTAGE = -2.0;
+  public static final double CUBE_VOLTAGE = 3.0;
+  public static final double CONE_VOLTAGE = 4.0;
+  public static final double EJECT_VOLTAGE = -3.0;
 
   private DigitalInput sensor = new DigitalInput(RobotMap.GRABBER_SENSOR);
 
@@ -41,7 +41,8 @@ public class Grabber extends SubsystemBase
   /** @return Do we sense a cube or cone? */
   public boolean haveGamepiece()
   {
-    return sensor.get();
+    // Sensor shows false when detecting...
+    return !sensor.get();
   }
   
   @Override

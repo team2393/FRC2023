@@ -11,7 +11,7 @@ public class GrabConeCommand extends CommandBase
 {
   private final Grabber grabber;
   // Keep pulling game piece in a little longer?
-  private final CycleDelayFilter delay = new CycleDelayFilter(0);
+  private final CycleDelayFilter delay = new CycleDelayFilter(10);
   private boolean done;
 
   public GrabConeCommand(Grabber grabber)

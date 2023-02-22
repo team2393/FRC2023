@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.magnussen;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -46,7 +47,7 @@ public class GrabberTestRobot extends CommandBaseRobot
     public void execute()
     {
       // For 'up', send position voltage
-      double voltage = -10.0 * OI.joystick.getRightY();
+      double voltage = -10.0 * MathUtil.applyDeadband(OI.joystick.getRightY(), 0.1);
       grabber.setVoltage(voltage);
       SmartDashboard.putNumber("Voltage", voltage);
     }
@@ -77,12 +78,23 @@ public class GrabberTestRobot extends CommandBaseRobot
     }
   };
 
-  GrabberTestRobot()
+  public GrabberTestRobot()
   {
     grabber.setDefaultCommand(new ManualCommand());
 
     SmartDashboard.setDefaultNumber("GrabDelay", 0.0);
     SmartDashboard.setDefaultNumber("GrabVoltage", 0.0);
+  }
+
+  @Override
+  public void teleopPeriodic()
+  {
+    if (OI.joystick.getXButtonPressed())
+      new GrabCubeCommand(grabber).schedule();;
+    if (OI.joystick.getBButtonPressed())
+      new GrabConeCommand(grabber).schedule();;
+    if (OI.joystick.getYButtonPressed())
+      new GrabberEjectCommand(grabber).schedule();;
   }
 
   @Override

@@ -27,7 +27,7 @@ import frc.robot.swervelib.VariableWaitCommand;
 /** Auto-no-mouse routines */
 public class AutoNoMouse
 {
-  // Run at up to 1.0m/s, accelerate by 0.5ms per second
+  // Run at up to 1.5m/s, accelerate by 1.0ms per second
   private static final TrajectoryConfig config = new TrajectoryConfig(1.5, 1);
 
   /** Width of field */
@@ -130,7 +130,7 @@ public class AutoNoMouse
       SequentialCommandGroup auto = new SequenceWithStart("BBE",  1.6, 1.03, 180);
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
-      auto.addCommands(followPathWeaver(drivetrain, "BBE", 180));
+      auto.addCommands(followPathWeaver(drivetrain, "BBE", 0));
       autos.add(auto);
     }
 
@@ -138,7 +138,7 @@ public class AutoNoMouse
       SequentialCommandGroup auto = new SequenceWithStart("RBE",  14.9, 1.05, 0);
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
-      auto.addCommands(followPathWeaver(drivetrain, "RBE", 0));
+      auto.addCommands(followPathWeaver(drivetrain, "RBE", 180));
       autos.add(auto);
     }
     // ---------------------- Move out and Balance -----------------------------------
@@ -190,6 +190,7 @@ public class AutoNoMouse
       auto.addCommands(new PrintCommand("Done!"));
       autos.add(auto);
     }
+    
     { // Blue, Bottom node, drive out then Balance
       SequentialCommandGroup auto = new SequenceWithStart("BBBalance", 1.84, 1.12, 180);
       auto.addCommands(new VariableWaitCommand());

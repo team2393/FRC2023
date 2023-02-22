@@ -23,8 +23,8 @@ public class SwerveOI
   public static final XboxController joystick = new XboxController(0);
 
   // Limit joystick slew, go to full speed in .. second
-  private static final SlewRateLimiter x_throttle = new SlewRateLimiter(MAX_METERS_PER_SEC/1.0);
-  private static final SlewRateLimiter y_throttle = new SlewRateLimiter(MAX_METERS_PER_SEC/1.0);
+  private static final SlewRateLimiter x_throttle = new SlewRateLimiter(MAX_METERS_PER_SEC/0.5);
+  private static final SlewRateLimiter y_throttle = new SlewRateLimiter(MAX_METERS_PER_SEC/0.5);
   private static final SlewRateLimiter rot_throttle = new SlewRateLimiter(MAX_RAD_PER_SEC/0.5);
 
   public static void reset()

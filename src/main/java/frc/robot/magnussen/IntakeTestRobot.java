@@ -7,6 +7,7 @@ import frc.robot.CommandBaseRobot;
  *  - Set offset and check angles so that 'fully out, horizontal' equals zero degrees
  *  - 'Vertical' equals 90 degrees
  *  - Moving right stick 'up' moves intake 'in'
+ *  - Moving left stick 'up' turns spinner to pull game piece 'in'
  *  - In autonomous, get intake to setpoint
  *  - Update teleop to toggle between 3 positions: 'out, 'up' to meet arm, 'stored'
  */
@@ -30,6 +31,10 @@ public class IntakeTestRobot extends CommandBaseRobot
     double voltage = -5.0 * OI.joystick.getRightY();
     intake.setVoltage(voltage);
     SmartDashboard.putNumber("Intake Voltage", voltage);
+
+    voltage = -5.0 * OI.joystick.getLeftY();
+    intake.setSpinner(voltage);
+    SmartDashboard.putNumber("Spinner Voltage", voltage);
 
     // TODO: Figure out how to alternate between different angles (0 degrees, 45 degrees, 90 degrees)
     // if (OI.joystick.getRightBumper() && intake.getAngle() < 90)

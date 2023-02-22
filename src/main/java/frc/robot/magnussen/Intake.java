@@ -15,20 +15,27 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase
 {
-  private CANSparkMax motor = new CANSparkMax(RobotMap.INTAKE_ANGLE, MotorType.kBrushless);
+  public static final double SPINNER_VOLTAGE = 3.0;
+  private CANSparkMax rotator = new CANSparkMax(RobotMap.INTAKE_ID, MotorType.kBrushless);
+  private CANSparkMax spinner = new CANSparkMax(RobotMap.INTAKE_SPINNER, MotorType.kBrushless);
 
   // Encoder on DIO?
   //private DutyCycleEncoder encoder = new DutyCycleEncoder(new DigitalInput(RobotMap.INTAKE_ANGLE));
   
   // Encoder on SparkMAX
-  private SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(Type.kDutyCycle);
+  private SparkMaxAbsoluteEncoder encoder = rotator.getAbsoluteEncoder(Type.kDutyCycle);
 
   private double simulated_angle = 90.0;
 
   public Intake()
   {
-    motor.restoreFactoryDefaults();
-    motor.setIdleMode(IdleMode.kBrake);
+    rotator.restoreFactoryDefaults();
+    rotator.setIdleMode(IdleMode.kBrake);
+    rotator.setSmartCurrentLimit(20);
+
+    spinner.restoreFactoryDefaults();
+    spinner.setIdleMode(IdleMode.kBrake);
+    spinner.setSmartCurrentLimit(20);
 
     // TODO SmartDashboard.getEntry(..
     SmartDashboard.setDefaultNumber("Intake Offset", 0.0);
@@ -52,10 +59,16 @@ public class Intake extends SubsystemBase
                               360);
   }
 
+  /** @param voltage Spinner voltage, positive for "in" */
+  public void setSpinner(double voltage)
+  {
+    spinner.setVoltage(voltage);
+  }
+
   /** @param voltage Intake voltage, positive for "up" */
   public void setVoltage(double voltage)
   {
-    motor.setVoltage(voltage);
+    rotator.setVoltage(voltage);
   }
 
   /** @param angle Intake angle, zero for horizontally out, positive for "up" */

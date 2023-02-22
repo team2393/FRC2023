@@ -43,9 +43,10 @@ public class RobotMap
   /** DIO port for cube/cone sensor */
   public static final int GRABBER_SENSOR = 9;
 
-  /** CAN ID for Intake motor */
+  /** CAN ID for Intake motor (also used for intake angle encoder) */
   public static final int INTAKE_ID = 18;
 
-  /** DIO Intake angle sensor */
-  public static final int INTAKE_ANGLE = 19;
+  /** CAN ID for Intake spinner  */
+  public static final int INTAKE_SPINNER = 19;
+
 }

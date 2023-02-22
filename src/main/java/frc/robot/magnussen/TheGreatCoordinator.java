@@ -97,6 +97,10 @@ public class TheGreatCoordinator
     double intake_angle = adjust(intake.getAngle(), -1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), 0.0, 120.0);
     intake.setAngle(intake_angle);
 
+    // Spinners turn on when intake is deployed?
+    // TODO Or need another sensor?
+    intake.setSpinner(intake.getAngle() < 90 ? Intake.SPINNER_VOLTAGE : 0);
+
     // Arm angle follows intake
     double arm_angle = -intake_angle;
     arm.setAngle(arm_angle);

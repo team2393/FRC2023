@@ -44,6 +44,7 @@ Next:
   * Test and calibrate intake
   * Test/adjust/update the great coordinator:
     * Intake and arm movement to take gamepieces
+    * How to turn intake spinner on/off?
     * Commands to move intake continuously? Or "out", "in", "stored"?
     * Lift/arm/intake handling for near/mid/far node placement of gamepieces
   * Test 'DriveUphillCommand' with actual robot

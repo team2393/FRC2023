@@ -66,7 +66,7 @@ public class GrabberTestRobot extends CommandBaseRobot
     @Override
     public void execute()
     {
-      done = delay.compute(grabber.haveCube());
+      done = delay.compute(grabber.haveGamepiece());
       grabber.setVoltage(done ? 0 : SmartDashboard.getNumber("GrabVoltage", 0.0));
     }
 

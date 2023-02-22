@@ -23,7 +23,7 @@ public class GrabConeCommand extends CommandBase
   @Override
   public void execute()
   {
-    done = delay.compute(grabber.haveCone());
+    done = delay.compute(grabber.haveGamepiece());
     grabber.setVoltage(done ? 0 : Grabber.CONE_VOLTAGE);
   }
 

@@ -24,10 +24,9 @@ public class GrabberEjectCommand extends CommandBase
   public void execute()
   {
     // Keep ejecting until we have no cube and no cone
-    // - same as   !(grabber.haveCube() || grabber.haveCone())
     // .. and then keep ejecting a little longer just to make sure
     //    game piece is gone
-    done = delay.compute(!grabber.haveCube()   &&   !grabber.haveCone());
+    done = delay.compute(!grabber.haveGamepiece());
     grabber.setVoltage(done ? 0 : Grabber.EJECT_VOLTAGE);
   }
 

@@ -40,11 +40,8 @@ public class RobotMap
   /** CAN ID for Spinner on grabber */
   public static final int GRABBER_ID = 17;
 
-  /** DIO port for cube sensor */
-  public static final int CUBE_SENSOR = 2;
-
-  /** DIO port for cube sensor */
-  public static final int CONE_SENSOR = 3;
+  /** DIO port for cube/cone sensor */
+  public static final int GRABBER_SENSOR = 9;
 
   /** CAN ID for Intake motor */
   public static final int INTAKE_ID = 18;

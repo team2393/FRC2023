@@ -23,7 +23,7 @@ public class GrabCubeCommand extends CommandBase
   @Override
   public void execute()
   {
-    done = delay.compute(grabber.haveCube());
+    done = delay.compute(grabber.haveGamepiece());
     grabber.setVoltage(done ? 0 : Grabber.CUBE_VOLTAGE);
   }
 

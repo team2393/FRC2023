@@ -20,12 +20,11 @@ public class Grabber extends SubsystemBase
   public static final double CONE_VOLTAGE = 5.0;
   public static final double EJECT_VOLTAGE = -2.0;
 
-  private DigitalInput cube_sensor = new DigitalInput(RobotMap.CUBE_SENSOR);
-  private DigitalInput cone_sensor = new DigitalInput(RobotMap.CONE_SENSOR);
+  private DigitalInput sensor = new DigitalInput(RobotMap.GRABBER_SENSOR);
 
   /** Motor controller */
   private CANSparkMax spinner = new CANSparkMax(RobotMap.GRABBER_ID, MotorType.kBrushless);
-  private NetworkTableEntry nt_cube, nt_cone;
+  private NetworkTableEntry nt_sensor;
 
 
   public Grabber()
@@ -34,29 +33,21 @@ public class Grabber extends SubsystemBase
     spinner.setIdleMode(IdleMode.kCoast);
     spinner.setSmartCurrentLimit(30); // TODO current limit?
 
-    nt_cube = SmartDashboard.getEntry("Cube");
-    nt_cone = SmartDashboard.getEntry("Cone");
+    nt_sensor = SmartDashboard.getEntry("Grabber");
 
     setDefaultCommand(new GrabberOffCommand(this));
   }
 
-  /** @return Do we sense a cube? */
-  public boolean haveCube()
+  /** @return Do we sense a cube or cone? */
+  public boolean haveGamepiece()
   {
-    return cube_sensor.get();
-  }
-
-  /** @return Do we sense a cone? */
-  public boolean haveCone()
-  {
-    return cone_sensor.get();
+    return sensor.get();
   }
   
   @Override
   public void periodic()
   {
-    nt_cube.setBoolean(haveCube());
-    nt_cone.setBoolean(haveCone());
+    nt_sensor.setBoolean(haveGamepiece());
   }
 
   /** @param voltage Spinner voltage, positive for 'in' */

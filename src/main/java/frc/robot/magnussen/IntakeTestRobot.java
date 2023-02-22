@@ -19,14 +19,7 @@ public class IntakeTestRobot extends CommandBaseRobot
   {
     super.robotInit();
     OI.reset();
-    SmartDashboard.setDefaultNumber("Intake Angle", 0.0);
     SmartDashboard.setDefaultNumber("Setpoint", 0.0);
-  }
-
-  @Override
-  public void robotPeriodic()
-  {
-    SmartDashboard.putNumber("Intake Angle", intake.getAngle());
   }
 
   @Override

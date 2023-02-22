@@ -28,6 +28,9 @@ public class Intake extends SubsystemBase
 
     // TODO SmartDashboard.getEntry(..
     SmartDashboard.setDefaultNumber("Intake Offset", 0.0);
+    SmartDashboard.setDefaultNumber("Intake kg", 0.0);
+    SmartDashboard.setDefaultNumber("Intake ks", 0.0);
+    SmartDashboard.setDefaultNumber("Intake P", 0.0);
   }
 
   @Override
@@ -59,13 +62,8 @@ public class Intake extends SubsystemBase
       simulated_angle = desired_angle;
       return;
     }
-    // Gravity gain, always applied to counteract gravity,
-    // but different for extension in/out
-    double kg;
-    // TODO if (extender.get())
-    //   kg = SmartDashboard.getNumber("Intake kg out", 0.0);
-    // else
-      kg = SmartDashboard.getNumber("Intake kg in", 0.0);
+    // Gravity gain, always applied to counteract gravity
+    double kg = SmartDashboard.getNumber("Intake kg", 0.0);
     // Static gain, minimum voltage to get moving
     double ks = SmartDashboard.getNumber("Intake ks", 0.0);
     // Propotional gain to correct angle error

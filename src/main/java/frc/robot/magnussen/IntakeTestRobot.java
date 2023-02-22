@@ -36,6 +36,7 @@ public class IntakeTestRobot extends CommandBaseRobot
     // Tick 'up' should move 'in'
     double voltage = -5.0 * OI.joystick.getRightY();
     intake.setVoltage(voltage);
+    SmartDashboard.putNumber("Intake Voltage", voltage);
 
     // TODO: Figure out how to alternate between different angles (0 degrees, 45 degrees, 90 degrees)
     // if (OI.joystick.getRightBumper() && intake.getAngle() < 90)

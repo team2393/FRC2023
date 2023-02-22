@@ -4,11 +4,11 @@
 package frc.robot.magnussen;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,15 +16,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Intake extends SubsystemBase
 {
   private CANSparkMax motor = new CANSparkMax(RobotMap.INTAKE_ANGLE, MotorType.kBrushless);
-  private DutyCycleEncoder encoder = new DutyCycleEncoder(new DigitalInput(RobotMap.INTAKE_ANGLE));
+
+  // Encoder on DIO?
+  //private DutyCycleEncoder encoder = new DutyCycleEncoder(new DigitalInput(RobotMap.INTAKE_ANGLE));
+  
+  // Encoder on SparkMAX
+  private SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(Type.kDutyCycle);
+
   private double simulated_angle = 90.0;
 
   public Intake()
   {
     motor.restoreFactoryDefaults();
     motor.setIdleMode(IdleMode.kBrake);
-
-    encoder.reset();
 
     // TODO SmartDashboard.getEntry(..
     SmartDashboard.setDefaultNumber("Intake Offset", 0.0);
@@ -44,17 +48,17 @@ public class Intake extends SubsystemBase
   {
     if (RobotBase.isSimulation())
       return simulated_angle;
-    return encoder.getAbsolutePosition() - SmartDashboard.getNumber("Intake Offset", 0.0);
+    return Math.IEEEremainder(encoder.getPosition()*360 - SmartDashboard.getNumber("Intake Offset", 0.0),
+                              360);
   }
 
   /** @param voltage Intake voltage, positive for "up" */
   public void setVoltage(double voltage)
   {
     motor.setVoltage(voltage);
-    SmartDashboard.putNumber("Intake Voltage", voltage);
   }
 
-  /** @param angle Intake angle, positive for "up" */
+  /** @param angle Intake angle, zero for horizontally out, positive for "up" */
   public void setAngle(double desired_angle)
   {
     if (RobotBase.isSimulation())
@@ -70,9 +74,9 @@ public class Intake extends SubsystemBase
     double P  = SmartDashboard.getNumber("Intake P", 0.0);
 
     // If intake is horizontal, cos(0) = 1 --> Apply full kg
-    // If intake is down, cos(-90 deg) = 0 --> No kg
+    // If intake is vertically up, cos(90 deg) = 0 --> No kg
     double current_angle = getAngle();
-    double error = desired_angle - current_angle;
+    double error = Math.IEEEremainder(desired_angle - current_angle, 360.0);
     double voltage = ks * Math.signum(error) 
                    + kg * Math.cos(Math.toRadians(current_angle))
                    +  P * error;

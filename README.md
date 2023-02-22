@@ -6,7 +6,7 @@ FRC Software manual: https://docs.wpilib.org/en/stable/index.html
 
 Game manual: https://www.firstinspires.org/resource-library/frc/competition-manual-qa-system
 
-Forum: https://www.chiefdelphi.com/
+Forum: https://www.chiefdelphi.com/, https://www.projectb.net.au/resources/robot-mechanisms
 
 Done:
   * Kickoff: January 7, 2023, https://efcms.engr.utk.edu/efp/first-kickoff/2023/welcome.php
@@ -22,9 +22,7 @@ Done:
   * Get 3rd party libraries for CTRE, Vec, ...
     * https://github.com/CrossTheRoadElec/Phoenix-Releases/releases
     * https://www.revrobotics.com/software
-   * Try new RoboRIO2
-
-Next:
+  * Use new RoboRIO2
   * Update firmware of power distribution module, pneumatic hub etc.
   * Manual control of all the motor types (Falcon, Spark, ??) we might have in the robot
       * https://www.andymark.com
@@ -39,9 +37,22 @@ Next:
       * Demo of computing robot location on field
       * Use https://github.com/wpilibsuite/WPILibPi/releases ?
       * Use LimeLight, https://www.chiefdelphi.com/t/limelight-v2-2023-firmware/422597 ?
-  * Prepare test robot for each key component of new robot as design materializes
-     * https://www.projectb.net.au/resources/robot-mechanisms
-  * Calibrate camera to get April tag locations
+
+Next:
+  * Grabber sensor, try to grab cube vs cone using suitable grabber motor speeds and sensor delays
+  * Update GrabCone, GrabCube, GabberEject commands
+  * Test and calibrate intake
+  * Test/adjust/update the great coordinator:
+    * Intake and arm movement to take gamepieces
+    * Near/mid/far node placement of gamepieces
+  * Test 'DriveUphillCommand' with actual robot
+  * Test "middle node exit" and "..balance " auto moves with simplified field
+  * Update OI, assign functions to joystick vs. buttonboard
+  * Pack control system essentials: Spare RoboRIO, Radio, USB and network cable, ...
+  * Test auto moves on actual field
+  * Mount and calibrate camera
+    * Check April tag locations, but disable odometry update during autonomous
+    * Test/calibrate/include TargetLockedDriveCommand
   * .. much more
 
 

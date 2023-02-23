@@ -71,7 +71,7 @@
     "windows": {
       "/SmartDashboard/Field": {
         "height": 8.013679504394531,
-        "image": "C:\\Users\\Team2393\\git\\FRC2023\\docs\\2023-field.png",
+        "image": "./docs/2023-field.png",
         "width": 16.541748046875,
         "window": {
           "visible": true

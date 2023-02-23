@@ -65,13 +65,13 @@ public class SwerveBotRobot extends CommandBaseRobot
   public void teleopPeriodic()
   {
     // Activate different drive mode?
-    if (SwerveOI.selectAbsoluteMode())
+    if (SwerveOI.joystick.getLeftBumperPressed())
       drive_absolute.schedule();
-    if (SwerveOI.selectRelativeMode())
+    if (SwerveOI.joystick.getRightBumperPressed())
       drive_relative.schedule();
     if (SwerveOI.resetOrigin())
       reset.schedule();
-    if (SwerveOI.selectFixedForward())
+    if (SwerveOI.joystick.getPOV() == 0)
       // drive_straight.schedule();
       driveuphill.schedule();
       // drive_rod.schedule();
@@ -80,7 +80,7 @@ public class SwerveBotRobot extends CommandBaseRobot
     //   drive2grid.schedule();
 
     //     fixed_fwd.schedule();
-    // else if (SwerveOI.selectFixedBack())
+    // else if (SwerveOI.joystick.getPOV() == 180)
     //     fixed_back.schedule();
     // else
     // {

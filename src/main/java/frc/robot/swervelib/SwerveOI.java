@@ -27,9 +27,9 @@ public class SwerveOI
   private static final SlewRateLimiter y_throttle = new SlewRateLimiter(MAX_METERS_PER_SEC/0.5);
   private static final SlewRateLimiter rot_throttle = new SlewRateLimiter(MAX_RAD_PER_SEC/0.5);
 
+  /** Clear memory of past button presses */
   public static void reset()
   {
-    // Clear memory of past button presses
     for (int i=1; i<=joystick.getButtonCount(); ++i)
       joystick.getRawButtonPressed(i);
     
@@ -67,26 +67,6 @@ public class SwerveOI
   public static double getCombinedTriggerValue()
   {
      return joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis();
-  }
-
-  public static boolean selectAbsoluteMode()
-  {
-    return joystick.getLeftBumperPressed();
-  }
-
-  public static boolean selectRelativeMode()
-  {
-    return joystick.getRightBumperPressed();
-  }
-
-  public static boolean selectFixedForward()
-  {
-    return joystick.getPOV() == 0;
-  }
-
-  public static boolean selectFixedBack()
-  {
-    return joystick.getPOV() == 180;
   }
 
   public static boolean resetOrigin()

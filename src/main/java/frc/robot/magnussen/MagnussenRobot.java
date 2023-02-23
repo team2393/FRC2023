@@ -80,6 +80,7 @@ public class MagnussenRobot extends CommandBaseRobot
   @Override
   public void teleopInit()
   {
+    OI.reset();
     // Stop motors unless they're supposed to move
     drivetrain.brake(true);
     drive_relative.schedule();
@@ -89,7 +90,7 @@ public class MagnussenRobot extends CommandBaseRobot
   public void teleopPeriodic()
   {
     // Activate different drive mode?
-    if (OI.selectRelativeMode())
+    if (OI.selectDriveMode())
       drive_relative.schedule();
     else if (OI.selectUphillMode())
       drive_uphill.schedule();

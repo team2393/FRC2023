@@ -16,13 +16,18 @@ public class OI extends SwerveOI
 {
   public static final GenericHID buttons = new GenericHID(1);
 
+  /** Clear memory of past button presses */
   public static void reset()
   {
     SwerveOI.reset();
 
-    // Clear memory of past button presses
     for (int i=1; i<=buttons.getButtonCount(); ++i)
       buttons.getRawButtonPressed(i);
+  }
+
+  public static boolean selectDriveMode()
+  {
+    return joystick.getRightBumperPressed();
   }
 
   public static boolean selectUphillMode()

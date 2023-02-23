@@ -5,17 +5,20 @@ package frc.robot.magnussen;
 
 import frc.robot.CommandBaseRobot;
 
-/** Fake lift/arm/... Robot
- *
- *  Used to simulate a robot where we control the lift/arm/intake
- */
-public class LiftArmDummyRobot extends CommandBaseRobot
+/** Test TheGreatCoordinator */
+public class TheGreatCoordinatorTestRobot extends CommandBaseRobot
 {
-  private final TheGreatCoordinator tgc = new TheGreatCoordinator(true);
+  private final TheGreatCoordinator coordinator = new TheGreatCoordinator(true);
+
+  @Override
+  public void teleopInit()
+  {
+    OI.reset();
+  }
 
   @Override
   public void teleopPeriodic()
   {
-    tgc.run();
+    coordinator.run();
   }
 }

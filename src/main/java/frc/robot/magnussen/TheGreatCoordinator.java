@@ -115,6 +115,7 @@ public class TheGreatCoordinator
     // Intake in, lift at bottom
     intake.setAngle(120.0);
     lift.setHeight(0.0);
+    intake.setSpinner(0);
 
     // Move arm angle
     double arm_angle = adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0);
@@ -138,6 +139,7 @@ public class TheGreatCoordinator
     intake.setAngle(120.0);
     lift.setHeight(0.3);
     arm.extend(false);
+    intake.setSpinner(0);
 
     // Move arm angle
     arm.setAngle(adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -120.0, 0.0));
@@ -155,6 +157,7 @@ public class TheGreatCoordinator
     intake.setAngle(120.0);
     lift.setHeight(0.7);
     arm.extend(lift.getHeight() > 0.4);
+    intake.setSpinner(0);
 
     // Move arm angle, but not too far out front
     arm.setAngle(adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -120.0, -50.0));

@@ -225,7 +225,7 @@
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Grabber",
-              "_title": "Grabber",
+              "_title": "/SmartDashboard/Grabber",
               "_glyph": 148,
               "_showGlyph": false,
               "Colors/Color when true": "#7CFC00FF",
@@ -535,7 +535,7 @@
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Grabber",
-              "_title": "SmartDashboard/Grabber",
+              "_title": "/SmartDashboard/Grabber",
               "_glyph": 148,
               "_showGlyph": false,
               "Colors/Color when true": "#7CFC00FF",
@@ -550,7 +550,7 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/GrabDelay",
-              "_title": "SmartDashboard/GrabDelay",
+              "_title": "/SmartDashboard/GrabDelay",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -563,7 +563,7 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/GrabVoltage",
-              "_title": "SmartDashboard/GrabVoltage",
+              "_title": "/SmartDashboard/GrabVoltage",
               "_glyph": 148,
               "_showGlyph": false
             }

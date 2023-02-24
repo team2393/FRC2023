@@ -49,4 +49,7 @@ public class RobotMap
   /** CAN ID for Intake spinner  */
   public static final int INTAKE_SPINNER = 19;
 
+  /** DIO for rev throughbore encoder */
+  public static final int INTAKE_ANGLE = 4;
+
 }

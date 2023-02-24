@@ -98,6 +98,9 @@
         "ResetPosition": {
           "open": true
         },
+        "Scheduler": {
+          "open": true
+        },
         "open": true
       }
     }

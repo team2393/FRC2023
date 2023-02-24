@@ -98,7 +98,10 @@ public class MagnussenRobot extends CommandBaseRobot
     if (SwerveOI.resetOrigin())
         reset.schedule();
 
-    coordinator.run();
+    if (drive_uphill.isScheduled())
+      coordinator.store();
+    else
+      coordinator.run();
   }
 
   @Override

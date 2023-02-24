@@ -55,7 +55,14 @@ public class TheGreatCoordinator
     value += rate;
     return MathUtil.clamp(value, min, max);
   }
-
+  public void store ()
+  {
+    mode = Mode.INTAKE;
+    arm.extend(false);
+    lift.setHeight(0.0);
+    intake.setAngle(120.0);
+    arm.setAngle(-100);
+  }
   public void run()
   {
     SmartDashboard.putString("Mode", mode.name());
@@ -106,8 +113,12 @@ public class TheGreatCoordinator
     arm.setAngle(arm_angle);
 
     // Move to other mode?
-    if (OI.joystick.getYButtonPressed())
+    OI.selectIntakeNodeMode();
+    if (OI.selectNearNodeMode())
       mode = Mode.NEAR;
+    if (OI.selectMiddleNodeMode())
+      mode = Mode.MID;
+    OI.selectFarNodeMode();
   }
 
   private void handleNear()
@@ -127,10 +138,12 @@ public class TheGreatCoordinator
     arm.extend(arm_angle < -170  ||  (arm_angle > -80.0  &&  arm_angle < -40.0));
 
     // Move to other mode?
-    if (OI.joystick.getXButtonPressed())
+    if (OI.selectIntakeNodeMode())
       mode = Mode.INTAKE;
-    if (OI.joystick.getYButtonPressed())
+    OI.selectNearNodeMode();
+    if (OI.selectMiddleNodeMode())
       mode = Mode.MID;
+    OI.selectFarNodeMode();
   }
 
   private void handleMid()
@@ -145,9 +158,12 @@ public class TheGreatCoordinator
     arm.setAngle(adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -120.0, 0.0));
 
     // Move to other mode?
-    if (OI.joystick.getXButtonPressed())
+    if (OI.selectIntakeNodeMode())
+      mode = Mode.INTAKE;
+    if (OI.selectNearNodeMode())
       mode = Mode.NEAR;
-    if (OI.joystick.getYButtonPressed())
+    OI.selectMiddleNodeMode();
+    if (OI.selectFarNodeMode())
       mode = Mode.FAR;
   }
 
@@ -163,7 +179,10 @@ public class TheGreatCoordinator
     arm.setAngle(adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -120.0, -50.0));
 
     // Move to other mode?
-    if (OI.joystick.getXButtonPressed())
+    OI.selectIntakeNodeMode();
+    OI.selectNearNodeMode();
+    if (OI.selectMiddleNodeMode())
       mode = Mode.MID;
+    OI.selectFarNodeMode();
   }
 }

@@ -38,6 +38,10 @@ Done:
       * Use https://github.com/wpilibsuite/WPILibPi/releases ?
       * Use LimeLight, https://www.chiefdelphi.com/t/limelight-v2-2023-firmware/422597 ?
 
+Prepared:
+  * Update OI, assign functions to joystick vs. buttonboard
+  * Intake angle sensor and basic motor movement
+
 Next:
   * Grabber sensor, try to grab cube vs cone using suitable grabber motor speeds and sensor delays
   * Update GrabCone, GrabCube, GabberEject commands
@@ -52,7 +56,6 @@ Next:
     * Lift/arm/intake handling for near/mid/far node placement of gamepieces
   * Test 'DriveUphillCommand' with actual robot
   * Test "middle node exit" and "..balance" auto moves with simplified field
-  * Update OI, assign functions to joystick vs. buttonboard
   * Pack control system essentials: Spare RoboRIO, Radio, USB and network cable, ...
   * Test auto moves on actual field
   * Mount and calibrate camera

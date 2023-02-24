@@ -5,6 +5,7 @@ package frc.robot.magnussen;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.util.LookupTable;
 
 /** The great arm/lift/grabber/intake coordinator */
 public class TheGreatCoordinator
@@ -38,6 +39,25 @@ public class TheGreatCoordinator
 
   private Mode mode;
 
+  /** Lookup from intake angle to arm angle */
+  private static final LookupTable intake_arm_lookup = new LookupTable(
+    new String[] { "Intake Angle", "Arm Angle" },
+                                0,           0,
+                               45,         -20,
+                               90,         -90,
+                              100,        -100);
+
+  // Demo of intake_arm_lookup
+  public static void main(String[] args)
+  {
+    for (double intake_angle=0;  intake_angle < 150; intake_angle += 5)
+    {
+      double arm_angle = intake_arm_lookup.lookup(intake_angle).getValue();
+      System.out.format("Intake %5.1f deg  ->  arm %5.1f deg\n", intake_angle, arm_angle);
+    }
+  }
+
+
   /** @param use_modes Use modes? */
   public TheGreatCoordinator(boolean use_modes)
   {
@@ -55,6 +75,8 @@ public class TheGreatCoordinator
     value += rate;
     return MathUtil.clamp(value, min, max);
   }
+
+  /** Place everything in a save position */
   public void store ()
   {
     mode = Mode.INTAKE;
@@ -63,6 +85,8 @@ public class TheGreatCoordinator
     intake.setAngle(120.0);
     arm.setAngle(-100);
   }
+
+  /** Interactively run the intake, arm, lift, grabber */
   public void run()
   {
     SmartDashboard.putString("Mode", mode.name());
@@ -109,7 +133,7 @@ public class TheGreatCoordinator
     intake.setSpinner(intake.getAngle() < 90 ? Intake.SPINNER_VOLTAGE : 0);
 
     // Arm angle follows intake
-    double arm_angle = -intake_angle;
+    double arm_angle = intake_arm_lookup.lookup(intake_angle).getValue();
     arm.setAngle(arm_angle);
 
     // Move to other mode?

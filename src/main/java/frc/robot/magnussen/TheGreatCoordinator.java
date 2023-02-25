@@ -58,6 +58,28 @@ public class TheGreatCoordinator extends SubsystemBase
                                 72,        -100,           0.3,
                                 100,       -128,           0.2);
 
+  private static final LookupTable near_lookup = new LookupTable(
+    new String[] { "Arm Angle", "Lift Height", "Extend" },
+                          -125,          0.15,        0,
+                          -110,          0.15,        0,
+                           -82,          0,           0,
+                           -70,          0,           1,
+                           -25,          0,           1,
+                             0,          0,           0);
+                              
+  private static final LookupTable mid_lookup = new LookupTable(
+   new String[] { "Arm Angle", "Lift Height", "Extend" },
+                              -90,   0.5,   0,
+                              -65,  0.6,  0,   
+                              -45,   0.56,  0,
+                              0,  0.3,  0);                       
+
+  private static final LookupTable far_lookup = new LookupTable(
+   new String[] { "Arm Angle", "Lift Height", "Extend" },
+                              -120, 0.7,   0,
+                              -110,  0.7,  0,
+                              -70,  0.7,   0, 
+                              -25,   0.7,   1);
   // Demo of intake_arm_lookup
   public static void main(String[] args)
   {
@@ -182,17 +204,18 @@ public class TheGreatCoordinator extends SubsystemBase
   {
     // Intake in, lift at bottom
     intake.setAngle(intake_setpoint = 125.0);
-    lift.setHeight(lift_setpoint = 0.3);
     intake.setSpinner(0);
-
+    
     // Move arm angle
-    arm_setpoint = adjust(arm_setpoint, 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0);
+    arm_setpoint = adjust(arm_setpoint, 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -125.0, 0.0);
     arm.setAngle(arm_setpoint);
-
+    
     // Extend when arm is sticking outside the back,
     // or out front yet not too far up (to prevent topping)
     // This should keep arm pulled in while where "inside" the robot
-    arm.extend(arm_setpoint < -170  ||  (arm_setpoint > -80.0  &&  arm_setpoint < -40.0));
+    Entry entry = near_lookup.lookup(arm_setpoint);  
+    lift.setHeight(lift_setpoint = entry.values[0]);
+    arm.extend(entry.values[1] > 0);
 
     // Move to other mode?
     if (OI.selectIntakeNodeMode())
@@ -207,13 +230,16 @@ public class TheGreatCoordinator extends SubsystemBase
   {
     // Intake in, lift at mid, arm in
     intake.setAngle(intake_setpoint = 125.0);
-    lift.setHeight(lift_setpoint = 0.3);
-    arm.extend(false);
     intake.setSpinner(0);
 
     // Move arm angle
     arm_setpoint = adjust(arm_setpoint, 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -120.0, 0.0);
     arm.setAngle(arm_setpoint);
+
+    Entry entry = mid_lookup.lookup(arm_setpoint);  
+    lift.setHeight(lift_setpoint = entry.values[0]);
+    arm.extend(entry.values[1] > 0);
+
 
     // Move to other mode?
     if (OI.selectIntakeNodeMode())
@@ -229,14 +255,14 @@ public class TheGreatCoordinator extends SubsystemBase
   {
     // Intake in, lift all up, arm out as soon as lift high enough
     intake.setAngle(intake_setpoint = 125.0);
-    lift.setHeight(lift_setpoint = 0.7);
-    arm.extend(lift.getHeight() > 0.4);
     intake.setSpinner(0);
 
     // Move arm angle, but not too far out front
-    arm_setpoint = adjust(arm_setpoint, 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -120.0, -50.0);
+    arm_setpoint = adjust(arm_setpoint, 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -120.0, 0);
     arm.setAngle(arm_setpoint);
-
+    Entry entry = far_lookup.lookup(arm_setpoint);  
+    lift.setHeight(lift_setpoint = entry.values[0]);
+    arm.extend(entry.values[1] > 0);
     // Move to other mode?
     OI.selectIntakeNodeMode();
     OI.selectNearNodeMode();

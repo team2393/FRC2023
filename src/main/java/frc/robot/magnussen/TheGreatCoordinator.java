@@ -52,11 +52,18 @@ public class TheGreatCoordinator extends SubsystemBase
   private Mode mode;
 
   /** Lookup from intake angle to arm angle and lift height */
-  private static final LookupTable intake_arm_lookup = new LookupTable(
-    new String[] { "Intake Angle", "Arm Angle", "Lift Height" },
-                                0,           0,            0.0,
-                                72,        -100,           0.3,
-                                100,       -128,           0.2);
+  private static final LookupTable cone_intake_arm_lookup = new LookupTable(
+    new String[] { "Intake Angle", "Arm Angle", "Lift Height", "Extend" },
+                                0,           0,            0.0,  0,
+                                72,        -100,           0.3,  0,
+                                100,       -128,           0.2,  0); 
+
+  private static final LookupTable cube_intake_arm_lookup = new LookupTable(
+    new String[] { "Intake Angle", "Arm Angle", "Lift Height", "Extend" },
+                                0,           -80,     0.05,      1,
+                                17,        -80,       0.4,      1,
+                                30,       -100,       0.5,      0,
+                                50,       -120,       0.5,      0);
 
   private static final LookupTable near_lookup = new LookupTable(
     new String[] { "Arm Angle", "Lift Height", "Extend" },
@@ -65,7 +72,7 @@ public class TheGreatCoordinator extends SubsystemBase
                            -82,          0,           0,
                            -70,          0,           1,
                            -25,          0,           1,
-                             0,          0,           0);
+                             0,          0,           1);
                               
   private static final LookupTable mid_lookup = new LookupTable(
    new String[] { "Arm Angle", "Lift Height", "Extend" },
@@ -80,16 +87,6 @@ public class TheGreatCoordinator extends SubsystemBase
                               -110,  0.7,  0,
                               -70,  0.7,   0, 
                               -25,   0.7,   1);
-  // Demo of intake_arm_lookup
-  public static void main(String[] args)
-  {
-    for (double intake_angle=0;  intake_angle < 150; intake_angle += 5)
-    {
-      double arm_angle = intake_arm_lookup.lookup(intake_angle).getValue();
-      System.out.format("Intake %5.1f deg  ->  arm %5.1f deg\n", intake_angle, arm_angle);
-    }
-  }
-
 
   /** @param use_modes Use modes? */
   public TheGreatCoordinator(boolean use_modes)
@@ -174,10 +171,7 @@ public class TheGreatCoordinator extends SubsystemBase
   }
 
   private void handleIntake()
-  {
-    // Arm in
-    arm.extend(false);
-    
+  {    
     // Move intake
     intake_setpoint = adjust(intake_setpoint, -1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), 0.0, 125.0);
     intake.setAngle(intake_setpoint);
@@ -187,15 +181,21 @@ public class TheGreatCoordinator extends SubsystemBase
     intake.setSpinner(intake.getAngle() < 90 ? Intake.SPINNER_VOLTAGE : 0);
     
     // Arm angle and lift follow intake
-    Entry entry = intake_arm_lookup.lookup(intake_setpoint);
+    Entry entry;
+    if (OI.selectCubeIntake())
+      entry = cube_intake_arm_lookup.lookup(intake_setpoint);
+    else 
+      entry = cone_intake_arm_lookup.lookup(intake_setpoint);
     arm.setAngle(arm_setpoint = entry.values[0]);
     lift.setHeight(lift_setpoint = entry.values[1]);
+    arm.extend(entry.values[2] > 0);
+
 
     // Move to other mode?
     OI.selectIntakeNodeMode();
-    if (OI.selectNearNodeMode())
+    if (OI.selectNearNodeMode()  &&  intake_setpoint > 110)
       mode = Mode.NEAR;
-    if (OI.selectMiddleNodeMode())
+    if (OI.selectMiddleNodeMode()  &&  intake_setpoint > 110)
       mode = Mode.MID;
     OI.selectFarNodeMode();
   }

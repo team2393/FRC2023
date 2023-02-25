@@ -25,6 +25,11 @@ public class OI extends SwerveOI
       buttons.getRawButtonPressed(i);
   }
 
+  public static boolean selectCubeIntake()
+  {
+    return buttons.getRawButton(1);
+  }
+
   public static boolean selectDriveMode()
   {
     return CORRECT ? joystick.getRightBumperPressed()

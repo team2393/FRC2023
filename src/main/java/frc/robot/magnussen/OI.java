@@ -27,28 +27,37 @@ public class OI extends SwerveOI
 
   public static boolean selectDriveMode()
   {
-    return buttons.getRawButtonPressed(7);
+    return CORRECT ? joystick.getRightBumperPressed()
+                   : buttons.getRawButtonPressed(7);
   }
 
   public static boolean selectUphillMode()
   {
-    return buttons.getRawButtonPressed(3);
+    return CORRECT ? joystick.getLeftBumperPressed()
+                   : buttons.getRawButtonPressed(3);
   }
+
   public static boolean selectIntakeNodeMode()
   {
-    return buttons.getRawButtonPressed(9); 
+    return CORRECT ? joystick.getAButtonPressed()
+                   : buttons.getRawButtonPressed(9); 
   }
 
   public static boolean selectNearNodeMode()
   {
-    return buttons.getRawButtonPressed(4); 
+    return CORRECT ? joystick.getXButtonPressed()
+                   : buttons.getRawButtonPressed(4); 
   }
+
   public static boolean selectMiddleNodeMode()
   {
-    return buttons.getRawButtonPressed(5); 
+    return CORRECT ? joystick.getYButtonPressed()
+                   : buttons.getRawButtonPressed(5); 
   }
+
   public static boolean selectFarNodeMode()
   {
-    return buttons.getRawButtonPressed(8); 
+    return CORRECT ? joystick.getBButtonPressed()
+                   : buttons.getRawButtonPressed(8); 
   }
 }

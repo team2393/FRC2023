@@ -7,6 +7,7 @@ import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.swervelib.SwerveDrivetrain;
 import frc.robot.swervelib.SwerveModule;
 
@@ -60,12 +61,11 @@ public class MagnussenDriveTrain extends SwerveDrivetrain
           return -30.0;
       }
     }
-
-    return -gyro.getPitch();
+    return gyro.getRoll();
   }
 
   public double getRoll()
   {
-    return -gyro.getRoll();
+    return gyro.getPitch();
   }
 }

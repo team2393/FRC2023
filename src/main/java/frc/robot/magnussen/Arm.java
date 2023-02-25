@@ -49,7 +49,7 @@ public class Arm extends SubsystemBase
   public Arm()
   {
     motor.restoreFactoryDefaults();
-    motor.setIdleMode(IdleMode.kBrake);
+    motor.setIdleMode(IdleMode.kCoast);
     // Positive voltage moves to positive angles, "up"
     motor.setInverted(true);
     motor.setSmartCurrentLimit(20); // TODO current limit?

@@ -75,6 +75,8 @@ public class MagnussenRobot extends CommandBaseRobot
       Pose2d start = ((SequenceWithStart) auto).getStart();
       drivetrain.setOdometry(start.getX(), start.getY(), start.getRotation().getDegrees());
     }
+
+    coordinator.reset();
   }
 
   @Override

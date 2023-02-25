@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase
   public Intake()
   {
     rotator.restoreFactoryDefaults();
-    rotator.setIdleMode(IdleMode.kBrake);
+    rotator.setIdleMode(IdleMode.kCoast);
     rotator.setInverted(true);
     rotator.setSmartCurrentLimit(20);
 

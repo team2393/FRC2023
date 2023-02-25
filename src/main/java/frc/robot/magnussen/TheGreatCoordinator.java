@@ -5,11 +5,12 @@ package frc.robot.magnussen;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LookupTable;
 import frc.robot.util.LookupTable.Entry;
 
 /** The great arm/lift/grabber/intake coordinator */
-public class TheGreatCoordinator
+public class TheGreatCoordinator extends SubsystemBase
 {
   // Components that we handle
   private final Lift lift = new Lift();
@@ -54,9 +55,8 @@ public class TheGreatCoordinator
   private static final LookupTable intake_arm_lookup = new LookupTable(
     new String[] { "Intake Angle", "Arm Angle", "Lift Height" },
                                 0,           0,            0.0,
-                               45,         -20,            0.0,
-                               90,         -90,            0.3,
-                              100,        -120,            0.0);
+                                72,        -100,           0.3,
+                                100,       -128,           0.2);
 
   // Demo of intake_arm_lookup
   public static void main(String[] args)
@@ -73,10 +73,22 @@ public class TheGreatCoordinator
   public TheGreatCoordinator(boolean use_modes)
   {
     mode = use_modes ? Mode.INTAKE : Mode.DIRECT;
+    reset();
+  }
 
+  public void reset()
+  {
     lift_setpoint = lift.getHeight();
     arm_setpoint = arm.getAngle();
     intake_setpoint = intake.getAngle();
+  }
+
+  @Override
+  public void periodic()
+  {
+    SmartDashboard.putNumber("IntakeSP", intake_setpoint);
+    SmartDashboard.putNumber("ArmSP", arm_setpoint);
+    SmartDashboard.putNumber("LiftSP", lift_setpoint);
   }
   
   /** @param value Current value
@@ -170,7 +182,7 @@ public class TheGreatCoordinator
   {
     // Intake in, lift at bottom
     intake.setAngle(intake_setpoint = 125.0);
-    lift.setHeight(lift_setpoint = 0.0);
+    lift.setHeight(lift_setpoint = 0.3);
     intake.setSpinner(0);
 
     // Move arm angle

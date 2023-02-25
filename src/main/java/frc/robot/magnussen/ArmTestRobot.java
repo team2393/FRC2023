@@ -5,6 +5,7 @@ package frc.robot.magnussen;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.CommandBaseRobot;
 
 /** Arm test robot

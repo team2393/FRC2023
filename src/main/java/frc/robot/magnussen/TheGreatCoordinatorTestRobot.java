@@ -8,17 +8,12 @@ import frc.robot.CommandBaseRobot;
 /** Test TheGreatCoordinator */
 public class TheGreatCoordinatorTestRobot extends CommandBaseRobot
 {
-  private final TheGreatCoordinator coordinator = new TheGreatCoordinator(false);
+  private final TheGreatCoordinator coordinator = new TheGreatCoordinator();
 
   @Override
   public void teleopInit()
   {
     OI.reset();
-  }
-
-  @Override
-  public void teleopPeriodic()
-  {
-    coordinator.run();
+    coordinator.store();
   }
 }

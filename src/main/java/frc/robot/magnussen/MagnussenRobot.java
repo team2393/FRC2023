@@ -30,7 +30,7 @@ public class MagnussenRobot extends CommandBaseRobot
 
   private final SendableChooser<Command> autos = new SendableChooser<>();
 
-  private final TheGreatCoordinator coordinator = new TheGreatCoordinator(true);
+  private final TheGreatCoordinator coordinator = new TheGreatCoordinator();
 
   private final Pneumatics pneumatics = new Pneumatics();
 
@@ -75,8 +75,6 @@ public class MagnussenRobot extends CommandBaseRobot
       Pose2d start = ((SequenceWithStart) auto).getStart();
       drivetrain.setOdometry(start.getX(), start.getY(), start.getRotation().getDegrees());
     }
-
-    coordinator.reset();
   }
 
   @Override
@@ -85,7 +83,10 @@ public class MagnussenRobot extends CommandBaseRobot
     OI.reset();
     // Stop motors unless they're supposed to move
     drivetrain.brake(true);
+  
     drive_relative.schedule();
+
+    coordinator.store();
   }
 
   @Override
@@ -95,15 +96,16 @@ public class MagnussenRobot extends CommandBaseRobot
     if (OI.selectDriveMode())
       drive_relative.schedule();
     else if (OI.selectUphillMode())
+    {
       drive_uphill.schedule();
+      coordinator.store();
+    }
     
     if (SwerveOI.resetOrigin())
         reset.schedule();
 
-    if (drive_uphill.isScheduled())
-      coordinator.store();
-    else
-      coordinator.run();
+    if (OI.selectIntakeNodeMode() && !drive_uphill.isScheduled())
+      coordinator.intake();
   }
 
   @Override
@@ -114,6 +116,8 @@ public class MagnussenRobot extends CommandBaseRobot
 
     // Run selected auto
     autos.getSelected().schedule();
+
+    coordinator.store();
   }
 
   @Override

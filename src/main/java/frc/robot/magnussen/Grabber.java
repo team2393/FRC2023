@@ -41,8 +41,7 @@ public class Grabber extends SubsystemBase
   /** @return Do we sense a cube or cone? */
   public boolean haveGamepiece()
   {
-    // Sensor shows false when detecting...
-    return !sensor.get();
+    return sensor.get();
   }
   
   @Override

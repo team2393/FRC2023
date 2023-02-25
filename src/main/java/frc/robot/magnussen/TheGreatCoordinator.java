@@ -74,10 +74,19 @@ public class TheGreatCoordinator extends SubsystemBase
     @Override
     public void execute()
     {
+      // Pull arm in, always safe to do
       arm.extend(false);
-      lift.setHeight(lift_setpoint = 0.0);
+      // Pull intake and arm in
       intake.setAngle(intake_setpoint = 125.0);
-      arm.setAngle(arm_setpoint = -120);
+      arm.setAngle(arm_setpoint = -100);
+
+      // TODO 1 Check these values, then set various positions while disabled and enable teleop
+      // Move lift up in case intake and arm could collide
+      if (45 < intake.getAngle() &&  intake.getAngle() < 110 &&
+         -95 < arm.getAngle()    &&  arm.getAngle() < -45)
+        lift.setHeight(lift_setpoint = 0.4);
+      else
+        lift.setHeight(lift_setpoint = 0.0);
       }
   };
 

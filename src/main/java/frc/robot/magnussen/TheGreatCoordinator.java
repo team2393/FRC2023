@@ -6,6 +6,7 @@ package frc.robot.magnussen;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.LookupTable;
+import frc.robot.util.LookupTable.Entry;
 
 /** The great arm/lift/grabber/intake coordinator */
 public class TheGreatCoordinator
@@ -39,13 +40,13 @@ public class TheGreatCoordinator
 
   private Mode mode;
 
-  /** Lookup from intake angle to arm angle */
+  /** Lookup from intake angle to arm angle and lift height */
   private static final LookupTable intake_arm_lookup = new LookupTable(
-    new String[] { "Intake Angle", "Arm Angle" },
-                                0,           0,
-                               45,         -20,
-                               90,         -90,
-                              100,        -100);
+    new String[] { "Intake Angle", "Arm Angle", "Lift Height" },
+                                0,           0,            0.0,
+                               45,         -20,            0.0,
+                               90,         -90,            0.3,
+                              100,        -120,            0.0);
 
   // Demo of intake_arm_lookup
   public static void main(String[] args)
@@ -120,21 +121,21 @@ public class TheGreatCoordinator
 
   private void handleIntake()
   {
-    // Arm in, lift at bottom
+    // Arm in
     arm.extend(false);
-    lift.setHeight(0.0);
-
+    
     // Move intake
     double intake_angle = adjust(intake.getAngle(), -1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), 0.0, 120.0);
     intake.setAngle(intake_angle);
-
+    
     // Spinners turn on when intake is deployed?
     // TODO Or need another sensor?
     intake.setSpinner(intake.getAngle() < 90 ? Intake.SPINNER_VOLTAGE : 0);
-
-    // Arm angle follows intake
-    double arm_angle = intake_arm_lookup.lookup(intake_angle).getValue();
-    arm.setAngle(arm_angle);
+    
+    // Arm angle and lift follow intake
+    Entry entry = intake_arm_lookup.lookup(intake_angle);
+    arm.setAngle(entry.values[0]);
+    lift.setHeight(entry.values[1]);
 
     // Move to other mode?
     OI.selectIntakeNodeMode();

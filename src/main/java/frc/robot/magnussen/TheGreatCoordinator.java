@@ -178,7 +178,10 @@ public class TheGreatCoordinator extends SubsystemBase
     
     // Spinners turn on when intake is deployed?
     // TODO Or need another sensor?
-    intake.setSpinner(intake.getAngle() < 90 ? Intake.SPINNER_VOLTAGE : 0);
+    if (intake.getAngle() > 90)
+      intake.setSpinner(0);
+    else
+      intake.setSpinner(OI.selectCubeIntake() ? Intake.SPINNER_VOLTAGE : -Intake.SPINNER_VOLTAGE);
     
     // Arm angle and lift follow intake
     Entry entry;

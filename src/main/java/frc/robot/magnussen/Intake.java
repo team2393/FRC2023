@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase
 {
-  public static final double SPINNER_VOLTAGE = 3.0;
+  public static final double SPINNER_VOLTAGE = 4.0;
   private CANSparkMax rotator = new CANSparkMax(RobotMap.INTAKE_ID, MotorType.kBrushless);
   private CANSparkMax spinner = new CANSparkMax(RobotMap.INTAKE_SPINNER, MotorType.kBrushless);
 
@@ -38,10 +38,10 @@ public class Intake extends SubsystemBase
 
     spinner.restoreFactoryDefaults();
     spinner.setIdleMode(IdleMode.kCoast);
-    spinner.setSmartCurrentLimit(20);
+    spinner.setSmartCurrentLimit(2);
 
     encoder.reset();
-
+    
     // TODO SmartDashboard.getEntry(..
     SmartDashboard.setDefaultNumber("Intake Offset", -100.0);
     SmartDashboard.setDefaultNumber("Intake kg", 0.2);

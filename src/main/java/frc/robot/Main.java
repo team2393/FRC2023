@@ -13,8 +13,8 @@ public final class Main
   public static void main(String... args)
   {
     // RobotBase.startRobot(frc.robot.magnussen.MagnussenRobot::new);
-    RobotBase.startRobot(frc.robot.magnussen.TheGreatCoordinatorTestRobot::new);
-    // RobotBase.startRobot(frc.robot.magnussen.IntakeTestRobot::new);
+    // RobotBase.startRobot(frc.robot.magnussen.TheGreatCoordinatorTestRobot::new);
+    RobotBase.startRobot(frc.robot.magnussen.IntakeTestRobot::new);
     // RobotBase.startRobot(frc.robot.magnussen.ArmTestRobot::new);
     // RobotBase.startRobot(frc.robot.magnussen.GrabberTestRobot::new);
     // RobotBase.startRobot(frc.robot.swervebot.SwerveBotRobot::new);

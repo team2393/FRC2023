@@ -4,10 +4,10 @@
 package frc.robot.magnussen;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxAbsoluteEncoder;
+// import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
+// import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -19,12 +19,12 @@ public class Intake extends SubsystemBase
 {
   public static final double SPINNER_VOLTAGE = 3.0;
   private CANSparkMax rotator = new CANSparkMax(RobotMap.INTAKE_ID, MotorType.kBrushless);
-  // private CANSparkMax spinner = new CANSparkMax(RobotMap.INTAKE_SPINNER, MotorType.kBrushless);
+  private CANSparkMax spinner = new CANSparkMax(RobotMap.INTAKE_SPINNER, MotorType.kBrushless);
 
-  // Encoder on DIO?
+  // Encoder on DIO
   private DutyCycleEncoder encoder = new DutyCycleEncoder(new DigitalInput(RobotMap.INTAKE_ANGLE));
   
-  // Encoder on SparkMAX
+  // Encoder on SparkMAX?
   // private SparkMaxAbsoluteEncoder encoder = rotator.getAbsoluteEncoder(Type.kDutyCycle);
 
   private double simulated_angle = 90.0;
@@ -36,9 +36,9 @@ public class Intake extends SubsystemBase
     rotator.setInverted(true);
     rotator.setSmartCurrentLimit(20);
 
-    // spinner.restoreFactoryDefaults();
-    // spinner.setIdleMode(IdleMode.kBrake);
-    // spinner.setSmartCurrentLimit(20);
+    spinner.restoreFactoryDefaults();
+    spinner.setIdleMode(IdleMode.kCoast);
+    spinner.setSmartCurrentLimit(20);
 
     encoder.reset();
 
@@ -67,7 +67,7 @@ public class Intake extends SubsystemBase
   /** @param voltage Spinner voltage, positive for "in" */
   public void setSpinner(double voltage)
   {
-    // spinner.setVoltage(voltage);
+    spinner.setVoltage(voltage);
   }
 
   /** @param voltage Intake voltage, positive for "up" */

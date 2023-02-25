@@ -50,6 +50,8 @@ public class IntakeTestRobot extends CommandBaseRobot
   @Override
   public void autonomousPeriodic()
   {
-    intake.setAngle(SmartDashboard.getNumber("Setpoint", 0));
+    double angle = SmartDashboard.getNumber("Setpoint", 0);
+    intake.setSpinner(angle < 90 ? Intake.SPINNER_VOLTAGE : 0);
+    intake.setAngle(angle);
   }
 }

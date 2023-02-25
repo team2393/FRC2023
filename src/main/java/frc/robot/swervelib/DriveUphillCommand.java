@@ -35,9 +35,9 @@ public class DriveUphillCommand extends CommandBase
     // we want to run at +-1 m/s uphill.
 
     // Any "nose up" angle means we need to drive forward
-    vx += uphill * drivetrain.getPitch()/45.0;
+    vx += uphill * drivetrain.getPitch()/25.0;
     // Any "left up" angle means we need to drive left
-    vy += uphill * drivetrain.getRoll()/45.0;
+    vy += uphill * drivetrain.getRoll()/25.0;
 
     drivetrain.swerve(vx, vy, vr);
   }

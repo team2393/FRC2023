@@ -16,6 +16,16 @@ public class TheGreatCoordinator
   private final Arm arm = new Arm();
   private final Intake intake = new Intake();
 
+  /** Setpoints
+   *  If we adjusted based on the current value from
+   *  getAngle(), getHeight(), ...,
+   *  we would amplify any regulation error:
+   *  Lift a little too low -> next time we make that the setpoint,
+   *  moving it even lower.
+   *  So we track and then adjust the _setpoint_.
+   */
+  private double lift_setpoint, arm_setpoint, intake_setpoint;
+
   /** Modes:
    *  DIRECT is for initial testing.
    *  Driver has to directly control the lift, arm and intake,
@@ -63,6 +73,10 @@ public class TheGreatCoordinator
   public TheGreatCoordinator(boolean use_modes)
   {
     mode = use_modes ? Mode.INTAKE : Mode.DIRECT;
+
+    lift_setpoint = lift.getHeight();
+    arm_setpoint = arm.getAngle();
+    intake_setpoint = intake.getAngle();
   }
   
   /** @param value Current value
@@ -82,9 +96,9 @@ public class TheGreatCoordinator
   {
     mode = Mode.INTAKE;
     arm.extend(false);
-    lift.setHeight(0.0);
-    intake.setAngle(120.0);
-    arm.setAngle(-100);
+    lift.setHeight(lift_setpoint = 0.0);
+    intake.setAngle(intake_setpoint = 120.0);
+    arm.setAngle(arm_setpoint = -100);
   }
 
   /** Interactively run the intake, arm, lift, grabber */
@@ -111,9 +125,13 @@ public class TheGreatCoordinator
   /** Directly control each device */
   private void directControl()
   {
-    lift.setHeight (adjust(lift.getHeight(), -0.02*MathUtil.applyDeadband(OI.joystick.getRightY(),      0.1),    0.0, 0.7));
-    arm.setAngle   (adjust(arm.getAngle(),    1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),       0.1), -180.0, 0.0));
-    intake.setAngle(adjust(intake.getAngle(),-1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1),    0.0, 120.0));
+    lift_setpoint   = adjust(lift_setpoint, -0.02*MathUtil.applyDeadband(OI.joystick.getRightY(),      0.1),    0.0, 0.7);
+    arm_setpoint    = adjust(arm_setpoint,    1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),       0.1), -180.0, 0.0);
+    intake_setpoint = adjust(intake_setpoint,-1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1),    0.0, 120.0);
+
+    lift.setHeight (lift_setpoint);
+    arm.setAngle   (arm_setpoint);
+    intake.setAngle(intake_setpoint);
 
     if (OI.joystick.getAButtonPressed())
       arm.extend(! arm.isExtended());
@@ -125,17 +143,17 @@ public class TheGreatCoordinator
     arm.extend(false);
     
     // Move intake
-    double intake_angle = adjust(intake.getAngle(), -1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), 0.0, 120.0);
-    intake.setAngle(intake_angle);
+    intake_setpoint = adjust(intake_setpoint, -1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), 0.0, 120.0);
+    intake.setAngle(intake_setpoint);
     
     // Spinners turn on when intake is deployed?
     // TODO Or need another sensor?
     intake.setSpinner(intake.getAngle() < 90 ? Intake.SPINNER_VOLTAGE : 0);
     
     // Arm angle and lift follow intake
-    Entry entry = intake_arm_lookup.lookup(intake_angle);
-    arm.setAngle(entry.values[0]);
-    lift.setHeight(entry.values[1]);
+    Entry entry = intake_arm_lookup.lookup(intake_setpoint);
+    arm.setAngle(arm_setpoint = entry.values[0]);
+    lift.setHeight(lift_setpoint = entry.values[1]);
 
     // Move to other mode?
     OI.selectIntakeNodeMode();
@@ -149,18 +167,18 @@ public class TheGreatCoordinator
   private void handleNear()
   {
     // Intake in, lift at bottom
-    intake.setAngle(120.0);
-    lift.setHeight(0.0);
+    intake.setAngle(intake_setpoint = 120.0);
+    lift.setHeight(lift_setpoint = 0.0);
     intake.setSpinner(0);
 
     // Move arm angle
-    double arm_angle = adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0);
-    arm.setAngle(arm_angle);
+    arm_setpoint = adjust(arm_setpoint, 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -180.0, 0.0);
+    arm.setAngle(arm_setpoint);
 
     // Extend when arm is sticking outside the back,
     // or out front yet not too far up (to prevent topping)
     // This should keep arm pulled in while where "inside" the robot
-    arm.extend(arm_angle < -170  ||  (arm_angle > -80.0  &&  arm_angle < -40.0));
+    arm.extend(arm_setpoint < -170  ||  (arm_setpoint > -80.0  &&  arm_setpoint < -40.0));
 
     // Move to other mode?
     if (OI.selectIntakeNodeMode())
@@ -174,13 +192,14 @@ public class TheGreatCoordinator
   private void handleMid()
   {
     // Intake in, lift at mid, arm in
-    intake.setAngle(120.0);
-    lift.setHeight(0.3);
+    intake.setAngle(intake_setpoint = 120.0);
+    lift.setHeight(lift_setpoint = 0.3);
     arm.extend(false);
     intake.setSpinner(0);
 
     // Move arm angle
-    arm.setAngle(adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -120.0, 0.0));
+    arm_setpoint = adjust(arm_setpoint, 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -120.0, 0.0);
+    arm.setAngle(arm_setpoint);
 
     // Move to other mode?
     if (OI.selectIntakeNodeMode())
@@ -195,13 +214,14 @@ public class TheGreatCoordinator
   private void handleFar()
   {
     // Intake in, lift all up, arm out as soon as lift high enough
-    intake.setAngle(120.0);
-    lift.setHeight(0.7);
+    intake.setAngle(intake_setpoint = 120.0);
+    lift.setHeight(lift_setpoint = 0.7);
     arm.extend(lift.getHeight() > 0.4);
     intake.setSpinner(0);
 
     // Move arm angle, but not too far out front
-    arm.setAngle(adjust(arm.getAngle(), 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -120.0, -50.0));
+    arm_setpoint = adjust(arm_setpoint, 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -120.0, -50.0);
+    arm.setAngle(arm_setpoint);
 
     // Move to other mode?
     OI.selectIntakeNodeMode();

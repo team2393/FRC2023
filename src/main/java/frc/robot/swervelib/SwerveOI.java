@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.XboxController;
 /** Operator Interface for swerving */
 public class SwerveOI
 {
-  /** Use correct stick setup, or the wrong one? */
+  /** Use correct stick setup (swervebot, tests), or the wrong one (competition robot)? */
   public static final boolean CORRECT = false;
 
   /** Maximum swerve speed sent from joystick input */

@@ -44,9 +44,9 @@ public class Intake extends SubsystemBase
 
     // TODO SmartDashboard.getEntry(..
     SmartDashboard.setDefaultNumber("Intake Offset", -100.0);
-    SmartDashboard.setDefaultNumber("Intake kg", 0.0);
+    SmartDashboard.setDefaultNumber("Intake kg", 0.2);
     SmartDashboard.setDefaultNumber("Intake ks", 0.0);
-    SmartDashboard.setDefaultNumber("Intake P", 0.0);
+    SmartDashboard.setDefaultNumber("Intake P", 0.05);
   }
 
   @Override

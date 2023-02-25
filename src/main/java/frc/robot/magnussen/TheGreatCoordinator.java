@@ -94,11 +94,13 @@ public class TheGreatCoordinator
   /** Place everything in a save position */
   public void store ()
   {
+    SmartDashboard.putString("Mode", "STORE");
     mode = Mode.INTAKE;
     arm.extend(false);
     lift.setHeight(lift_setpoint = 0.0);
-    intake.setAngle(intake_setpoint = 120.0);
-    arm.setAngle(arm_setpoint = -100);
+    lift.setHeight(lift_setpoint = 0.0);
+    intake.setAngle(intake_setpoint = 125.0);
+    arm.setAngle(arm_setpoint = -120);
   }
 
   /** Interactively run the intake, arm, lift, grabber */
@@ -127,7 +129,7 @@ public class TheGreatCoordinator
   {
     lift_setpoint   = adjust(lift_setpoint, -0.02*MathUtil.applyDeadband(OI.joystick.getRightY(),      0.1),    0.0, 0.7);
     arm_setpoint    = adjust(arm_setpoint,    1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),       0.1), -180.0, 0.0);
-    intake_setpoint = adjust(intake_setpoint,-1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1),    0.0, 120.0);
+    intake_setpoint = adjust(intake_setpoint,-1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1),    0.0, 125.0);
 
     lift.setHeight (lift_setpoint);
     arm.setAngle   (arm_setpoint);
@@ -143,7 +145,7 @@ public class TheGreatCoordinator
     arm.extend(false);
     
     // Move intake
-    intake_setpoint = adjust(intake_setpoint, -1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), 0.0, 120.0);
+    intake_setpoint = adjust(intake_setpoint, -1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), 0.0, 125.0);
     intake.setAngle(intake_setpoint);
     
     // Spinners turn on when intake is deployed?
@@ -167,7 +169,7 @@ public class TheGreatCoordinator
   private void handleNear()
   {
     // Intake in, lift at bottom
-    intake.setAngle(intake_setpoint = 120.0);
+    intake.setAngle(intake_setpoint = 125.0);
     lift.setHeight(lift_setpoint = 0.0);
     intake.setSpinner(0);
 
@@ -192,7 +194,7 @@ public class TheGreatCoordinator
   private void handleMid()
   {
     // Intake in, lift at mid, arm in
-    intake.setAngle(intake_setpoint = 120.0);
+    intake.setAngle(intake_setpoint = 125.0);
     lift.setHeight(lift_setpoint = 0.3);
     arm.extend(false);
     intake.setSpinner(0);
@@ -214,7 +216,7 @@ public class TheGreatCoordinator
   private void handleFar()
   {
     // Intake in, lift all up, arm out as soon as lift high enough
-    intake.setAngle(intake_setpoint = 120.0);
+    intake.setAngle(intake_setpoint = 125.0);
     lift.setHeight(lift_setpoint = 0.7);
     arm.extend(lift.getHeight() > 0.4);
     intake.setSpinner(0);

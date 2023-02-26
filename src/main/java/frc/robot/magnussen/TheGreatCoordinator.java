@@ -103,19 +103,31 @@ public class TheGreatCoordinator extends SubsystemBase
     }
   };
 
+  private static final LookupTable stored_arm_lookup = new LookupTable(
+    new String[] { "Arm Angle", "Intake Angle", "Lift Height" },
+                          0,            125,            0,
+                          .16,          125,            0.15,
+                          -127,         125,            0.2,
+                          -144,         125,            0.17,
+                          -154,         125,            0.08,
+                          -165,         125,            0,
+                          -180,         125,            0,
+                          152,          125,            0);
+
   /** Place everything in a safe position */
   private class StoreCommand extends CoordinatorCommand
   {
     @Override
     public void execute()
     {
-      // Pull arm in, always safe to do
+      arm_setpoint = adjust(arm_setpoint, 1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -200.0, 0.0);
+      arm.setAngle(arm_setpoint);
+      
+      Entry entry = stored_arm_lookup.lookup(arm_setpoint);  
+      intake.setAngle(intake_setpoint = entry.values[0]);
+      lift.setHeight(lift_setpoint = entry.values[1]);
       arm.extend(false);
-      // Pull intake and arm in
-      intake.setAngle(intake_setpoint = 125.0);
-      arm.setAngle(arm_setpoint = -90);
-      setSafeLiftHeight(0.0);
-      }
+    }
   };
 
   /** Move intake out, place arm at ~-90, wait for intake to be out */

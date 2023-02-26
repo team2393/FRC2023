@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.XboxController;
 /** Operator Interface for swerving */
 public class SwerveOI
 {
-  /** Use correct stick setup (swervebot, tests), or the wrong one (competition robot)? */
-  public static final boolean CORRECT = false;
+  /** Use competition robot, or test setup with just one joystick? */
+  public static final boolean TEST = false;
 
   /** Maximum swerve speed sent from joystick input */
   public static double MAX_METERS_PER_SEC = 4.0;
@@ -40,7 +40,7 @@ public class SwerveOI
   /** @return Forward/backwards speed [m/s] */
   public static double getForwardSpeed()
   {
-    double stick = CORRECT ? -joystick.getRightY() : -joystick.getLeftY();
+    double stick = -joystick.getLeftY();
     stick = MathUtil.applyDeadband(stick, 0.1);
     return x_throttle.calculate(MAX_METERS_PER_SEC * stick);
   }
@@ -48,7 +48,7 @@ public class SwerveOI
   /** @return Left/right speed [m/s] */
   public static double getLeftSpeed()
   {
-    double stick = CORRECT ? -joystick.getRightX() : -joystick.getLeftX();
+    double stick = -joystick.getLeftX();
     stick = MathUtil.applyDeadband(stick, 0.1);
     return y_throttle.calculate(MAX_METERS_PER_SEC * stick);
   }
@@ -56,7 +56,7 @@ public class SwerveOI
   /** @return Rotational speed, counter-clockwise [rad/s] */
   public static double getRotationSpeed()
   {
-    double stick = CORRECT ? -joystick.getLeftX() : -joystick.getRightX();
+    double stick = -joystick.getRightX();
     stick = MathUtil.applyDeadband(stick, 0.1);
     // Square output (keeping sign) for more sensitive center moves
     stick *= Math.abs(stick);

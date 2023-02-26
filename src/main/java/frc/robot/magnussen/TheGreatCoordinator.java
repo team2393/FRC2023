@@ -135,7 +135,7 @@ public class TheGreatCoordinator extends SubsystemBase
                   : cone_intake_arm_lookup.lookup(intake_setpoint);
       arm.setAngle(arm_setpoint = entry.values[0]);
       setSafeLiftHeight(entry.values[1]);
-      arm.extend(entry.values[2] > 0);
+      arm.extend(entry.values[2] > 0.5);
 
       // Move to other mode?
       OI.selectIntakeMode();
@@ -170,7 +170,7 @@ public class TheGreatCoordinator extends SubsystemBase
       
       Entry entry = near_lookup.lookup(arm_setpoint);  
       setSafeLiftHeight(entry.values[0]);
-      arm.extend(entry.values[1] > 0);
+      arm.extend(entry.values[1] > 0.5);
 
       // Move to other mode?
       if (OI.selectIntakeMode())
@@ -203,7 +203,7 @@ public class TheGreatCoordinator extends SubsystemBase
 
       Entry entry = mid_lookup.lookup(arm_setpoint);  
       setSafeLiftHeight(entry.values[0]);
-      arm.extend(entry.values[1] > 0);
+      arm.extend(entry.values[1] > 0.5);
 
       // Move to other mode?
       if (OI.selectIntakeMode())
@@ -237,7 +237,7 @@ public class TheGreatCoordinator extends SubsystemBase
 
       Entry entry = far_lookup.lookup(arm_setpoint);  
       setSafeLiftHeight(entry.values[0]);
-      arm.extend(entry.values[1] > 0);
+      arm.extend(entry.values[1] > 0.5);
 
       // Move to other mode?
       OI.selectIntakeMode();

@@ -50,7 +50,7 @@ public class Intake extends SubsystemBase
   private NetworkTableEntry nt_offset, nt_kg, nt_angle;
 
   private final ProfiledPIDController pid = new ProfiledPIDController(0.05, 0, 0,
-                                                                      new Constraints(180.0, 180.0));
+                                                                      new Constraints(180.0, 90.0));
 
   public Intake()
   {

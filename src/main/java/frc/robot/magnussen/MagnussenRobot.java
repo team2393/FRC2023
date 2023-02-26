@@ -104,11 +104,21 @@ public class MagnussenRobot extends CommandBaseRobot
     if (OI.resetOrigin())
         reset.schedule();
 
-    if (OI.selectIntakeMode()  &&  !drive_uphill.isScheduled())
+    boolean normal = !drive_uphill.isScheduled();
+    if (OI.selectIntakeMode()  &&  normal)
       coordinator.startIntake();
-    
+
+    if (OI.selectNearNodeMode() && normal)
+      coordinator.near();
+
+    if (OI.selectMiddleNodeMode() && normal)
+      coordinator.mid();
+
+    if (OI.selectFarNodeMode() && normal)
+      coordinator.far();
+      
     if (OI.ejectGamepiece())
-      new GrabberEjectCommand(coordinator.grabber).schedule();
+      coordinator.eject();
   }
 
   @Override

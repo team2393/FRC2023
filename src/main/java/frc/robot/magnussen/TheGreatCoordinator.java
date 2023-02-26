@@ -45,7 +45,7 @@ public class TheGreatCoordinator extends SubsystemBase
     double lift_extra;
 
     // Arm far enough out, intake far enough in  => no conflict
-    if (arm.getAngle() > -80  &&  intake.getAngle() > 100)
+    if (arm.getAngle() > -80  &&  intake.getAngle() > 95)
       lift_extra = 0.0;
     else
     {
@@ -56,7 +56,7 @@ public class TheGreatCoordinator extends SubsystemBase
                          + arm_length    * sin(toRadians(-arm.getAngle()));
       // When lift is down, distance between arm and intake pivot points
       // is about 0.74 m, so need this extra hight to keep them apart:
-      double extra_needed = used_height - 0.74;
+      double extra_needed = used_height - 0.68;
       // Lift moves at about 30 deg to vertical, so needs to move a little more
       lift_extra = extra_needed/cos(toRadians(30));
     }
@@ -115,6 +115,24 @@ public class TheGreatCoordinator extends SubsystemBase
       }
   };
 
+  /** Move intake out, place arm at ~-90, wait for intake to be out */
+  private class DeloyIntakeCommand extends CoordinatorCommand
+  {
+    @Override
+    public void execute()
+    {
+      intake.setAngle(intake_setpoint = 0.0);
+      arm.setAngle(arm_setpoint = -90);
+      setSafeLiftHeight(0.0);
+    }
+
+    @Override
+    public boolean isFinished()
+    {
+      return intake.getAngle() < 20;
+    }
+  }
+
   /** Take game piece in */
   private static final LookupTable cone_intake_arm_lookup = new LookupTable(
     new String[] { "Intake Angle", "Arm Angle", "Lift Height", "Extend" },
@@ -149,14 +167,6 @@ public class TheGreatCoordinator extends SubsystemBase
       arm.setAngle(arm_setpoint = entry.values[0]);
       setSafeLiftHeight(entry.values[1]);
       arm.extend(entry.values[2] > 0.5);
-
-      // Move to other mode?
-      OI.selectIntakeMode();
-      if (OI.selectNearNodeMode()  &&  intake_setpoint > 110)
-        new NearCommand().schedule();
-      if (OI.selectMiddleNodeMode()  &&  intake_setpoint > 110)
-        new MidCommand().schedule();
-      OI.selectFarNodeMode();
     }
   }
 
@@ -184,14 +194,6 @@ public class TheGreatCoordinator extends SubsystemBase
       Entry entry = near_lookup.lookup(arm_setpoint);  
       setSafeLiftHeight(entry.values[0]);
       arm.extend(entry.values[1] > 0.5);
-
-      // Move to other mode?
-      if (OI.selectIntakeMode())
-        startIntake();
-      OI.selectNearNodeMode();
-      if (OI.selectMiddleNodeMode())
-        new MidCommand().schedule();
-      OI.selectFarNodeMode();
     }
   }
 
@@ -217,15 +219,6 @@ public class TheGreatCoordinator extends SubsystemBase
       Entry entry = mid_lookup.lookup(arm_setpoint);  
       setSafeLiftHeight(entry.values[0]);
       arm.extend(entry.values[1] > 0.5);
-
-      // Move to other mode?
-      if (OI.selectIntakeMode())
-        startIntake();
-      if (OI.selectNearNodeMode())
-        new NearCommand().schedule();
-      OI.selectMiddleNodeMode();
-      if (OI.selectFarNodeMode())
-        new FarCommand().schedule();
     }
   }
 
@@ -251,13 +244,6 @@ public class TheGreatCoordinator extends SubsystemBase
       Entry entry = far_lookup.lookup(arm_setpoint);  
       setSafeLiftHeight(entry.values[0]);
       arm.extend(entry.values[1] > 0.5);
-
-      // Move to other mode?
-      OI.selectIntakeMode();
-      OI.selectNearNodeMode();
-      if (OI.selectMiddleNodeMode())
-        new MidCommand().schedule();
-      OI.selectFarNodeMode();
     }
   }
 
@@ -280,12 +266,37 @@ public class TheGreatCoordinator extends SubsystemBase
     // TODO 2 Check intake sequence
     CommandBase grab_item = OI.selectCubeIntake() ? new GrabCubeCommand(grabber) : new GrabConeCommand(grabber);
     new SequentialCommandGroup(
+      new DeloyIntakeCommand(),
       // Grab item and run intake, stop when we grabbed an item
       new ParallelDeadlineGroup(grab_item, new IntakeCommand()),
-      // Next, move to 'mid' TODO better StoreCommand?
-      new MidCommand()
+      // Next, move to 'near'?
+      new NearCommand()
     ).schedule();
   }
+
+  public void near()
+  {
+    new NearCommand().schedule();
+  }
+
+  public void mid()
+  {
+    new MidCommand().schedule();
+  }
+
+  public void far()
+  {
+    new FarCommand().schedule();
+  }
+
+  public void eject()
+  {
+    new SequentialCommandGroup(
+      new GrabberEjectCommand(grabber),
+      new StoreCommand()
+    ).schedule();
+  }
+
 
   @Override
   public void periodic()

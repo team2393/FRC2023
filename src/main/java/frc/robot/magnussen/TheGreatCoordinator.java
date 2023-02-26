@@ -3,6 +3,10 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.magnussen;
 
+import static java.lang.Math.max;
+import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,6 +36,22 @@ public class TheGreatCoordinator extends SubsystemBase
    */
   private double lift_setpoint, arm_setpoint, intake_setpoint;
 
+  /** Set lift to desired height or higher in case of conflict w/ arm or intake
+   *  @param desired Desired height (minimum)
+   */
+  private void setSafeLiftHeight(double desired)
+  {
+    // How long is the arm right now?
+    double arm_length = arm.isExtended() ? Arm.LENGTH_EXTENDED : Arm.LENGTH_RETRACTED;
+    // How much of intake is sticking "up", how much of arm is "down"?
+    double used_height = Intake.LENGTH * sin(toRadians(intake.getAngle()))
+                       + arm_length    * sin(toRadians(-arm.getAngle()));
+    // TODO Extra lift height needed beyond clearance when lift is down
+    double extra_needed = used_height - 0.3;
+    // Use extra or desired, whatever's greater
+    lift.setHeight(lift_setpoint = max(extra_needed, desired));
+  }
+
   /** Base for command that uses the coordinator and shows its name as "Mode" */
   abstract private class CoordinatorCommand extends CommandBase
   {
@@ -58,16 +78,12 @@ public class TheGreatCoordinator extends SubsystemBase
     @Override
     public void execute()
     {
-      lift_setpoint   = adjust(lift_setpoint, -0.02*MathUtil.applyDeadband(OI.joystick.getRightY(),      0.1),    0.0, 0.7);
-      arm_setpoint    = adjust(arm_setpoint,    1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),       0.1), -180.0, 0.0);
-      intake_setpoint = adjust(intake_setpoint,-1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1),    0.0, 125.0);
-    
-      lift.setHeight (lift_setpoint);
-      arm.setAngle   (arm_setpoint);
-      intake.setAngle(intake_setpoint);
-    
       if (OI.joystick.getAButtonPressed())
         arm.extend(! arm.isExtended());
+    
+      setSafeLiftHeight(               adjust(lift_setpoint,  -0.02*MathUtil.applyDeadband(OI.joystick.getRightY(),      0.1),    0.0, 0.7));
+      arm.setAngle   (arm_setpoint   = adjust(arm_setpoint,    1.00*MathUtil.applyDeadband(OI.joystick.getLeftX(),       0.1), -180.0, 0.0));
+      intake.setAngle(intake_setpoint= adjust(intake_setpoint,-1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1),    0.0, 125.0));    
     }
   };
 
@@ -81,15 +97,8 @@ public class TheGreatCoordinator extends SubsystemBase
       arm.extend(false);
       // Pull intake and arm in
       intake.setAngle(intake_setpoint = 125.0);
-      arm.setAngle(arm_setpoint = -100);
-
-      // TODO 1 Check these values, then set various positions while disabled and enable teleop
-      // Move lift up in case intake and arm could collide
-      if (45 < intake.getAngle() &&  intake.getAngle() < 110 &&
-         -95 < arm.getAngle()    &&  arm.getAngle() < -45)
-        lift.setHeight(lift_setpoint = 0.4);
-      else
-        lift.setHeight(lift_setpoint = 0.0);
+      arm.setAngle(arm_setpoint = -100); // TODO Store arm at -90?
+      setSafeLiftHeight(0.0);
       }
   };
 
@@ -125,7 +134,7 @@ public class TheGreatCoordinator extends SubsystemBase
                   ? cube_intake_arm_lookup.lookup(intake_setpoint)
                   : cone_intake_arm_lookup.lookup(intake_setpoint);
       arm.setAngle(arm_setpoint = entry.values[0]);
-      lift.setHeight(lift_setpoint = entry.values[1]);
+      setSafeLiftHeight(entry.values[1]);
       arm.extend(entry.values[2] > 0);
 
       // Move to other mode?
@@ -160,7 +169,7 @@ public class TheGreatCoordinator extends SubsystemBase
       arm.setAngle(arm_setpoint);
       
       Entry entry = near_lookup.lookup(arm_setpoint);  
-      lift.setHeight(lift_setpoint = entry.values[0]);
+      setSafeLiftHeight(entry.values[0]);
       arm.extend(entry.values[1] > 0);
 
       // Move to other mode?
@@ -193,7 +202,7 @@ public class TheGreatCoordinator extends SubsystemBase
       arm.setAngle(arm_setpoint);
 
       Entry entry = mid_lookup.lookup(arm_setpoint);  
-      lift.setHeight(lift_setpoint = entry.values[0]);
+      setSafeLiftHeight(entry.values[0]);
       arm.extend(entry.values[1] > 0);
 
       // Move to other mode?
@@ -227,7 +236,7 @@ public class TheGreatCoordinator extends SubsystemBase
       arm.setAngle(arm_setpoint);
 
       Entry entry = far_lookup.lookup(arm_setpoint);  
-      lift.setHeight(lift_setpoint = entry.values[0]);
+      setSafeLiftHeight(entry.values[0]);
       arm.extend(entry.values[1] > 0);
 
       // Move to other mode?
@@ -260,6 +269,7 @@ public class TheGreatCoordinator extends SubsystemBase
     new SequentialCommandGroup(
       // Grab item and run intake, stop when we grabbed an item
       new ParallelDeadlineGroup(grab_item, new IntakeCommand()),
+      // Next, move to 'mid' TODO better StoreCommand?
       new MidCommand()
     ).schedule();
   }

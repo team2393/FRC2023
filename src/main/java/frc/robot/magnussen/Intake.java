@@ -16,13 +16,26 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/** Intake
+ *
+ *  Rotates from zero degrees for 'horizontally out'
+ *  to 90 for 'up' and further to 'all in'.
+ * 
+ *  Spinner to capture game pieces. 
+ */
 public class Intake extends SubsystemBase
 {
+  // TODO Measure intake
+  public static final double LENGTH = 0.3;
+
   public static final double SPINNER_VOLTAGE = 4.0;
   private CANSparkMax rotator = new CANSparkMax(RobotMap.INTAKE_ID, MotorType.kBrushless);
   private CANSparkMax spinner = new CANSparkMax(RobotMap.INTAKE_SPINNER, MotorType.kBrushless);
 
-  // Encoder on DIO
+  /** Through Bore Encoder on DIO
+   *  'A'/'S' switch on side of encoder must be in 'A' position.
+   *  Absolute readout via (white, red, black)
+   */
   private DutyCycleEncoder encoder = new DutyCycleEncoder(new DigitalInput(RobotMap.INTAKE_ANGLE));
   
   // Encoder on SparkMAX?
@@ -39,6 +52,7 @@ public class Intake extends SubsystemBase
     rotator.setInverted(true);
     rotator.setSmartCurrentLimit(20);
 
+    // Use low current limit to hold game pieces
     spinner.restoreFactoryDefaults();
     spinner.setIdleMode(IdleMode.kCoast);
     spinner.setSmartCurrentLimit(2);

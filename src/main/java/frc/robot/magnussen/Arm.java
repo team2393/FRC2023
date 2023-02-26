@@ -21,6 +21,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /** Arm that rotates and extends/contracts */
 public class Arm extends SubsystemBase
 {
+  // TODO Measure arm
+  public static final double LENGTH_EXTENDED = 0.46;
+  public static final double LENGTH_RETRACTED = 0.3;
+
   /** Motor controller */
   private final CANSparkMax motor = new CANSparkMax(RobotMap.ARM_ID, MotorType.kBrushless);
 

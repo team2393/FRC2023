@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /** Grabber */
 public class Grabber extends SubsystemBase
 {
-  public static final double CUBE_VOLTAGE = 5;
+  public static final double CUBE_VOLTAGE = 8;
   public static final double CONE_VOLTAGE = 5.0;
   public static final double EJECT_VOLTAGE = -5.0;
 
@@ -32,11 +32,21 @@ public class Grabber extends SubsystemBase
   {
     spinner.restoreFactoryDefaults();
     spinner.setIdleMode(IdleMode.kCoast);
-    spinner.setSmartCurrentLimit(10);
+    spinner.setSmartCurrentLimit(20);
 
     nt_sensor = SmartDashboard.getEntry("Grabber");
 
     setDefaultCommand(off = new GrabberOffCommand(this));
+  }
+
+  public void setConeLimit()
+  {
+    spinner.setSmartCurrentLimit(2);
+  }
+
+  public void setCubeLimit()
+  {
+    spinner.setSmartCurrentLimit(20);
   }
 
   /** @return Do we sense a cube or cone? */

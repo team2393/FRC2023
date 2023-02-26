@@ -12,6 +12,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -45,18 +46,20 @@ public class TheGreatCoordinator extends SubsystemBase
     double lift_extra;
 
     // Arm far enough out, intake far enough in  => no conflict
-    if (arm.getAngle() > -80  &&  intake.getAngle() > 95)
+    if (arm.getAngle() > -95  &&  intake.getAngle() > 100)
       lift_extra = 0.0;
     else
     {
       // How long is the arm right now?
       double arm_length = arm.isExtended() ? Arm.LENGTH_EXTENDED : Arm.LENGTH_RETRACTED;
+      if (grabber.haveGamepiece())
+        arm_length += 0.15;
       // How much of intake is sticking "up", how much of arm is "down"?
       double used_height = Intake.LENGTH * sin(toRadians(intake.getAngle()))
                          + arm_length    * sin(toRadians(-arm.getAngle()));
       // When lift is down, distance between arm and intake pivot points
       // is about 0.74 m, so need this extra hight to keep them apart:
-      double extra_needed = used_height - 0.68;
+      double extra_needed = used_height - 0.55;
       // Lift moves at about 30 deg to vertical, so needs to move a little more
       lift_extra = extra_needed/cos(toRadians(30));
     }
@@ -110,7 +113,7 @@ public class TheGreatCoordinator extends SubsystemBase
       arm.extend(false);
       // Pull intake and arm in
       intake.setAngle(intake_setpoint = 125.0);
-      arm.setAngle(arm_setpoint = -100); // TODO Store arm at -90?
+      arm.setAngle(arm_setpoint = -90);
       setSafeLiftHeight(0.0);
       }
   };
@@ -151,7 +154,7 @@ public class TheGreatCoordinator extends SubsystemBase
     public void execute()
     {
       // Move intake
-      intake_setpoint = adjust(intake_setpoint, -1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), 0.0, 125.0);
+      intake_setpoint = adjust(intake_setpoint, -1.00*MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1), -2.0, 125.0);
       intake.setAngle(intake_setpoint);
       
       // Spinners turn on when intake is deployed
@@ -165,7 +168,7 @@ public class TheGreatCoordinator extends SubsystemBase
                   ? cube_intake_arm_lookup.lookup(intake_setpoint)
                   : cone_intake_arm_lookup.lookup(intake_setpoint);
       arm.setAngle(arm_setpoint = entry.values[0]);
-      setSafeLiftHeight(entry.values[1]);
+      lift.setHeight(lift_setpoint = entry.values[1]); // Do NOT enforce safe lift height
       arm.extend(entry.values[2] > 0.5);
     }
   }
@@ -247,13 +250,16 @@ public class TheGreatCoordinator extends SubsystemBase
     }
   }
 
+  private CommandBase store;
+
   public TheGreatCoordinator()
   {
+    setDefaultCommand(store = new StoreCommand());
   }
 
   public void store()
   {
-    new StoreCommand().schedule();
+    store.schedule();
   }
 
   public void directControl()
@@ -265,13 +271,15 @@ public class TheGreatCoordinator extends SubsystemBase
   {
     // TODO 2 Check intake sequence
     CommandBase grab_item = OI.selectCubeIntake() ? new GrabCubeCommand(grabber) : new GrabConeCommand(grabber);
-    new SequentialCommandGroup(
+    SequentialCommandGroup group = new SequentialCommandGroup(
       new DeloyIntakeCommand(),
       // Grab item and run intake, stop when we grabbed an item
       new ParallelDeadlineGroup(grab_item, new IntakeCommand()),
       // Next, move to 'near'?
-      new NearCommand()
-    ).schedule();
+      new ParallelCommandGroup(new NearCommand(), new GrabberOffCommand(grabber))
+    );
+    group.setName("IntakeGroup");
+    group.schedule();
   }
 
   public void near()
@@ -291,12 +299,8 @@ public class TheGreatCoordinator extends SubsystemBase
 
   public void eject()
   {
-    new SequentialCommandGroup(
-      new GrabberEjectCommand(grabber),
-      new StoreCommand()
-    ).schedule();
+    new GrabberEjectCommand(grabber).schedule();
   }
-
 
   @Override
   public void periodic()

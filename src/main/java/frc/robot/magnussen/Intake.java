@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase
   /** Intake length [m] */
   public static final double LENGTH = 0.39;
 
-  public static final double SPINNER_VOLTAGE = 4.0;
+  public static final double SPINNER_VOLTAGE = 8.0;
   private CANSparkMax rotator = new CANSparkMax(RobotMap.INTAKE_ID, MotorType.kBrushless);
   private CANSparkMax spinner = new CANSparkMax(RobotMap.INTAKE_SPINNER, MotorType.kBrushless);
 
@@ -62,7 +62,7 @@ public class Intake extends SubsystemBase
     // Use low current limit to hold game pieces
     spinner.restoreFactoryDefaults();
     spinner.setIdleMode(IdleMode.kCoast);
-    spinner.setSmartCurrentLimit(2);
+    spinner.setSmartCurrentLimit(20);
 
     encoder.reset();
     

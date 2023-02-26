@@ -41,20 +41,19 @@ Done:
 Prepared:
   * Update OI, assign functions to joystick vs. buttonboard
   * Intake angle sensor and basic motor movement
-
-Next:
   * Grabber sensor, try to grab cube vs cone using suitable grabber motor speeds and sensor delays
   * Update GrabCone, GrabCube, GabberEject commands
+  * Test 'DriveUphillCommand' with actual robot
   * Test and calibrate intake
     * Move intake to angle setpoints 0, 90, 100, ...
     * How to turn intake spinner on/off?
       Run when "out" based on angle?
-      Run when "out" _and_ sensor indicates there's no game piece, yet?
+
+Next:
   * Test/adjust/update the great coordinator:
     * Intake and arm movement to take gamepieces
-    * Commands to move intake continuously? Or "out", "in", "stored"?
+    * Commands to move intake continuously, but move on once game piece has been captured
     * Lift/arm/intake handling for near/mid/far node placement of gamepieces
-  * Test 'DriveUphillCommand' with actual robot
   * Test "middle node exit" and "..balance" auto moves with simplified field
   * Pack control system essentials: Spare RoboRIO, Radio, USB and network cable, ...
   * Test auto moves on actual field

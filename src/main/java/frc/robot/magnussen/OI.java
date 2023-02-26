@@ -25,6 +25,7 @@ public class OI extends SwerveOI
       buttons.getRawButtonPressed(i);
   }
 
+  /** @return Select cube? Otherwise: Cone */
   public static boolean selectCubeIntake()
   {
     return buttons.getRawButton(1);
@@ -48,6 +49,11 @@ public class OI extends SwerveOI
                 : buttons.getRawButtonPressed(9); 
   }
 
+  public static boolean selectEjectGamepiece()
+  {
+    return false; // TODO 3 Pick a button 
+  }
+
   public static boolean selectNearNodeMode()
   {
     return TEST ? joystick.getXButtonPressed()
@@ -65,4 +71,5 @@ public class OI extends SwerveOI
     return TEST ? joystick.getBButtonPressed()
                 : buttons.getRawButtonPressed(8); 
   }
+
 }

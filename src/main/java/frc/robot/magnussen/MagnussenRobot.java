@@ -108,8 +108,8 @@ public class MagnussenRobot extends CommandBaseRobot
       coordinator.startIntake();
     
     // TODO 3 Find button to eject (and move 'intake' to joystick?)
-    // if (OI.selectEjectGamepiece())
-    //   new GrabberEjectCommand(coordinator.grabber);
+    if (OI.selectEjectGamepiece())
+      new GrabberEjectCommand(coordinator.grabber);
   }
 
   @Override

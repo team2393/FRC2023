@@ -19,6 +19,9 @@ public class GrabberOffCommand extends CommandBase
   @Override
   public void execute()
   {
-    grabber.setVoltage(0);
+    if (grabber.haveGamepiece())
+      grabber.setVoltage(1.0);
+    else
+      grabber.setVoltage(0);
   }
 }

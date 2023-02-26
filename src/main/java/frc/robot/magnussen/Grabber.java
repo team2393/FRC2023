@@ -10,20 +10,23 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** Grabber */
 public class Grabber extends SubsystemBase
 {
-  public static final double CUBE_VOLTAGE = 3.5;
-  public static final double CONE_VOLTAGE = 4.0;
-  public static final double EJECT_VOLTAGE = -4.0;
+  public static final double CUBE_VOLTAGE = 5;
+  public static final double CONE_VOLTAGE = 5.0;
+  public static final double EJECT_VOLTAGE = -5.0;
 
   private DigitalInput sensor = new DigitalInput(RobotMap.GRABBER_SENSOR);
 
   /** Motor controller */
   private CANSparkMax spinner = new CANSparkMax(RobotMap.GRABBER_ID, MotorType.kBrushless);
   private NetworkTableEntry nt_sensor;
+  private CommandBase off;
+
 
   public Grabber()
   {
@@ -33,7 +36,7 @@ public class Grabber extends SubsystemBase
 
     nt_sensor = SmartDashboard.getEntry("Grabber");
 
-    setDefaultCommand(new GrabberOffCommand(this));
+    setDefaultCommand(off = new GrabberOffCommand(this));
   }
 
   /** @return Do we sense a cube or cone? */

@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 // import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -29,6 +30,8 @@ public class Intake extends SubsystemBase
 
   private double simulated_angle = 90.0;
 
+  private NetworkTableEntry nt_offset, nt_kg, nt_p, nt_angle;
+
   public Intake()
   {
     rotator.restoreFactoryDefaults();
@@ -42,17 +45,19 @@ public class Intake extends SubsystemBase
 
     encoder.reset();
     
-    // TODO SmartDashboard.getEntry(..
-    SmartDashboard.setDefaultNumber("Intake Offset", -100.0);
-    SmartDashboard.setDefaultNumber("Intake kg", 0.2);
-    SmartDashboard.setDefaultNumber("Intake ks", 0.0);
-    SmartDashboard.setDefaultNumber("Intake P", 0.05);
+    nt_offset = SmartDashboard.getEntry("Intake Offset");
+    nt_offset.setDefaultDouble(-100.0);
+    nt_kg = SmartDashboard.getEntry("Intake kg");
+    nt_kg.setDefaultDouble(0.2);
+    nt_p = SmartDashboard.getEntry("Intake P");
+    nt_p.setDefaultDouble(0.05);
+    nt_angle = SmartDashboard.getEntry("Intake Angle");
   }
 
   @Override
   public void periodic()
   {
-    SmartDashboard.putNumber("Intake Angle", getAngle());
+    nt_angle.setDouble(getAngle());
   }
 
   /** @return Intake angle in degrees */
@@ -60,7 +65,7 @@ public class Intake extends SubsystemBase
   {
     if (RobotBase.isSimulation())
       return simulated_angle;
-    return Math.IEEEremainder(encoder.getAbsolutePosition()*360.0 - SmartDashboard.getNumber("Intake Offset", 0.0),
+    return Math.IEEEremainder(encoder.getAbsolutePosition()*360.0 - nt_offset.getDouble(0.0),
                               360);
   }
 
@@ -85,18 +90,15 @@ public class Intake extends SubsystemBase
       return;
     }
     // Gravity gain, always applied to counteract gravity
-    double kg = SmartDashboard.getNumber("Intake kg", 0.0);
-    // Static gain, minimum voltage to get moving
-    double ks = SmartDashboard.getNumber("Intake ks", 0.0);
+    double kg = nt_kg.getDouble(0.0);
     // Propotional gain to correct angle error
-    double P  = SmartDashboard.getNumber("Intake P", 0.0);
+    double P  = nt_p.getDouble(0.0);
 
     // If intake is horizontal, cos(0) = 1 --> Apply full kg
     // If intake is vertically up, cos(90 deg) = 0 --> No kg
     double current_angle = getAngle();
     double error = Math.IEEEremainder(desired_angle - current_angle, 360.0);
-    double voltage = ks * Math.signum(error) 
-                   + kg * Math.cos(Math.toRadians(current_angle))
+    double voltage = kg * Math.cos(Math.toRadians(current_angle))
                    +  P * error;
     setVoltage(voltage);
   }

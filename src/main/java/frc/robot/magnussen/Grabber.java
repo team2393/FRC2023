@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /** Grabber */
 public class Grabber extends SubsystemBase
 {
-  // TODO Pick suitable voltages
   public static final double CUBE_VOLTAGE = 3.0;
   public static final double CONE_VOLTAGE = 4.0;
   public static final double EJECT_VOLTAGE = -3.0;
@@ -26,12 +25,11 @@ public class Grabber extends SubsystemBase
   private CANSparkMax spinner = new CANSparkMax(RobotMap.GRABBER_ID, MotorType.kBrushless);
   private NetworkTableEntry nt_sensor;
 
-
   public Grabber()
   {
     spinner.restoreFactoryDefaults();
     spinner.setIdleMode(IdleMode.kCoast);
-    spinner.setSmartCurrentLimit(30); // TODO current limit?
+    spinner.setSmartCurrentLimit(10);
 
     nt_sensor = SmartDashboard.getEntry("Grabber");
 

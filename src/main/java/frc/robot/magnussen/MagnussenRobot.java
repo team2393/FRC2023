@@ -105,7 +105,11 @@ public class MagnussenRobot extends CommandBaseRobot
         reset.schedule();
 
     if (OI.selectIntakeNodeMode() && !drive_uphill.isScheduled())
-      coordinator.intake();
+      coordinator.startIntake();
+    
+    // TODO 3 Find button to eject (and move 'intake' to joystick?)
+    // if (OI.selectEjectGamepiece())
+    //   new GrabberEjectCommand(coordinator.grabber);
   }
 
   @Override

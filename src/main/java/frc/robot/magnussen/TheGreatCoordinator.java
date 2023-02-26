@@ -7,6 +7,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LookupTable;
 import frc.robot.util.LookupTable.Entry;
@@ -18,6 +20,7 @@ public class TheGreatCoordinator extends SubsystemBase
   private final Lift lift = new Lift();
   private final Arm arm = new Arm();
   private final Intake intake = new Intake();
+  final Grabber grabber = new Grabber();
 
   /** Setpoints
    *  If we adjusted based on the current value from
@@ -50,7 +53,7 @@ public class TheGreatCoordinator extends SubsystemBase
   }
 
   /** Directly control each device */
-  public class DirectCommand extends CoordinatorCommand
+  private class DirectCommand extends CoordinatorCommand
   {
     @Override
     public void execute()
@@ -69,7 +72,7 @@ public class TheGreatCoordinator extends SubsystemBase
   };
 
   /** Place everything in a safe position */
-  public class StoreCommand extends CoordinatorCommand
+  private class StoreCommand extends CoordinatorCommand
   {
     @Override
     public void execute()
@@ -102,7 +105,7 @@ public class TheGreatCoordinator extends SubsystemBase
                                17,         -80,          0.4,   1,
                                30,        -100,          0.5,   0,
                                50,        -120,          0.5,   0);
-  public class IntakeCommand extends CoordinatorCommand
+  private class IntakeCommand extends CoordinatorCommand
   {
     @Override
     public void execute()
@@ -143,7 +146,7 @@ public class TheGreatCoordinator extends SubsystemBase
                            -70,          0,           1,
                            -25,          0,           1,
                              0,          0,           1);
-  public class NearCommand extends CoordinatorCommand
+  private class NearCommand extends CoordinatorCommand
   {
     @Override
     public void execute()
@@ -162,7 +165,7 @@ public class TheGreatCoordinator extends SubsystemBase
 
       // Move to other mode?
       if (OI.selectIntakeNodeMode())
-        new IntakeCommand().schedule();
+        startIntake();
       OI.selectNearNodeMode();
       if (OI.selectMiddleNodeMode())
         new MidCommand().schedule();
@@ -176,7 +179,7 @@ public class TheGreatCoordinator extends SubsystemBase
                           -65,           0.6,   0,   
                           -45,           0.56,  0,
                             0,           0.3,   0);
-  public class MidCommand extends CoordinatorCommand
+  private class MidCommand extends CoordinatorCommand
   {
     @Override
     public void execute()
@@ -195,7 +198,7 @@ public class TheGreatCoordinator extends SubsystemBase
 
       // Move to other mode?
       if (OI.selectIntakeNodeMode())
-        new IntakeCommand().schedule();
+        startIntake();
       if (OI.selectNearNodeMode())
         new NearCommand().schedule();
       OI.selectMiddleNodeMode();
@@ -210,7 +213,7 @@ public class TheGreatCoordinator extends SubsystemBase
                          -110,           0.7,   0,
                           -70,           0.7,   0, 
                           -25,           0.7,   1);
-  public class FarCommand extends CoordinatorCommand
+  private class FarCommand extends CoordinatorCommand
   {
     @Override
     public void execute()
@@ -245,9 +248,15 @@ public class TheGreatCoordinator extends SubsystemBase
     new StoreCommand().schedule();
   }
 
-  public void intake()
+  public void startIntake()
   {
-    new IntakeCommand().schedule();
+    // TODO 2 Check intake sequence
+    CommandBase grab_item = OI.selectCubeIntake() ? new GrabCubeCommand(grabber) : new GrabConeCommand(grabber);
+    new SequentialCommandGroup(
+      // Grab item and run intake, stop when we grabbed an item
+      new ParallelDeadlineGroup(grab_item, new IntakeCommand()),
+      new MidCommand()
+    ).schedule();
   }
 
   @Override

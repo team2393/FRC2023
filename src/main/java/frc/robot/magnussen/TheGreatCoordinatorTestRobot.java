@@ -14,6 +14,12 @@ public class TheGreatCoordinatorTestRobot extends CommandBaseRobot
   public void teleopInit()
   {
     OI.reset();
+    coordinator.directControl();
+  }
+
+  @Override
+  public void autonomousInit()
+  {
     coordinator.store();
   }
 }

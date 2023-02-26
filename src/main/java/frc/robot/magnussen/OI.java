@@ -31,7 +31,7 @@ public class OI extends SwerveOI
     return buttons.getRawButton(1);
   }
 
-  public static boolean selectDriveMode()
+  public static boolean selectNormalDriveMode()
   {
     return TEST ? joystick.getRightBumperPressed()
                 : buttons.getRawButtonPressed(7);
@@ -43,13 +43,13 @@ public class OI extends SwerveOI
                 : buttons.getRawButtonPressed(3);
   }
 
-  public static boolean selectIntakeNodeMode()
+  public static boolean selectIntakeMode()
   {
     return TEST ? joystick.getAButtonPressed()
                 : buttons.getRawButtonPressed(9); 
   }
 
-  public static boolean selectEjectGamepiece()
+  public static boolean ejectGamepiece()
   {
     return false; // TODO 3 Pick a button 
   }
@@ -71,5 +71,4 @@ public class OI extends SwerveOI
     return TEST ? joystick.getBButtonPressed()
                 : buttons.getRawButtonPressed(8); 
   }
-
 }

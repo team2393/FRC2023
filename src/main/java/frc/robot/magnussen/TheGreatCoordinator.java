@@ -129,7 +129,7 @@ public class TheGreatCoordinator extends SubsystemBase
       arm.extend(entry.values[2] > 0);
 
       // Move to other mode?
-      OI.selectIntakeNodeMode();
+      OI.selectIntakeMode();
       if (OI.selectNearNodeMode()  &&  intake_setpoint > 110)
         new NearCommand().schedule();
       if (OI.selectMiddleNodeMode()  &&  intake_setpoint > 110)
@@ -164,7 +164,7 @@ public class TheGreatCoordinator extends SubsystemBase
       arm.extend(entry.values[1] > 0);
 
       // Move to other mode?
-      if (OI.selectIntakeNodeMode())
+      if (OI.selectIntakeMode())
         startIntake();
       OI.selectNearNodeMode();
       if (OI.selectMiddleNodeMode())
@@ -197,7 +197,7 @@ public class TheGreatCoordinator extends SubsystemBase
       arm.extend(entry.values[1] > 0);
 
       // Move to other mode?
-      if (OI.selectIntakeNodeMode())
+      if (OI.selectIntakeMode())
         startIntake();
       if (OI.selectNearNodeMode())
         new NearCommand().schedule();
@@ -231,7 +231,7 @@ public class TheGreatCoordinator extends SubsystemBase
       arm.extend(entry.values[1] > 0);
 
       // Move to other mode?
-      OI.selectIntakeNodeMode();
+      OI.selectIntakeMode();
       OI.selectNearNodeMode();
       if (OI.selectMiddleNodeMode())
         new MidCommand().schedule();
@@ -246,6 +246,11 @@ public class TheGreatCoordinator extends SubsystemBase
   public void store()
   {
     new StoreCommand().schedule();
+  }
+
+  public void directControl()
+  {
+    new DirectCommand().schedule();
   }
 
   public void startIntake()
@@ -264,6 +269,8 @@ public class TheGreatCoordinator extends SubsystemBase
   {
     if (DriverStation.isDisabled())
     {
+      // Track current readings, so in case elements are manually moved,
+      // we'll continue with those when again enabled
       lift_setpoint = lift.getHeight();
       arm_setpoint = arm.getAngle();
       intake_setpoint = intake.getAngle();

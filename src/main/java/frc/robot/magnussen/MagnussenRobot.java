@@ -93,7 +93,7 @@ public class MagnussenRobot extends CommandBaseRobot
   public void teleopPeriodic()
   {
     // Activate different drive mode?
-    if (OI.selectDriveMode())
+    if (OI.selectNormalDriveMode())
       drive_relative.schedule();
     else if (OI.selectUphillMode())
     {
@@ -101,14 +101,14 @@ public class MagnussenRobot extends CommandBaseRobot
       coordinator.store();
     }
     
-    if (SwerveOI.resetOrigin())
+    if (OI.resetOrigin())
         reset.schedule();
 
-    if (OI.selectIntakeNodeMode() && !drive_uphill.isScheduled())
+    if (OI.selectIntakeMode()  &&  !drive_uphill.isScheduled())
       coordinator.startIntake();
     
     // TODO 3 Find button to eject (and move 'intake' to joystick?)
-    if (OI.selectEjectGamepiece())
+    if (OI.ejectGamepiece())
       new GrabberEjectCommand(coordinator.grabber);
   }
 

@@ -42,6 +42,7 @@ public class SwerveOI
   {
     double stick = -joystick.getLeftY();
     stick = MathUtil.applyDeadband(stick, 0.1);
+    stick *= Math.abs(stick);
     return x_throttle.calculate(MAX_METERS_PER_SEC * stick);
   }
 
@@ -50,6 +51,7 @@ public class SwerveOI
   {
     double stick = -joystick.getLeftX();
     stick = MathUtil.applyDeadband(stick, 0.1);
+    stick *= Math.abs(stick);
     return y_throttle.calculate(MAX_METERS_PER_SEC * stick);
   }
 

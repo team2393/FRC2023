@@ -21,12 +21,6 @@ public class GrabCubeCommand extends CommandBase
   }
 
   @Override
-  public void initialize()
-  {
-    grabber.setCubeLimit();
-  }
-
-  @Override
   public void execute()
   {
     done = delay.compute(grabber.haveGamepiece());

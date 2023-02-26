@@ -139,9 +139,10 @@ public class TheGreatCoordinator extends SubsystemBase
   /** Take game piece in */
   private static final LookupTable cone_intake_arm_lookup = new LookupTable(
     new String[] { "Intake Angle", "Arm Angle", "Lift Height", "Extend" },
-                                0,           0,           0.0,  0,
-                               72,        -100,           0.3,  0,
-                              100,        -128,           0.2,  0); 
+                                0,         -88,          0.51  ,  0,
+                                65,        -88,          0.51,    0,
+                               77,         -99,          0.25,    0,
+                              87,         -122,          0.48,    0); 
   private static final LookupTable cube_intake_arm_lookup = new LookupTable(
     new String[] { "Intake Angle", "Arm Angle", "Lift Height", "Extend" },
                                 0,         -80,          0.05,  1,
@@ -158,10 +159,15 @@ public class TheGreatCoordinator extends SubsystemBase
       intake.setAngle(intake_setpoint);
       
       // Spinners turn on when intake is deployed
-      if (intake.getAngle() > 90)
+      boolean cube_mode = OI.selectCubeIntake();
+      if (intake.getAngle() > 100)
         intake.setSpinner(0);
+      // If we have a cone, stop grabbing it with the intake. In fact release it
+      else if (grabber.haveGamepiece()  &&  !cube_mode)
+        intake.setSpinner(2);
       else
-        intake.setSpinner(OI.selectCubeIntake() ? Intake.SPINNER_VOLTAGE : -Intake.SPINNER_VOLTAGE);
+      // Grab cone or cube
+        intake.setSpinner(cube_mode ? Intake.SPINNER_VOLTAGE : -Intake.SPINNER_VOLTAGE);
       
       // Arm angle and lift follow intake
       Entry entry = OI.selectCubeIntake()
@@ -203,7 +209,7 @@ public class TheGreatCoordinator extends SubsystemBase
   private final LookupTable mid_lookup = new LookupTable(
    new String[] { "Arm Angle", "Lift Height", "Extend" },
                           -90,           0.5,   0,
-                          -65,           0.6,   0,   
+                          -62,           0.55,   0,   
                           -45,           0.56,  0,
                             0,           0.3,   0);
   private class MidCommand extends CoordinatorCommand
@@ -270,7 +276,17 @@ public class TheGreatCoordinator extends SubsystemBase
   public void startIntake()
   {
     // TODO 2 Check intake sequence
-    CommandBase grab_item = OI.selectCubeIntake() ? new GrabCubeCommand(grabber) : new GrabConeCommand(grabber);
+    CommandBase grab_item;
+    if (OI.selectCubeIntake())
+    {
+      grab_item = new GrabCubeCommand(grabber);
+      intake.setCubeLimit();
+    }
+    else
+    {
+      grab_item = new GrabConeCommand(grabber);
+      intake.setConeLimit();
+    }
     SequentialCommandGroup group = new SequentialCommandGroup(
       new DeloyIntakeCommand(),
       // Grab item and run intake, stop when we grabbed an item
@@ -299,7 +315,12 @@ public class TheGreatCoordinator extends SubsystemBase
 
   public void eject()
   {
-    new GrabberEjectCommand(grabber).schedule();
+    SequentialCommandGroup group = new SequentialCommandGroup(
+      new GrabberEjectCommand(grabber),
+      new StoreCommand()
+    );
+    group.setName("EjectGroup");
+    group.schedule();
   }
 
   @Override

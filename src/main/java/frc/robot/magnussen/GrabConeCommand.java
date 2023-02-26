@@ -21,12 +21,6 @@ public class GrabConeCommand extends CommandBase
   }
 
   @Override
-  public void initialize()
-  {
-    grabber.setConeLimit();
-  }
-
-  @Override
   public void execute()
   {
     done = delay.compute(grabber.haveGamepiece());

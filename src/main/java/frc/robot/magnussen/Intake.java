@@ -59,7 +59,6 @@ public class Intake extends SubsystemBase
     rotator.setInverted(true);
     rotator.setSmartCurrentLimit(20);
 
-    // Use low current limit to hold game pieces
     spinner.restoreFactoryDefaults();
     spinner.setIdleMode(IdleMode.kCoast);
     spinner.setSmartCurrentLimit(20);
@@ -74,6 +73,17 @@ public class Intake extends SubsystemBase
 
     pid.enableContinuousInput(-180.0, 180.0);
     pid.reset(getAngle());
+  }
+
+  public void setCubeLimit()
+  {
+    spinner.setSmartCurrentLimit(20);
+  }
+
+  public void setConeLimit()
+  {
+    // Use low current limit to hold cone
+    spinner.setSmartCurrentLimit(2);
   }
 
   @Override

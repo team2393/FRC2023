@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.magnussen;
 
+import static java.lang.Math.cos;
 import static java.lang.Math.max;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
@@ -41,15 +42,27 @@ public class TheGreatCoordinator extends SubsystemBase
    */
   private void setSafeLiftHeight(double desired)
   {
-    // How long is the arm right now?
-    double arm_length = arm.isExtended() ? Arm.LENGTH_EXTENDED : Arm.LENGTH_RETRACTED;
-    // How much of intake is sticking "up", how much of arm is "down"?
-    double used_height = Intake.LENGTH * sin(toRadians(intake.getAngle()))
-                       + arm_length    * sin(toRadians(-arm.getAngle()));
-    // TODO Extra lift height needed beyond clearance when lift is down
-    double extra_needed = used_height - 0.3;
+    double lift_extra;
+
+    // Arm far enough out, intake far enough in  => no conflict
+    if (arm.getAngle() > -80  &&  intake.getAngle() > 100)
+      lift_extra = 0.0;
+    else
+    {
+      // How long is the arm right now?
+      double arm_length = arm.isExtended() ? Arm.LENGTH_EXTENDED : Arm.LENGTH_RETRACTED;
+      // How much of intake is sticking "up", how much of arm is "down"?
+      double used_height = Intake.LENGTH * sin(toRadians(intake.getAngle()))
+                         + arm_length    * sin(toRadians(-arm.getAngle()));
+      // When lift is down, distance between arm and intake pivot points
+      // is about 0.74 m, so need this extra hight to keep them apart:
+      double extra_needed = used_height - 0.74;
+      // Lift moves at about 30 deg to vertical, so needs to move a little more
+      lift_extra = extra_needed/cos(toRadians(30));
+    }
+
     // Use extra or desired, whatever's greater
-    lift.setHeight(lift_setpoint = max(extra_needed, desired));
+    lift.setHeight(lift_setpoint = max(lift_extra, desired));
   }
 
   /** Base for command that uses the coordinator and shows its name as "Mode" */
@@ -149,8 +162,8 @@ public class TheGreatCoordinator extends SubsystemBase
 
   private static final LookupTable near_lookup = new LookupTable(
     new String[] { "Arm Angle", "Lift Height", "Extend" },
-                          -125,          0.15,        0,
-                          -110,          0.15,        0,
+                          -125,          0  ,         0,
+                          -110,          0,           0,
                            -82,          0,           0,
                            -70,          0,           1,
                            -25,          0,           1,

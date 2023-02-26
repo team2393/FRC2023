@@ -15,9 +15,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /** Grabber */
 public class Grabber extends SubsystemBase
 {
-  public static final double CUBE_VOLTAGE = 3.0;
+  public static final double CUBE_VOLTAGE = 3.5;
   public static final double CONE_VOLTAGE = 4.0;
-  public static final double EJECT_VOLTAGE = -3.0;
+  public static final double EJECT_VOLTAGE = -4.0;
 
   private DigitalInput sensor = new DigitalInput(RobotMap.GRABBER_SENSOR);
 

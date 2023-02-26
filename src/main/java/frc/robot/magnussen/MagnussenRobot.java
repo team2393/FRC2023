@@ -54,7 +54,7 @@ public class MagnussenRobot extends CommandBaseRobot
     // power.setSwitchableChannel(false);
     // SmartDashboard.putData(power);
 
-    camera = new LimelightClient(drivetrain);
+    // camera = new LimelightClient(drivetrain);
   }
 
   @Override
@@ -107,9 +107,8 @@ public class MagnussenRobot extends CommandBaseRobot
     if (OI.selectIntakeMode()  &&  !drive_uphill.isScheduled())
       coordinator.startIntake();
     
-    // TODO 3 Find button to eject (and move 'intake' to joystick?)
     if (OI.ejectGamepiece())
-      new GrabberEjectCommand(coordinator.grabber);
+      new GrabberEjectCommand(coordinator.grabber).schedule();
   }
 
   @Override

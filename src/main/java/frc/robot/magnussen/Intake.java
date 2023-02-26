@@ -9,11 +9,15 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 // import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** Intake
@@ -25,8 +29,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class Intake extends SubsystemBase
 {
-  // TODO Measure intake
-  public static final double LENGTH = 0.3;
+  /** Intake length [m] */
+  public static final double LENGTH = 0.39;
 
   public static final double SPINNER_VOLTAGE = 4.0;
   private CANSparkMax rotator = new CANSparkMax(RobotMap.INTAKE_ID, MotorType.kBrushless);
@@ -43,7 +47,10 @@ public class Intake extends SubsystemBase
 
   private double simulated_angle = 90.0;
 
-  private NetworkTableEntry nt_offset, nt_kg, nt_p, nt_angle;
+  private NetworkTableEntry nt_offset, nt_kg, nt_angle;
+
+  private final ProfiledPIDController pid = new ProfiledPIDController(0.05, 0, 0,
+                                                                      new Constraints(180.0, 180.0));
 
   public Intake()
   {
@@ -63,9 +70,10 @@ public class Intake extends SubsystemBase
     nt_offset.setDefaultDouble(-100.0);
     nt_kg = SmartDashboard.getEntry("Intake kg");
     nt_kg.setDefaultDouble(0.2);
-    nt_p = SmartDashboard.getEntry("Intake P");
-    nt_p.setDefaultDouble(0.05);
     nt_angle = SmartDashboard.getEntry("Intake Angle");
+
+    pid.enableContinuousInput(-180.0, 180.0);
+    pid.reset(getAngle());
   }
 
   @Override
@@ -105,15 +113,12 @@ public class Intake extends SubsystemBase
     }
     // Gravity gain, always applied to counteract gravity
     double kg = nt_kg.getDouble(0.0);
-    // Propotional gain to correct angle error
-    double P  = nt_p.getDouble(0.0);
 
     // If intake is horizontal, cos(0) = 1 --> Apply full kg
     // If intake is vertically up, cos(90 deg) = 0 --> No kg
     double current_angle = getAngle();
-    double error = Math.IEEEremainder(desired_angle - current_angle, 360.0);
     double voltage = kg * Math.cos(Math.toRadians(current_angle))
-                   +  P * error;
+                   + pid.calculate(current_angle, desired_angle);
     setVoltage(voltage);
   }
 }

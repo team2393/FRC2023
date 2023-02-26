@@ -51,7 +51,7 @@ public class OI extends SwerveOI
 
   public static boolean ejectGamepiece()
   {
-    return false; // TODO 3 Pick a button 
+    return buttons.getRawButtonPressed(10);
   }
 
   public static boolean selectNearNodeMode()

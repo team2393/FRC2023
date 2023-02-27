@@ -12,6 +12,7 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -87,6 +88,8 @@ public class Arm extends SubsystemBase
   @Override
   public void periodic()
   {
+    if (DriverStation.isDisabled())
+      pid.reset(getAngle());
     nt_angle.setNumber(getAngle());
     nt_extended.setBoolean(extender.get());
   }

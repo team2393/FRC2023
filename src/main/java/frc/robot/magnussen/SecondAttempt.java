@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.util.LookupTable;
 import frc.robot.util.LookupTable.Entry;
 
@@ -84,13 +85,13 @@ public class SecondAttempt extends SubsystemBase
       else
         lift_setpoint = 0.0;
 
-      // We want intake at 90 and arm at -110
+      // We want intake at 70 and arm at -120
 
       // Is arm 'outside'?
       if (arm.getAngle() > -90)
       { // Is intake out of the way?
         if (intake.getAngle() < 10.0)
-            arm_setpoint = -110.0;
+            arm_setpoint = -120.0;
         else
         {
           // Move arm further outside
@@ -102,10 +103,21 @@ public class SecondAttempt extends SubsystemBase
       }
       else
       { // Arm is at least -90 deg "in"
-        // Pull all the way in
-        arm_setpoint = -110;
-        if (arm.getAngle() < 100)
-          intake_setpoint = 90.0;
+        // Is this the initial setup with intake all in
+        // and arm lying on intake?
+        if (intake.getAngle() > 120  &&  intake_setpoint != 70.0)
+        {
+          arm_setpoint = -155.0;
+          if (arm.getAngle() < -150.0)
+            intake_setpoint = 70.0;
+        }
+
+        if (intake.getAngle() < 90)
+        {
+          arm_setpoint = -120;
+          if (arm.getAngle() < -100)
+            intake_setpoint = 70.0;
+        }
       }
     }
   }
@@ -121,7 +133,7 @@ public class SecondAttempt extends SubsystemBase
     public void execute()
     {
       // Is intake 'in' and arm 'out'?
-      done = intake.getAngle() > 80  &&  arm.getAngle() > -95;
+      done = intake.getAngle() > 60  &&  arm.getAngle() > -95;
       if (done)
         return;
 
@@ -131,7 +143,7 @@ public class SecondAttempt extends SubsystemBase
       if (grabber.haveGamepiece())
       {
         // TODO Higher in cone mode...
-        lift_setpoint = 0.3;
+        lift_setpoint = 0.4;
       }
       else
         lift_setpoint = 0.0;
@@ -178,14 +190,14 @@ public class SecondAttempt extends SubsystemBase
     @Override
     public void initialize()
     {
-      intake_setpoint = 90;
+      intake_setpoint = 80;
       intake.setSpinner(0);
     }
 
     @Override
     public boolean isFinished()
     {
-      return intake.getAngle() > 80.0;
+      return Math.abs(intake.getAngle() - 80.0) < 5.0;
     }
   }
 
@@ -207,7 +219,7 @@ public class SecondAttempt extends SubsystemBase
     @Override
     public boolean isFinished()
     {
-      return Math.abs(lift_setpoint - lift.getHeight()) < 0.1;
+      return Math.abs(lift_setpoint - lift.getHeight()) < 0.03;
     }
   }
 
@@ -387,9 +399,10 @@ public class SecondAttempt extends SubsystemBase
       new InstantCommand(() -> intake.setSpinner(Intake.SPINNER_VOLTAGE)),
       new GrabCubeCommand(grabber),
       new InstantCommand(() -> arm.extend(false)),
-      new SetLiftCommand(0.3),
-      new SetArmCommand(-110.0),
-      new IntakeUpCommand()
+      new SetLiftCommand(0.4),
+      new SetArmCommand(-120.0),
+      new IntakeUpCommand(),
+      new WaitCommand(10)
      );
     group.addRequirements(this);
     group.setName("IntakeCube");

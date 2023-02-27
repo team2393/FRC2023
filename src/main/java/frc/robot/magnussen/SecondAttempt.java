@@ -75,15 +75,16 @@ public class SecondAttempt extends SubsystemBase
   }
 
   /** Hold everything in a safe position inside the robot
-   *  May invoke from starting configuration
+   *  May invoke from any? configuration
    */
   private class StoreCommand extends CoordinatorCommand
   {
     @Override
     public void execute()
     {
+      intake.setSpinner(0);
       arm.extend(false);
-      intake_setpoint = 90.0;
+
       if (grabber.haveGamepiece())
       {
         // TODO Higher in cone mode...
@@ -91,9 +92,30 @@ public class SecondAttempt extends SubsystemBase
       }
       else
         lift_setpoint = 0.0;
-      if (intake.getAngle() < 100)
-        arm_setpoint = -110.0;
-      intake.setSpinner(0);
+
+      // We want intake at 90 and arm at -110
+
+      // Is arm 'outside'?
+      if (arm.getAngle() > -90)
+      { // Is intake out of the way?
+        if (intake.getAngle() < 10.0)
+            arm_setpoint = -110.0;
+        else
+        {
+          // Move arm further outside
+          arm_setpoint = -40;
+          // Once there, put intake out and down into safe zone
+          if (arm.getAngle() > -45)
+            intake_setpoint = 5.0;
+        }
+      }
+      else
+      { // Arm is at least -90 deg "in"
+        // Pull all the way in
+        arm_setpoint = -110;
+        if (arm.getAngle() < 100)
+          intake_setpoint = 90.0;
+      }
     }
   }
 
@@ -313,24 +335,25 @@ public class SecondAttempt extends SubsystemBase
     return value;
   }
 
+  public void store()
+  {
+    new StoreCommand().schedule();
+  }
+
   public void intakeCube()
   {
     SequentialCommandGroup group = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "Intake Cube")),
       new PrintCommand("Starting cube intake.."),
       new IntakeDownCommand(),
-      new WaitCommand(2.0), // TODO REMOVE
       new SetLiftCommand(0.05),
       new SetArmCommand(-80.0),
-      new WaitCommand(2.0), // TODO REMOVE
       new InstantCommand(() -> arm.extend(true)),
       new InstantCommand(() -> intake.setSpinner(Intake.SPINNER_VOLTAGE)),
       new GrabCubeCommand(grabber),
       new InstantCommand(() -> arm.extend(false)),
       new SetLiftCommand(0.3),
-      new WaitCommand(2.0), // TODO REMOVE
       new SetArmCommand(-110.0),
-      new WaitCommand(2.0), // TODO REMOVE
       new IntakeUpCommand()
      );
     group.addRequirements(this);
@@ -344,10 +367,8 @@ public class SecondAttempt extends SubsystemBase
       new InstantCommand(() -> SmartDashboard.putString("Mode", "Intake Cone")),
       new PrintCommand("Starting cone intake.."),
       new IntakeDownCommand(),
-      new WaitCommand(2.0), // TODO REMOVE
       new ParallelDeadlineGroup(new GrabConeCommand(grabber), new InteractiveConeIntakeCommand()),
-      new SetLiftCommand(0.3),
-      new WaitCommand(2.0) // TODO REMOVE
+      new SetLiftCommand(0.3)
      );
     group.addRequirements(this);
     group.setName("IntakeCone");

@@ -13,6 +13,9 @@ public class SecondAttemptTestRobot extends CommandBaseRobot
   @Override
   public void teleopPeriodic()
   {
+    if (OI.joystick.getRawButtonPressed(6))
+      coordinator.store();
+
     // if (OI.selectIntakeMode())
     //   coordinator.intakeCube();
     if (OI.selectIntakeMode())

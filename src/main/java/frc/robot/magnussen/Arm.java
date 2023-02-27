@@ -113,7 +113,11 @@ public class Arm extends SubsystemBase
   {
     if (RobotBase.isSimulation())
     {
-      simulated_angle = desired_angle;
+      if (desired_angle > simulated_angle)
+        simulated_angle += 0.3;
+      else
+        simulated_angle -= 0.3;
+      // simulated_angle = desired_angle;
       return;
     }
     // Compare w/ ArmFeedforward

@@ -119,7 +119,10 @@ public class Lift extends SubsystemBase
   {
     if (RobotBase.isSimulation())
     {
-      simulated_height = desired_height;
+      if (simulated_height < desired_height)
+        simulated_height += 0.025;
+      else
+        simulated_height -= 0.025;
       return;
     }
 

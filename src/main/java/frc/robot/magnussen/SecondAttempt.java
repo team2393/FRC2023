@@ -8,9 +8,12 @@ import static java.lang.Math.max;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 
+import com.ctre.phoenix.GadgeteerUartClient.GadgeteerConnection;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -81,7 +84,13 @@ public class SecondAttempt extends SubsystemBase
     {
       arm.extend(false);
       intake_setpoint = 90.0;
-      lift_setpoint = grabber.haveGamepiece() ? 0.3 : 0;
+      if (grabber.haveGamepiece())
+      {
+        // TODO Higher in cone mode...
+        lift_setpoint = 0.3;
+      }
+      else
+        lift_setpoint = 0.0;
       if (intake.getAngle() < 100)
         arm_setpoint = -110.0;
       intake.setSpinner(0);
@@ -163,6 +172,40 @@ public class SecondAttempt extends SubsystemBase
     }
   }
 
+  /** Move intake to capture cone and then transfer to grabber */
+  private static final LookupTable cone_intake_arm_lookup = new LookupTable(
+    new String[] { "Intake Angle", "Arm Angle", "Lift Height", "Extend" },
+                               -2,         -88,          0.51,    0,
+                               65,         -88,          0.51,    0,
+                               77,         -99,          0.25,    0); 
+  private class InteractiveConeIntakeCommand extends CoordinatorCommand
+  {
+    private Timer timer = new Timer();
+
+    @Override
+    public void execute()
+    {
+      // Move intake
+      Entry entry = cone_intake_arm_lookup.lookup(adjust(intake_setpoint, getUserInput()));      
+      intake_setpoint = entry.position;
+      arm_setpoint = entry.values[0];
+      lift_setpoint = entry.values[1];
+      arm.extend(entry.values[2] > 0.5);
+      
+      // If we have a cone, stop grabbing it with the intake. In fact release it
+      if (grabber.haveGamepiece())
+        intake.setSpinner(2);
+      else
+      {
+        intake.setSpinner(-Intake.SPINNER_VOLTAGE);
+        timer.restart();
+      }
+    }
+  }
+
+
+
+
   private static final LookupTable near_lookup = new LookupTable(
     new String[] { "Arm Angle", "Lift Height", "Extend" },
                            -90,          0.3,         0,
@@ -229,6 +272,7 @@ public class SecondAttempt extends SubsystemBase
   {
     SequentialCommandGroup group = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "Intake Cube")),
+      new PrintCommand("Starting cube intake.."),
       new IntakeDownCommand(),
       new WaitCommand(2.0), // TODO REMOVE
       new SetLiftCommand(0.05),
@@ -248,6 +292,24 @@ public class SecondAttempt extends SubsystemBase
     group.setName("IntakeCube");
     group.schedule();
   }
+
+  public void intakeCone()
+  {
+    SequentialCommandGroup group = new SequentialCommandGroup(
+      new InstantCommand(() -> SmartDashboard.putString("Mode", "Intake Cone")),
+      new PrintCommand("Starting cone intake.."),
+      new IntakeDownCommand(),
+      new WaitCommand(2.0), // TODO REMOVE
+      new ParallelDeadlineGroup(new GrabConeCommand(grabber), new InteractiveConeIntakeCommand()),
+      new SetLiftCommand(0.3),
+      new WaitCommand(2.0) // TODO REMOVE
+     );
+    group.addRequirements(this);
+    group.setName("IntakeCone");
+    group.schedule();
+  }
+
+
 
   public void near()
   {

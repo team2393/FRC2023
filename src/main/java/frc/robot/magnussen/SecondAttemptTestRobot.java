@@ -13,10 +13,15 @@ public class SecondAttemptTestRobot extends CommandBaseRobot
   @Override
   public void teleopPeriodic()
   {
+    // if (OI.selectIntakeMode())
+    //   coordinator.intakeCube();
     if (OI.selectIntakeMode())
-      coordinator.intakeCube();
+      coordinator.intakeCone();
+
+
     if (OI.selectNearNodeMode())
       coordinator.near();
+
     if (OI.ejectGamepiece())
       coordinator.eject();
   }

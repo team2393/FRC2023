@@ -1,0 +1,262 @@
+// Copyright (c) FIRST Team 2393 and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+package frc.robot.magnussen;
+
+import static java.lang.Math.cos;
+import static java.lang.Math.max;
+import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.util.LookupTable;
+import frc.robot.util.LookupTable.Entry;
+
+/** Arm/lift/grabber/intake coordinator */
+public class SecondAttempt extends SubsystemBase
+{
+  // Components that we handle
+  private final Lift lift = new Lift();
+  private final Arm arm = new Arm();
+  private final Intake intake = new Intake();
+  final Grabber grabber = new Grabber();
+
+  /** Setpoints
+   *  If we adjusted based on the current value from
+   *  getAngle(), getHeight(), ...,
+   *  we would amplify any regulation error:
+   *  Lift a little too low -> next time we make that the setpoint,
+   *  moving it even lower.
+   *  So we track and then adjust the _setpoint_.
+   */
+  private double lift_setpoint, arm_setpoint, intake_setpoint;
+
+  /** Base for command that uses the coordinator and shows its name as "Mode" */
+  abstract private class CoordinatorCommand extends CommandBase
+  {
+    CoordinatorCommand()
+    {
+      addRequirements(SecondAttempt.this);
+    }
+
+    @Override
+    public void initialize()
+    {
+      String mode = getClass().getName();
+      int sep = mode.indexOf('$');
+      if (sep > 0)
+        mode = mode.substring(sep+1);
+      mode = mode.replace("Command", "");
+      SmartDashboard.putString("Mode", mode);
+    }
+
+    protected double getUserInput()
+    {
+      if (RobotBase.isReal())
+        return MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1);
+      else
+        return (System.currentTimeMillis() / 5000) % 2 == 0 ? 1.0 : -1.0;
+    }
+
+  }
+
+  /** Hold everything in a safe position inside the robot
+   *  May invoke from starting configuration
+   */
+  private class StoreCommand extends CoordinatorCommand
+  {
+    @Override
+    public void execute()
+    {
+      arm.extend(false);
+      intake_setpoint = 90.0;
+      lift_setpoint = grabber.haveGamepiece() ? 0.3 : 0;
+      if (intake.getAngle() < 100)
+        arm_setpoint = -110.0;
+      intake.setSpinner(0);
+    }
+  }
+
+  private class IntakeDownCommand extends CommandBase
+  {
+    @Override
+    public void initialize()
+    {
+      intake_setpoint = 0;
+    }
+
+    @Override
+    public boolean isFinished()
+    {
+      return intake.getAngle() < 10.0;
+    }
+  }
+
+  private class IntakeUpCommand extends CommandBase
+  {
+    @Override
+    public void initialize()
+    {
+      intake_setpoint = 90;
+      intake.setSpinner(0);
+    }
+
+    @Override
+    public boolean isFinished()
+    {
+      return intake.getAngle() > 80.0;
+    }
+  }
+
+  private class SetLiftCommand extends CommandBase
+  {
+    private double height;
+    
+    public SetLiftCommand(double height)
+    {
+      this.height = height;
+    }
+
+    @Override
+    public void execute()
+    {
+      lift_setpoint = height;
+    }
+
+    @Override
+    public boolean isFinished()
+    {
+      return Math.abs(lift_setpoint - lift.getHeight()) < 0.1;
+    }
+  }
+
+  private class SetArmCommand extends CommandBase
+  {
+    private double angle;
+    
+    public SetArmCommand(double angle)
+    {
+      this.angle = angle;
+    }
+
+    @Override
+    public void execute()
+    {
+      arm_setpoint = angle;
+    }
+
+    @Override
+    public boolean isFinished()
+    {
+      return Math.abs(Math.IEEEremainder(arm_setpoint - arm.getAngle(), 360)) < 5;
+    }
+  }
+
+  private static final LookupTable near_lookup = new LookupTable(
+    new String[] { "Arm Angle", "Lift Height", "Extend" },
+                           -90,          0.3,         0,
+                           -82,          0,           0,
+                           -70,          0,           1,
+                           -25,          0,           1,
+                             0,          0,           1);
+  private class NearCommand extends CoordinatorCommand
+  {
+    @Override
+    public void execute()
+    {
+      // Intake in, lift at bottom
+      intake_setpoint = 125.0;
+      intake.setSpinner(0);
+      
+      // Move arm angle
+      Entry entry = near_lookup.lookup(adjust(arm_setpoint, getUserInput()));
+      arm_setpoint = entry.position;
+      lift_setpoint = entry.values[0];
+      arm.extend(entry.values[1] > 0.5);
+    }
+  }
+
+  public SecondAttempt()
+  {
+    SmartDashboard.putString("Mode", "Init...");
+    setDefaultCommand(new StoreCommand());
+  }
+
+  @Override
+  public void periodic()
+  {
+    if (DriverStation.isDisabled())
+    {
+      // Track current readings, so in case elements are manually moved,
+      // we'll continue with those when again enabled
+      lift_setpoint = lift.getHeight();
+      arm_setpoint = arm.getAngle();
+      // Keep in range -270..90
+      if (arm_setpoint > 90.0)
+        arm_setpoint -= 360.0;
+      intake_setpoint = intake.getAngle();
+    }
+    else
+    {
+      lift.setHeight(lift_setpoint);
+      arm.setAngle(arm_setpoint);
+      intake.setAngle(intake_setpoint);
+    }
+  }
+  
+  /** @param value Current value
+   *  @param rate Decrease/increase -1..1
+   *  @return Adjusted value
+   */
+  private double adjust(double value, double rate)
+  {
+    value += rate;
+    return value;
+  }
+
+  public void intakeCube()
+  {
+    SequentialCommandGroup group = new SequentialCommandGroup(
+      new InstantCommand(() -> SmartDashboard.putString("Mode", "Intake Cube")),
+      new IntakeDownCommand(),
+      new WaitCommand(2.0), // TODO REMOVE
+      new SetLiftCommand(0.05),
+      new SetArmCommand(-80.0),
+      new WaitCommand(2.0), // TODO REMOVE
+      new InstantCommand(() -> arm.extend(true)),
+      new InstantCommand(() -> intake.setSpinner(Intake.SPINNER_VOLTAGE)),
+      new GrabCubeCommand(grabber),
+      new InstantCommand(() -> arm.extend(false)),
+      new SetLiftCommand(0.3),
+      new WaitCommand(2.0), // TODO REMOVE
+      new SetArmCommand(-110.0),
+      new WaitCommand(2.0), // TODO REMOVE
+      new IntakeUpCommand()
+     );
+    group.addRequirements(this);
+    group.setName("IntakeCube");
+    group.schedule();
+  }
+
+  public void near()
+  {
+    new NearCommand().schedule();
+  }
+
+  public void eject()
+  {
+    // TODO Eject, .. and then ..
+    new StoreCommand().schedule();
+  }
+}

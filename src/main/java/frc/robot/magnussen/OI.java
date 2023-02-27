@@ -45,18 +45,19 @@ public class OI extends SwerveOI
 
   public static boolean selectIntakeMode()
   {
-    return TEST ? joystick.getAButtonPressed()
+    return TEST ? joystick.getRawButtonPressed(1)
                 : buttons.getRawButtonPressed(9); 
   }
 
   public static boolean ejectGamepiece()
   {
-    return buttons.getRawButtonPressed(10);
+    return TEST ? joystick.getRawButtonPressed(4)
+                : buttons.getRawButtonPressed(10);
   }
 
   public static boolean selectNearNodeMode()
   {
-    return TEST ? joystick.getXButtonPressed()
+    return TEST ? joystick.getRawButtonPressed(2)
                 : buttons.getRawButtonPressed(4); 
   }
 

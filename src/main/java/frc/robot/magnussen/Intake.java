@@ -45,7 +45,7 @@ public class Intake extends SubsystemBase
   // Encoder on SparkMAX?
   // private SparkMaxAbsoluteEncoder encoder = rotator.getAbsoluteEncoder(Type.kDutyCycle);
 
-  private double simulated_angle = 90.0;
+  private double simulated_angle = 125.0;
 
   private NetworkTableEntry nt_offset, nt_kg, nt_angle;
 

@@ -18,9 +18,14 @@ public class SecondAttemptTestRobot extends CommandBaseRobot
     if (OI.selectIntakeMode())
       coordinator.intakeCone();
 
-
     if (OI.selectNearNodeMode())
       coordinator.near();
+
+    if (OI.selectMiddleNodeMode())
+      coordinator.mid();
+
+    if (OI.selectFarNodeMode())
+      coordinator.far();
 
     if (OI.ejectGamepiece())
       coordinator.eject();

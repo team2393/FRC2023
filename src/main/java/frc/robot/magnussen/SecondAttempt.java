@@ -230,6 +230,51 @@ public class SecondAttempt extends SubsystemBase
     }
   }
 
+  private final LookupTable mid_lookup = new LookupTable(
+   new String[] { "Arm Angle", "Lift Height", "Extend" },
+                          -90,           0.5,   0,
+                          -62,           0.55,  0,   
+                          -45,           0.56,  0,
+                            0,           0.3,   0);
+  private class MidCommand extends CoordinatorCommand
+  {
+    @Override
+    public void execute()
+    {
+      // Intake in, lift at bottom
+      intake_setpoint = 125.0;
+      intake.setSpinner(0);
+      
+      // Move arm angle
+      Entry entry = mid_lookup.lookup(adjust(arm_setpoint, getUserInput()));
+      arm_setpoint = entry.position;
+      lift_setpoint = entry.values[0];
+      arm.extend(entry.values[1] > 0.5);
+    }
+  }
+
+  private static final LookupTable far_lookup = new LookupTable(
+   new String[] { "Arm Angle", "Lift Height", "Extend" },
+                          -90,           0.7,   0,
+                          -70,           0.7,   0, 
+                          -25,           0.7,   1);
+  private class FarCommand extends CoordinatorCommand
+  {
+    @Override
+    public void execute()
+    {
+      // Intake in, lift at bottom
+      intake_setpoint = 125.0;
+      intake.setSpinner(0);
+      
+      // Move arm angle
+      Entry entry = far_lookup.lookup(adjust(arm_setpoint, getUserInput()));
+      arm_setpoint = entry.position;
+      lift_setpoint = entry.values[0];
+      arm.extend(entry.values[1] > 0.5);
+    }
+  }
+
   public SecondAttempt()
   {
     SmartDashboard.putString("Mode", "Init...");
@@ -309,16 +354,30 @@ public class SecondAttempt extends SubsystemBase
     group.schedule();
   }
 
-
-
   public void near()
   {
     new NearCommand().schedule();
   }
 
+  public void mid()
+  {
+    new MidCommand().schedule();
+  }
+
+  public void far()
+  {
+    new FarCommand().schedule();
+  }
+
   public void eject()
   {
-    // TODO Eject, .. and then ..
-    new StoreCommand().schedule();
+    SequentialCommandGroup group = new SequentialCommandGroup(
+      new InstantCommand(() -> SmartDashboard.putString("Mode", "Eject")),
+      new PrintCommand("Ejecting.."),
+      new GrabberEjectCommand(grabber)
+    );
+    group.addRequirements(this);
+    group.setName("Eject");
+    group.schedule();
   }
 }

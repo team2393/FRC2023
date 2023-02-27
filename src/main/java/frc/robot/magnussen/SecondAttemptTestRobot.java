@@ -11,15 +11,22 @@ public class SecondAttemptTestRobot extends CommandBaseRobot
   private SecondAttempt coordinator = new SecondAttempt();
 
   @Override
+  public void teleopInit()
+  {
+    OI.reset();
+  }
+
+  @Override
   public void teleopPeriodic()
   {
-    if (OI.joystick.getRawButtonPressed(6))
-      coordinator.store();
+    // if (OI.joystick.getRawButtonPressed(6))
+    //   coordinator.store();
 
-    // if (OI.selectIntakeMode())
-    //   coordinator.intakeCube();
     if (OI.selectIntakeMode())
-      coordinator.intakeCone();
+      if (OI.selectCubeIntake())
+        coordinator.intakeCube();
+      else
+        coordinator.intakeCone();
 
     if (OI.selectNearNodeMode())
       coordinator.near();

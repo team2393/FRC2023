@@ -17,7 +17,6 @@ import frc.robot.SequenceWithStart;
 import frc.robot.swervelib.DriveUphillCommand;
 import frc.robot.swervelib.RelativeSwerveCommand;
 import frc.robot.swervelib.ResetPositionCommand;
-import frc.robot.swervelib.SwerveOI;
 import frc.robot.vision.LimelightClient;
 
 /** Team 2393 2023 Robot */
@@ -30,7 +29,8 @@ public class MagnussenRobot extends CommandBaseRobot
 
   private final SendableChooser<Command> autos = new SendableChooser<>();
 
-  private final TheGreatCoordinator coordinator = new TheGreatCoordinator();
+  // private final TheGreatCoordinator coordinator = new TheGreatCoordinator();
+  private final SecondAttempt coordinator = new SecondAttempt();
 
   private final Pneumatics pneumatics = new Pneumatics();
 
@@ -106,7 +106,10 @@ public class MagnussenRobot extends CommandBaseRobot
 
     boolean normal = !drive_uphill.isScheduled();
     if (OI.selectIntakeMode()  &&  normal)
-      coordinator.startIntake();
+      if (OI.selectCubeIntake())
+        coordinator.intakeCube();
+      else
+        coordinator.intakeCone();
 
     if (OI.selectNearNodeMode() && normal)
       coordinator.near();

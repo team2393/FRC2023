@@ -269,7 +269,6 @@ public class SecondAttempt extends SubsystemBase
                            -90,          0.3,         0,
                            -82,          0,           0,
                            -70,          0,           1,
-                           -25,          0,           1,
                              0,          0,           1);
   private class NearCommand extends CoordinatorCommand
   {
@@ -284,7 +283,7 @@ public class SecondAttempt extends SubsystemBase
       Entry entry = near_lookup.lookup(adjust(arm_setpoint, getUserInput()));
       arm_setpoint = entry.position;
       lift_setpoint = entry.values[0];
-      arm.extend(entry.values[1] > 0.5);
+      arm.extend(entry.values[1] > 0.9);
     }
   }
 

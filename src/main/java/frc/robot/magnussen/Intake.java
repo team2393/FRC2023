@@ -65,6 +65,8 @@ public class Intake extends SubsystemBase
     spinner.setSmartCurrentLimit(20);
 
     encoder.reset();
+
+    SmartDashboard.putData("IntakePID", pid);
     
     nt_offset = SmartDashboard.getEntry("Intake Offset");
     nt_offset.setDefaultDouble(-100.0);

@@ -121,7 +121,7 @@ public class SecondAttempt extends SubsystemBase
     public void execute()
     {
       // Is intake 'in' and arm 'out'?
-      done = intake.getAngle() > 80  &&  arm.getAngle() > -90;
+      done = intake.getAngle() > 80  &&  arm.getAngle() > -95;
       if (done)
         return;
 

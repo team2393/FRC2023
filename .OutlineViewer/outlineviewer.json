@@ -10,6 +10,9 @@
   },
   "transitory": {
     "SmartDashboard": {
+      "Scheduler": {
+        "open": true
+      },
       "open": true
     }
   }

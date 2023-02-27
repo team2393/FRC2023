@@ -57,10 +57,10 @@ public class SecondAttempt extends SubsystemBase
 
     protected double getUserInput()
     {
-      if (RobotBase.isReal())
+      // if (RobotBase.isReal())
         return MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1);
-      else
-        return (System.currentTimeMillis() / 6000) % 2 == 0 ? 1.0 : -1.0;
+      // else
+        // return (System.currentTimeMillis() / 6000) % 2 == 0 ? 1.0 : -1.0;
     }
 
   }

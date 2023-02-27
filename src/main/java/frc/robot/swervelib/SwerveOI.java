@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 public class SwerveOI
 {
   /** Use competition robot, or test setup with just one joystick? */
-  public static final boolean TEST = true;
+  public static final boolean TEST = false;
 
   /** Maximum swerve speed sent from joystick input */
   public static double MAX_METERS_PER_SEC = 4.0;

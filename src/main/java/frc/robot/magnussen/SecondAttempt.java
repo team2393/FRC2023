@@ -3,13 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.magnussen;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.max;
-import static java.lang.Math.sin;
-import static java.lang.Math.toRadians;
-
-import com.ctre.phoenix.GadgeteerUartClient.GadgeteerConnection;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -17,12 +10,10 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.util.LookupTable;
 import frc.robot.util.LookupTable.Entry;
 
@@ -69,7 +60,7 @@ public class SecondAttempt extends SubsystemBase
       if (RobotBase.isReal())
         return MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1);
       else
-        return (System.currentTimeMillis() / 5000) % 2 == 0 ? 1.0 : -1.0;
+        return (System.currentTimeMillis() / 6000) % 2 == 0 ? 1.0 : -1.0;
     }
 
   }
@@ -116,6 +107,54 @@ public class SecondAttempt extends SubsystemBase
         if (arm.getAngle() < 100)
           intake_setpoint = 90.0;
       }
+    }
+  }
+
+  /** Assuming components are stored,
+   *  move arm 'out' with intake stored 'in'
+   */
+  private class UnStoreCommand extends CoordinatorCommand
+  {
+    private boolean done;
+
+    @Override
+    public void execute()
+    {
+      // Is intake 'in' and arm 'out'?
+      done = intake.getAngle() > 80  &&  arm.getAngle() > -90;
+      if (done)
+        return;
+
+      intake.setSpinner(0);
+      arm.extend(false);
+
+      if (grabber.haveGamepiece())
+      {
+        // TODO Higher in cone mode...
+        lift_setpoint = 0.3;
+      }
+      else
+        lift_setpoint = 0.0;
+
+      // Starting with intake at 90 and arm at -110,
+      // we want intake at 90 and arm at -45
+
+      if (arm.getAngle() < -85.0)
+      {
+        // Move intake out/down to allow arm movement
+        intake_setpoint = 5.0;
+        if (intake.getAngle() < 10.0)
+          arm_setpoint = -45.0;
+      }
+      else if (arm.getAngle() > -50.0)
+        intake_setpoint = 90.0;
+
+    }
+
+    @Override
+    public boolean isFinished()
+    {
+      return done;
     }
   }
 
@@ -216,7 +255,7 @@ public class SecondAttempt extends SubsystemBase
       
       // If we have a cone, stop grabbing it with the intake. In fact release it
       if (grabber.haveGamepiece())
-        intake.setSpinner(2);
+        intake.setSpinner(2.0);
       else
       {
         intake.setSpinner(-Intake.SPINNER_VOLTAGE);
@@ -224,9 +263,6 @@ public class SecondAttempt extends SubsystemBase
       }
     }
   }
-
-
-
 
   private static final LookupTable near_lookup = new LookupTable(
     new String[] { "Arm Angle", "Lift Height", "Extend" },
@@ -377,17 +413,24 @@ public class SecondAttempt extends SubsystemBase
 
   public void near()
   {
-    new NearCommand().schedule();
+    new SequentialCommandGroup(
+      new UnStoreCommand(),
+      new SetArmCommand(-75.0),
+      new NearCommand()).schedule();
   }
 
   public void mid()
   {
-    new MidCommand().schedule();
+    new SequentialCommandGroup(
+      new UnStoreCommand(),
+      new MidCommand()).schedule();
   }
 
   public void far()
   {
-    new FarCommand().schedule();
+    new SequentialCommandGroup(
+      new UnStoreCommand(),
+      new FarCommand()).schedule();
   }
 
   public void eject()

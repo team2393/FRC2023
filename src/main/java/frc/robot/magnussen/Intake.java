@@ -119,9 +119,9 @@ public class Intake extends SubsystemBase
     if (RobotBase.isSimulation())
     {
       if (desired_angle > simulated_angle)
-        simulated_angle += 0.3;
+        simulated_angle += 0.35;
       else
-        simulated_angle -= 0.3;
+        simulated_angle -= 0.35;
       // simulated_angle = desired_angle;
       return;
     }

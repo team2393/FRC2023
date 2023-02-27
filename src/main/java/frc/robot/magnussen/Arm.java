@@ -47,7 +47,7 @@ public class Arm extends SubsystemBase
   private NetworkTableEntry nt_ks;
   // PID for angle, not adjusting faster than 90 deg/sec (same accel.)
   private ProfiledPIDController pid = new ProfiledPIDController(0.15, 0, 0,
-                                          new TrapezoidProfile.Constraints(90, 90));
+                                          new TrapezoidProfile.Constraints(180, 180));
 
   public Arm()
   {

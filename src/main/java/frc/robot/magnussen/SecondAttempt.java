@@ -142,8 +142,8 @@ public class SecondAttempt extends SubsystemBase
 
       if (grabber.haveGamepiece())
       {
-        // TODO Higher in cone mode...
-        lift_setpoint = 0.4;
+        // Higher in cone mode...
+        lift_setpoint = OI.selectCubeIntake() ? 0.4 : 0.5;
       }
       else
         lift_setpoint = 0.0;
@@ -401,8 +401,7 @@ public class SecondAttempt extends SubsystemBase
       new InstantCommand(() -> arm.extend(false)),
       new SetLiftCommand(0.4),
       new SetArmCommand(-120.0),
-      new IntakeUpCommand(),
-      new WaitCommand(10)
+      new IntakeUpCommand()
      );
     group.addRequirements(this);
     group.setName("IntakeCube");

@@ -69,7 +69,7 @@ public class Intake extends SubsystemBase
     SmartDashboard.putData("IntakePID", pid);
     
     nt_offset = SmartDashboard.getEntry("Intake Offset");
-    nt_offset.setDefaultDouble(-100.0);
+    nt_offset.setDefaultDouble(-107.0);
     nt_kg = SmartDashboard.getEntry("Intake kg");
     nt_kg.setDefaultDouble(0.2);
     nt_angle = SmartDashboard.getEntry("Intake Angle");

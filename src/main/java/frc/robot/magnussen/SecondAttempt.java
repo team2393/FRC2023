@@ -149,16 +149,18 @@ public class SecondAttempt extends SubsystemBase
         lift_setpoint = 0.0;
 
       // Starting with intake at 90 and arm at -110,
-      // we want intake at 90 and arm at -45
+      // we want intake at 90 and arm at -40
 
       if (arm.getAngle() < -85.0)
       {
         // Move intake out/down to allow arm movement
         intake_setpoint = 5.0;
+        // Intake out of the way? Move arm out
         if (intake.getAngle() < 10.0)
-          arm_setpoint = -45.0;
+          arm_setpoint = -40.0;
       }
       else if (arm.getAngle() > -50.0)
+        // Final step: Arm is out, pull intake back in
         intake_setpoint = 90.0;
 
     }

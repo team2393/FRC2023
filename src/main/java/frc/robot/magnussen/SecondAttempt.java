@@ -63,9 +63,11 @@ public class SecondAttempt extends SubsystemBase
       // else
         // return (System.currentTimeMillis() / 6000) % 2 == 0 ? 1.0 : -1.0;
     }
-
   }
 
+  /** Do we have enough air pressure? */
+  private static boolean pressurized = false;
+ 
   /** Hold everything in a safe position inside the robot
    *  May invoke from any? configuration
    */
@@ -74,6 +76,11 @@ public class SecondAttempt extends SubsystemBase
     @Override
     public void execute()
     {
+      if (! pressurized)
+      { // Don't move anything until we once have sufficient pressure
+        pressurized = SmartDashboard.getNumber("Pressure", 0.0) > 80.0;
+        return;
+      }
       intake.setSpinner(0);
       arm.extend(false);
 

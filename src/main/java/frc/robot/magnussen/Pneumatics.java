@@ -4,7 +4,10 @@
 package frc.robot.magnussen;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -17,6 +20,7 @@ public class Pneumatics extends SubsystemBase
   private final PneumaticHub hub = new PneumaticHub();
   private final NetworkTableEntry nt_pressure;
   private int calls = 0;
+  private Timer sim_timer = null;
 
   public Pneumatics()
   {
@@ -28,7 +32,22 @@ public class Pneumatics extends SubsystemBase
   @Override
   public void periodic()
   {
-    if (++calls > 50)
+    if (RobotBase.isSimulation())
+    { // Simulate air pressure.
+      if (sim_timer == null)
+      {
+        nt_pressure.setDouble(0.0);
+        // Start timer when enabled
+        if (DriverStation.isEnabled())
+        {
+          sim_timer = new Timer();
+          sim_timer.restart();
+        }
+      }
+      else // Simulate pressure rising by 5 psi per second until 120
+        nt_pressure.setDouble(Math.min(120.0, 5.0*sim_timer.get()));
+    }
+    else if (++calls > 50)
     {
       // Read analog input 0
       nt_pressure.setDouble(hub.getPressure(0));

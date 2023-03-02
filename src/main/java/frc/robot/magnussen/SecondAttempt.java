@@ -431,6 +431,17 @@ public class SecondAttempt extends SubsystemBase
     group.schedule();
   }
 
+  // TODO Initial idea for gabbing game piece from substation (slide)
+  public void intakeFromSubstation()
+  {
+    new SequentialCommandGroup(
+      new UnStoreCommand(),
+      // Grab a cube, and move around height of 'mid' until we get a cube
+      new ParallelDeadlineGroup(new GrabCubeCommand(grabber),
+                                new MidCommand())
+      ).schedule();
+  }
+
   public void near()
   {
     new SequentialCommandGroup(

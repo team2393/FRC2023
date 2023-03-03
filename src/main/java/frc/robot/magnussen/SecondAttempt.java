@@ -470,16 +470,24 @@ public class SecondAttempt extends SubsystemBase
     }
   }
 
-  public void intakeFromSubstation()
+  public void intakeFromSubstation(boolean cube)
   {
-    new SequentialCommandGroup(
-      new UnStoreCommand(),
-      // Position arm where it should be able to catch items from slide
-      new SetArmCommand(-7.5),
-      // Then start grab a cube, but at same time allow adjusting arm until we get a cube
-      new ParallelDeadlineGroup(new GrabCubeCommand(grabber),
-                                new SubstationIntakeCommand())
-      ).schedule();
+    CommandBase grabCommand = cube ? new GrabCubeCommand(grabber) : new GrabConeCommand(grabber);
+    SequentialCommandGroup group = new SequentialCommandGroup
+    (
+      new InstantCommand(() -> SmartDashboard.putString("Mode", "Intake From Substation")),
+      new PrintCommand("Starting intake from substation.."),
+      new SetLiftCommand(0),
+      new SetArmCommand(-180),
+      new InstantCommand(() -> arm.extend(true)),
+      grabCommand,
+      new InstantCommand(() -> arm.extend(false)),
+      new WaitCommand(2),
+      new SetArmCommand(-120)
+    );
+    group.addRequirements(this);
+    group.setName("IntakeFromSubstation");
+    group.schedule();
   }
 
   public void near()

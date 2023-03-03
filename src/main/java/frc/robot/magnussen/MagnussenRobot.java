@@ -110,6 +110,8 @@ public class MagnussenRobot extends CommandBaseRobot
         coordinator.intakeCube();
       else
         coordinator.intakeCone();
+    if (OI.selectSubstationIntakeMode()  &&  normal)
+      coordinator.intakeFromSubstation(OI.selectCubeIntake());
 
     if (OI.selectNearNodeMode() && normal)
       coordinator.near();

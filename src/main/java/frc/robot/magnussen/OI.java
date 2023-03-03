@@ -49,6 +49,12 @@ public class OI extends SwerveOI
                 : buttons.getRawButtonPressed(9); 
   }
 
+  public static boolean selectSubstationIntakeMode()
+  {
+    return TEST ? joystick.getRawButtonPressed(6)
+                : buttons.getRawButtonPressed(6);
+  }
+
   public static boolean selectNearNodeMode()
   {
     return TEST ? joystick.getRawButtonPressed(2)

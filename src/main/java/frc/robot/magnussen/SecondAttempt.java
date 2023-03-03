@@ -483,7 +483,7 @@ public class SecondAttempt extends SubsystemBase
       grabCommand,
       new ParallelDeadlineGroup(
           new SequentialCommandGroup(new InstantCommand(() -> arm.extend(false)),
-                                     new WaitCommand(2.0),
+                                     new WaitCommand(0.5),
                                      new SetArmCommand(-120)),
           new GrabberOffCommand(grabber))
       );

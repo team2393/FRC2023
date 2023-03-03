@@ -37,9 +37,9 @@ public class AutoDriveUphillCommand extends CommandBase
     // If we're tilted 45 degrees we want to run at +-1 m/s uphill.
 
     // Any "nose up" angle means we need to drive forward (X)
-    double vx = drivetrain.getPitch()/45.0;
+    double vx = drivetrain.getPitch()/27.0;
     // Any "left up" angle means we need to drive left (Y)
-    double vy = drivetrain.getRoll()/45.0;
+    double vy = drivetrain.getRoll()/27.0;
     // We ain't gonna not do no rotating, maybe
     double vr = 0.0;
 

@@ -84,6 +84,9 @@ public class SecondAttempt extends SubsystemBase
       intake.setSpinner(0);
       arm.extend(false);
 
+      // Lift up so that arm with or w/o gamepiece can clear the intake
+      // .. but only if the arm allows lifting up
+      // TODO  if (arm.getAngle() > -110  &&  grabber.haveGamepiece())...
       if (grabber.haveGamepiece())
       {
         // Higher in cone mode...
@@ -258,8 +261,8 @@ public class SecondAttempt extends SubsystemBase
   private static final LookupTable cone_intake_arm_lookup = new LookupTable(
     new String[] { "Intake Angle", "Arm Angle", "Lift Height", "Extend" },
                                -2,         -88,          0.51,    0,
-                               65,         -88,          0.51,    0,
-                               77,         -99,          0.25,    0); 
+                               85,         -88,          0.51,    0,          
+                               90,         -99,          0.25,    0); 
   private class InteractiveConeIntakeCommand extends CoordinatorCommand
   {
     private Timer timer = new Timer();

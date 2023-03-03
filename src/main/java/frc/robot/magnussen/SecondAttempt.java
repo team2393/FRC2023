@@ -481,10 +481,12 @@ public class SecondAttempt extends SubsystemBase
       new SetArmCommand(-180),
       new InstantCommand(() -> arm.extend(true)),
       grabCommand,
-      new InstantCommand(() -> arm.extend(false)),
-      new WaitCommand(2),
-      new SetArmCommand(-120)
-    );
+      new ParallelDeadlineGroup(
+          new SequentialCommandGroup(new InstantCommand(() -> arm.extend(false)),
+                                     new WaitCommand(2.0),
+                                     new SetArmCommand(-120)),
+          new GrabberOffCommand(grabber))
+      );
     group.addRequirements(this);
     group.setName("IntakeFromSubstation");
     group.schedule();

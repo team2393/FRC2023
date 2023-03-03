@@ -62,7 +62,7 @@ public class Arm extends SubsystemBase
     nt_angle = SmartDashboard.getEntry("Arm Angle");
     nt_extended = SmartDashboard.getEntry("Arm Extended");
     nt_offset = SmartDashboard.getEntry("Arm Offset");
-    nt_offset.setDefaultDouble(91.25);
+    nt_offset.setDefaultDouble(103.9);
     nt_kg_in = SmartDashboard.getEntry("Arm kg in");
     nt_kg_in.setDefaultDouble(0.3);
     nt_kg_out = SmartDashboard.getEntry("Arm kg out");

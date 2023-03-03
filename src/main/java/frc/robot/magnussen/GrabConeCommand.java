@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.magnussen;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.util.CycleDelayFilter;
 
@@ -11,7 +12,8 @@ public class GrabConeCommand extends CommandBase
 {
   private final Grabber grabber;
   // Keep pulling game piece in a little longer?
-  private final CycleDelayFilter delay = new CycleDelayFilter(60);
+  private final Timer timer = new Timer();
+
   private boolean done;
 
   public GrabConeCommand(Grabber grabber)
@@ -23,7 +25,15 @@ public class GrabConeCommand extends CommandBase
   @Override
   public void execute()
   {
-    done = delay.compute(grabber.haveGamepiece());
+    if (! grabber.haveGamepiece())
+    {
+      timer.restart();
+      done = false;
+    }
+    else
+    {
+      done = timer.hasElapsed(1.0);
+    }
     grabber.setVoltage(done ? 0 : Grabber.CONE_VOLTAGE);
   }
 

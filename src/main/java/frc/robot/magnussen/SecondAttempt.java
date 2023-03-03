@@ -184,10 +184,22 @@ public class SecondAttempt extends SubsystemBase
 
   private class IntakeDownCommand extends CommandBase
   {
+    private double desired;
+
+    IntakeDownCommand()
+    {
+      this(0);
+    }
+
+    IntakeDownCommand(double desired)
+    {
+      this.desired = desired;
+    }
+  
     @Override
     public void initialize()
     {
-      intake_setpoint = 0;
+      intake_setpoint = desired;
     }
 
     @Override
@@ -404,9 +416,9 @@ public class SecondAttempt extends SubsystemBase
     SequentialCommandGroup group = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "Intake Cube")),
       new PrintCommand("Starting cube intake.."),
-      new IntakeDownCommand(),
+      new IntakeDownCommand(6),
       new SetLiftCommand(0.05),
-      new SetArmCommand(-80.0),
+      new SetArmCommand(-85.0),
       new InstantCommand(() -> arm.extend(true)),
       new InstantCommand(() -> intake.setSpinner(Intake.SPINNER_VOLTAGE)),
       new GrabCubeCommand(grabber),

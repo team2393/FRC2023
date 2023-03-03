@@ -432,13 +432,38 @@ public class SecondAttempt extends SubsystemBase
   }
 
   // TODO Initial idea for gabbing game piece from substation (slide)
+  //
+  // Pick up from rear of robot, arm at -150..-180 degrees?
+  // Can we then rotate the arm back to the front for placement,
+  // or will arm with gamepiece not fit through lift?
+  //
+  // This picks up from the front
+  private static final LookupTable sub_intake = new LookupTable(
+    new String[] { "Arm Angle", "Lift Height", "Extend" },
+                           -60,          0,           0,
+                             0,          0,           0);
+  private class SubstationIntakeCommand extends CoordinatorCommand
+  {
+    @Override
+    public void execute()
+    {
+      // Move arm angle
+      Entry entry = sub_intake.lookup(adjust(arm_setpoint, getUserInput()));
+      arm_setpoint = entry.position;
+      lift_setpoint = entry.values[0];
+      arm.extend(entry.values[1] > 0.9);
+    }
+  }
+
   public void intakeFromSubstation()
   {
     new SequentialCommandGroup(
       new UnStoreCommand(),
-      // Grab a cube, and move around height of 'mid' until we get a cube
+      // Position arm where it should be able to catch items from slide
+      new SetArmCommand(-7.5),
+      // Then start grab a cube, but at same time allow adjusting arm until we get a cube
       new ParallelDeadlineGroup(new GrabCubeCommand(grabber),
-                                new MidCommand())
+                                new SubstationIntakeCommand())
       ).schedule();
   }
 

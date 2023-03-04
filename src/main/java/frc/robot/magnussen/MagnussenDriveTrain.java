@@ -45,10 +45,10 @@ public class MagnussenDriveTrain extends SwerveDrivetrain
       // Left charge station, coming from the right, headed left, simulate driving 'up' and then 'down' the charge station
       if (Math.abs(Math.IEEEremainder(heading - 180.0, 360)) < 10.0)
       { // From the right, go 'up'
-        if (4.03 < x  &&  x < 4.9)
+        if (4.26 < x  &&  x < 5.2)
           return 30.0;
-        // Then flat from 4.03 to 3.66, then down
-        if (2.8  < x  &&   x < 3.66)
+        // Then down from about center on
+        if (2.8  < x  &&   x < 4.26)
           return -30.0;
       }
 

@@ -15,6 +15,12 @@ public class AutoDriveUphillCommand extends CommandBase
   /** Start position */
   private Translation2d start;
 
+  /** Angle at which we'll run +-1m/s */
+  private double max_speed_angle;
+
+  /** Which way is 'uphill' (heading relative to robot) */
+  private double uphill;
+
   /** How long have we been stable? */
   private Timer stable_timer = new Timer();
 
@@ -29,17 +35,19 @@ public class AutoDriveUphillCommand extends CommandBase
   {
     // Remember where we think we are
     start = drivetrain.getPose().getTranslation();
+
+    // Initially, this angle results in driving +-1 m/s
+    max_speed_angle = 27.0;
+    // Don't know which way is uphill, yet
+    uphill = Double.NaN;
   }
 
   public void execute()
   {
-    // Angles are reported in degrees.
-    // If we're tilted 45 degrees we want to run at +-1 m/s uphill.
-
     // Any "nose up" angle means we need to drive forward (X)
-    double vx = drivetrain.getPitch()/27.0;
+    double vx = drivetrain.getPitch()/max_speed_angle;
     // Any "left up" angle means we need to drive left (Y)
-    double vy = drivetrain.getRoll()/27.0;
+    double vy = drivetrain.getRoll()/max_speed_angle;
     // We ain't gonna not do no rotating, maybe
     double vr = 0.0;
 
@@ -47,7 +55,26 @@ public class AutoDriveUphillCommand extends CommandBase
 
     // Are we moving, i.e., not stable?
     if ((vx*vx + vy*vy) > 0.2)
+    {
       stable_timer.restart();
+
+      // Did we aleady determine which way is "uphill"?
+      if (Double.isNaN(uphill))
+      {
+        uphill = Math.toDegrees(Math.atan2(vy, vx));
+        System.out.println("Uphill is " + uphill + " deg");
+      }
+      else
+      { // Did we change direction from original "uphill" by at least 90 degrees?
+        double now = Math.toDegrees(Math.atan2(vy, vx));
+        if (Math.abs(Math.IEEEremainder(uphill-now, 360)) > 90)
+        {
+          uphill = now;
+          max_speed_angle += 3.0;
+          System.out.println("Uphill changed to " + now + " deg, max speed angle now " + max_speed_angle);
+        }
+      } 
+    }
   }
 
   @Override

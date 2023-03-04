@@ -285,9 +285,9 @@ public class AutoNoMouse
     }
 
     { // Skeleton for another auto option
-      SequentialCommandGroup auto = new SequenceWithStart("Another", 1.84, 1.12, 0);
+      SequentialCommandGroup auto = new SequenceWithStart("Balance", 5.19, 2.88, 180);
       auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
+      auto.addCommands(new AutoDriveUphillCommand(drivetrain));
       autos.add(auto);
     }
 

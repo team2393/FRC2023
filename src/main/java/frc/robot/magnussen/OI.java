@@ -28,7 +28,7 @@ public class OI extends SwerveOI
   /** @return Select cube? Otherwise: Cone */
   public static boolean selectCubeIntake()
   {
-    return buttons.getRawButton(1);
+    return TEST ? false : buttons.getRawButton(1);
   }
 
   public static boolean selectNormalDriveMode()

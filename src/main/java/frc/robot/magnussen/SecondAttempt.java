@@ -90,7 +90,7 @@ public class SecondAttempt extends SubsystemBase
       if (grabber.haveGamepiece())
       {
         // Higher in cone mode...
-        lift_setpoint = OI.selectCubeIntake() ? 0.4 : 0.5;
+        lift_setpoint = OI.selectCubeIntake() ? 0.0 : 0.0;
       }
       else
         lift_setpoint = 0.0;

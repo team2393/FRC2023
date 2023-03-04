@@ -71,7 +71,7 @@ public class AutoDriveUphillCommand extends CommandBase
         if (Math.abs(Math.IEEEremainder(uphill-now, 360)) > 90)
         {
           uphill = now;
-          max_speed_angle += 3.5;
+          max_speed_angle += 4.0;
           System.out.println("Uphill changed to " + now + " deg, max speed angle now " + max_speed_angle);
         }
       } 

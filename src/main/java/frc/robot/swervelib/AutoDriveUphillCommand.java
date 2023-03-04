@@ -37,9 +37,10 @@ public class AutoDriveUphillCommand extends CommandBase
     start = drivetrain.getPose().getTranslation();
 
     // Initially, this angle results in driving +-1 m/s
-    max_speed_angle = 27.0;
+    max_speed_angle = 25.0;
     // Don't know which way is uphill, yet
     uphill = Double.NaN;
+    stable_timer.restart();
   }
 
   public void execute()
@@ -70,7 +71,7 @@ public class AutoDriveUphillCommand extends CommandBase
         if (Math.abs(Math.IEEEremainder(uphill-now, 360)) > 90)
         {
           uphill = now;
-          max_speed_angle += 3.0;
+          max_speed_angle += 3.5;
           System.out.println("Uphill changed to " + now + " deg, max speed angle now " + max_speed_angle);
         }
       } 
@@ -90,7 +91,7 @@ public class AutoDriveUphillCommand extends CommandBase
       return true;
     }
     // Have we been standing still for a while, likely leveled out?
-    if (stable_timer.hasElapsed(1.5))
+    if (stable_timer.hasElapsed(10.0))
     {
       System.out.println("AutoDriveUphillCommand believes that we did it!");
       return true;

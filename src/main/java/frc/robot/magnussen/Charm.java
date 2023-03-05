@@ -10,8 +10,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -19,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.util.LookupTable;
 import frc.robot.util.LookupTable.Entry;
 
@@ -358,20 +357,24 @@ public class Charm extends SubsystemBase
     SequentialCommandGroup arm_behind_intake = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "ArmBehindIntake")),
       new SetIntakeSpinnerCommand(0),
-      // Runs for initial unfold, so wait for air pressure
+      // This may be the initial unfold, so wait for air pressure
       new PressurizeCommand(),
       new RetractArmCommand(),
       new SetLiftCommand(0),
       // Move arm a little up/back
+      new SetArmCommand(-155),
       // Move intake out to allow full arm movement
-      new ParallelCommandGroup(new SetArmCommand(-155),
-                               new SetIntakeCommand(10.0)),
-      // Arm out
-      new SetArmCommand(-10),
+      new ParallelCommandGroup(new SetIntakeCommand(10.0),
+                              // and move arm out once intake is out of the way
+                               new WaitUntilCommand(() -> intake.getAngle() < 45)
+                                   .andThen(new SetArmCommand(-10))
+                               ),
       // Intake back in
-      new SetIntakeCommand(INTAKE_IDLE_POS),
-      // Arm into idle position
-      new SetArmCommand(ARM_IDLE_POS));
+      new ParallelCommandGroup(new SetIntakeCommand(INTAKE_IDLE_POS),
+                               // Arm into idle position
+                               new WaitUntilCommand(() -> intake.getAngle() > 95)
+                                   .andThen(new SetArmCommand(ARM_IDLE_POS)))
+    );
 
     // Intake is behind arm
     SequentialCommandGroup intake_behind_arm = new SequentialCommandGroup(
@@ -423,15 +426,43 @@ public class Charm extends SubsystemBase
     return selector;
   }
 
-  private class MakeSafeCommand extends ConditionalCommand
+  /** Assert that intake is in idle position, arm in front of it.
+   *  If not, move everything to idle position
+   */
+  private class MakeSafeCommand extends CommandBase
   {
-    /** Assert that intake is in idle position, arm in front of it.
-     *  If not, move everything to idle position
-     */
-    public MakeSafeCommand()
+    private CommandBase sub_command;
+
+    @Override
+    public void initialize()
     {
-      super(Commands.none(), idle(),
-           () -> intake_setpoint == INTAKE_IDLE_POS  &&  arm_setpoint > -100);
+      if (intake_setpoint == INTAKE_IDLE_POS  &&  arm_setpoint > -100)
+        sub_command = null;
+      else
+      { // Only create idle commands when needed
+        sub_command = idle();
+        sub_command.initialize();
+      }
+    }
+
+    @Override
+    public void execute()
+    {
+      if (sub_command != null)
+        sub_command.execute();
+    }
+
+    @Override
+    public void end(boolean interrupted)
+    {
+      if (sub_command != null)
+        sub_command.end(interrupted);
+    }
+
+    @Override
+    public boolean isFinished()
+    {
+      return sub_command == null   ||  sub_command.isFinished();
     }
   }
 
@@ -501,6 +532,7 @@ public class Charm extends SubsystemBase
     (
       new InstantCommand(() -> SmartDashboard.putString("Mode", "SubIntake")),
       new PrintCommand("Intake from substation.."),
+      new MakeSafeCommand(),
       // Lift out of the way ...
       new RetractArmCommand(),
       new SetLiftCommand(0.5),
@@ -508,7 +540,7 @@ public class Charm extends SubsystemBase
       new ParallelCommandGroup(new SetIntakeCommand(45),
                                new SetArmCommand(-120)),
       new SetLiftCommand(0),
-      new ParallelCommandGroup(new SetIntakeCommand(90),
+      new ParallelCommandGroup(new SetIntakeCommand(80),
                                new SetArmCommand(-180)),
       new ExtendArmCommand(),
       new ProxyCommand(() -> cube ? new GrabCubeCommand(grabber) : new GrabConeCommand(grabber)),

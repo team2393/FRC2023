@@ -46,7 +46,6 @@ import frc.robot.util.LookupTable.Entry;
  *  Scoring requires swapping arm and intake position to get arm in front
  *  of intake, then swap back to store.
  *  Intake likely keeps a dropped gamepiece inside the robot.
- *  
  */
 public class Charm extends SubsystemBase
 {
@@ -55,6 +54,14 @@ public class Charm extends SubsystemBase
   private final Arm arm = new Arm();
   private final Intake intake = new Intake();
   private final Grabber grabber = new Grabber();
+
+  // TODO Tune basic arm, lift, intake moves to be faster
+  // TODO Check every move/transition on actual robot.
+  //      See how far arm needs to move out, lift up etc.
+  //      when swapping arm/intake locations
+  // TODO Can tables for near/mid/far be combined into one,
+  //      so near/mid/far simply change the initial arm angle
+  //      but can then move to any node level?
 
   /** Setpoints
    *  If we adjusted based on the current value from

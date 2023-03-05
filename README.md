@@ -1,67 +1,23 @@
 Team 2393 FRC Season 2023
 =========================
 
-FRC Software manual: https://docs.wpilib.org/en/stable/index.html
+ * FRC Software manual: https://docs.wpilib.org/en/stable/index.html
  * Are there WPI updates https://github.com/wpilibsuite/allwpilib/releases ?
-
-Game manual: https://www.firstinspires.org/resource-library/frc/competition-manual-qa-system
-
-Forum: https://www.chiefdelphi.com/, https://www.projectb.net.au/resources/robot-mechanisms
-
-Done:
-  * Kickoff: January 7, 2023, https://efcms.engr.utk.edu/efp/first-kickoff/2023/welcome.php
-  * Swervebot: Manual and basic auto
-  * Camera: Basic April tags demo
-      * https://docs.wpilib.org/en/latest/docs/software/vision-processing/apriltag/apriltag-intro.html
-      * https://docs.photonvision.org/en/latest/docs/getting-started/description.html
-      * https://github.com/Tigerbotics7125/AprilTag16h5
-      * https://www.chiefdelphi.com/t/wpilib-apriltagdetector-sample-code
-      * https://www.chiefdelphi.com/t/list-of-apriltag-3d-positions
-  * Install 2023 WPILib on robot laptop
-    * Settings: Editor Tab Size 2, Detect indentation off, minimap disabled, inlay hints off
-  * Get 3rd party libraries for CTRE, Vec, ...
+ * Game manual: https://www.firstinspires.org/resource-library/frc/competition-manual-qa-system
+ * Forum: https://www.chiefdelphi.com/, https://www.projectb.net.au/resources/robot-mechanisms
+ * Camera: Basic April tags demo
+    * https://docs.wpilib.org/en/latest/docs/software/vision-processing/apriltag/apriltag-intro.html
+    * https://docs.photonvision.org/en/latest/docs/getting-started/description.html
+    * https://github.com/Tigerbotics7125/AprilTag16h5
+    * https://www.chiefdelphi.com/t/wpilib-apriltagdetector-sample-code
+    * https://www.chiefdelphi.com/t/list-of-apriltag-3d-positions
+ * 3rd party libraries for CTRE, Vec, ...
     * https://github.com/CrossTheRoadElec/Phoenix-Releases/releases
+    * https://store.ctr-electronics.com/software
     * https://www.revrobotics.com/software
-  * Use new RoboRIO2
-  * Update firmware of power distribution module, pneumatic hub etc.
-  * Manual control of all the motor types (Falcon, Spark, ??) we might have in the robot
-      * https://www.andymark.com
-      * https://wcproducts.com
-      * https://store.ctr-electronics.com/software
-      * https://docs.revrobotics.com 
-      * https://www.chiefdelphi.com/t/2023-falcon-updates-and-availability
-  * PID control of each motor type for position as well as speed
-  * While actual robot is being designed, work with swervebot
-  * Vision
-      * Calibrate camera
-      * Demo of computing robot location on field
-      * Use https://github.com/wpilibsuite/WPILibPi/releases ?
-      * Use LimeLight, https://www.chiefdelphi.com/t/limelight-v2-2023-firmware/422597 ?
-
-Prepared:
-  * Update OI, assign functions to joystick vs. buttonboard
-  * Intake angle sensor and basic motor movement
-  * Grabber sensor, try to grab cube vs cone using suitable grabber motor speeds and sensor delays
-  * Update GrabCone, GrabCube, GabberEject commands
-  * Test 'DriveUphillCommand' with actual robot
-  * Test and calibrate intake
-    * Move intake to angle setpoints 0, 90, 100, ...
-    * How to turn intake spinner on/off?
-      Run when "out" based on angle?
-
-Next:
-  * Test/adjust/update the great coordinator:
-    * Intake and arm movement to take gamepieces
-    * Commands to move intake continuously, but move on once game piece has been captured
-    * Lift/arm/intake handling for near/mid/far node placement of gamepieces
-  * Test "middle node exit" and "..balance" auto moves with simplified field
-  * Pack control system essentials: Spare RoboRIO, Radio, USB and network cable, ...
-  * Test auto moves on actual field
-  * Mount and calibrate camera
-    * Check April tag locations, but disable odometry update during autonomous
-    * Test/calibrate/include TargetLockedDriveCommand
-  * .. much more
-
+    * https://docs.revrobotics.com 
+    * https://www.andymark.com
+    * https://wcproducts.com
 
 Events, https://frc-events.firstinspires.org/2023/Events/EventList:
  * Week 1, March 1, 2023: [Searcy, AR](https://maps.google.com/maps?ll=35.249098,-91.726211&z=16&t=m&hl=en-US&gl=US&mapclient=embed&q=Searcy%2C%20AR%2072149)

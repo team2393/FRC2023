@@ -6,26 +6,17 @@ package frc.robot.magnussen;
 import static java.lang.Math.IEEEremainder;
 import static java.lang.Math.abs;
 
-import java.util.Map;
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
-import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.util.LookupTable;
 import frc.robot.util.LookupTable.Entry;
 
@@ -34,16 +25,16 @@ import frc.robot.util.LookupTable.Entry;
  *  When idle, the intake is folded back and the arm hangs down.
  * 
  *  Pro:
- *  Arm is in front of intake, ready to move arm/lift to score.
+ *  Arm is in front of intake, ready to move arm & lift to score.
  *  Should a game piece drop from the grabber into the robot,
  *  it likely falls onto the lexan plate and can be forced out
- *  by driving backwards or spinning.
+ *  by driving backwards and/or spinning.
  * 
  *  Con:
- *  Taking game pieces in, i.e., moving intake out first requires
- *  swapping arm and intake position
+ *  Taking game pieces in via intake first requires swapping positions
+ *  so intake is before arm, then swapping back for idle position.
  * 
- *  Alternative: Arm is back at least -100 degree, intake in front ~80 deg.
+ *  Alternative: Arm is back at least -90 degree, intake in front at ~80 deg.
  * 
  *  Pro:
  *  Can simply drop intake down to take game pieces,
@@ -61,7 +52,7 @@ public class Charm extends SubsystemBase
   private final Lift lift = new Lift();
   private final Arm arm = new Arm();
   private final Intake intake = new Intake();
-  final Grabber grabber = new Grabber();
+  private final Grabber grabber = new Grabber();
 
   /** Setpoints
    *  If we adjusted based on the current value from
@@ -73,35 +64,28 @@ public class Charm extends SubsystemBase
    */
   private double lift_setpoint, arm_setpoint, intake_setpoint;
 
-  /** Do we have enough air pressure? */
-  private static boolean pressurized = false;
-
   /** Command that awaits sufficient air pressure, once */
-  private class PressurizeCommand extends CommandBase
+  private static class PressurizeCommand extends CommandBase
   {
+    private static boolean pressurized = false;
+
     @Override
     public void initialize()
     {
       if (! pressurized)
         System.out.println("Waiting for air pressure");
     }
-    @Override
-    public void execute()
-    {
-      // If already pressurized, once: fine. If never, check
-      if (! pressurized)
-        pressurized = SmartDashboard.getNumber("Pressure", 0.0) > 80.0;
-    }
-
+    
     @Override
     public boolean isFinished()
     {
+      if (! pressurized)
+        pressurized = SmartDashboard.getNumber("Pressure", 0.0) > 80.0;
       return pressurized;
     }
   }
 
-
-  /** Command that keeps setpoints where they are */
+  /** Command that keeps setpoints where they are, forever, until cancelled */
   private class StayCommand extends CommandBase
   {
   }
@@ -117,7 +101,7 @@ public class Charm extends SubsystemBase
     }
 
     @Override
-    public void execute()
+    public void initialize()
     {
       lift_setpoint = height;
     }
@@ -149,6 +133,14 @@ public class Charm extends SubsystemBase
     public boolean isFinished()
     {
       return abs(IEEEremainder(desired - intake.getAngle(), 360)) < 5.0;
+    }
+  }
+
+  private class SetIntakeSpinnerCommand extends InstantCommand
+  {
+    public SetIntakeSpinnerCommand(double voltage)
+    {
+      super(() -> intake.setSpinner(voltage));
     }
   }
 
@@ -193,7 +185,7 @@ public class Charm extends SubsystemBase
 
   private class InteractiveArmLiftExtendCommand extends CommandBase
   {
-    private final LookupTable table;
+    protected final LookupTable table;
 
     /** @param table Table to use for arm angle, lift height, arm extension */
     public InteractiveArmLiftExtendCommand(LookupTable table)
@@ -204,16 +196,13 @@ public class Charm extends SubsystemBase
     
     protected double getUserInput()
     {
-      // if (RobotBase.isReal())
-        return MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1);
-      // else
-        // return (System.currentTimeMillis() / 6000) % 2 == 0 ? 1.0 : -1.0;
+      return MathUtil.applyDeadband(OI.getCombinedTriggerValue(), 0.1);
     }
 
     @Override
     public void execute()
     {
-      // Move arm angle
+      // Lookup settings for adjusted arm angle
       Entry entry = table.lookup(arm_setpoint + getUserInput());
       // Use resulting values for arm(!), lift, extension
       arm_setpoint = entry.position;
@@ -233,6 +222,7 @@ public class Charm extends SubsystemBase
     public NearCommand()
     {
       super(near_lookup);
+      setName("Near");
     }
 
     @Override
@@ -255,6 +245,7 @@ public class Charm extends SubsystemBase
     public MidCommand()
     {
       super(mid_lookup);
+      setName("Mid");
     }
 
     @Override
@@ -276,6 +267,7 @@ public class Charm extends SubsystemBase
     public FarCommand()
     {
       super(far_lookup);
+      setName("Far");
     }
 
     @Override
@@ -284,6 +276,44 @@ public class Charm extends SubsystemBase
       SmartDashboard.putString("Mode", "Far");
       // TODO Preset arm, then allow interactive adjustment
       arm_setpoint = -5.0;
+    }
+  }
+
+  /** Move intake to capture cone and then transfer to grabber */
+  private static final LookupTable cone_intake_arm_lookup = new LookupTable(
+    new String[] { "Intake Angle", "Arm Angle", "Lift Height", "Extend" },
+                               -2,         -88,          0.51,    0,
+                               85,         -88,          0.51,    0,          
+                               90,         -99,          0.25,    0); 
+  private class InteractiveConeIntakeCommand  extends InteractiveArmLiftExtendCommand
+  {
+    public InteractiveConeIntakeCommand()
+    {
+      super(cone_intake_arm_lookup);
+    }
+
+    @Override
+    public void initialize()
+    {
+      SmartDashboard.putString("Mode", "IntakeCone");
+    }
+
+    @Override
+    public void execute()
+    { // Difrerent from InteractiveArmLiftExtendCommand, adjust _intake_
+      Entry entry = cone_intake_arm_lookup.lookup(intake_setpoint + getUserInput());      
+      // .. and then move intake, armm lift, extension
+      intake_setpoint = entry.position;
+      arm_setpoint = entry.values[0];
+      lift_setpoint = entry.values[1];
+      arm.extend(entry.values[2] > 0.5);
+      
+      // Grab/hold cone with intake.
+      // Once cone is in grabber, stop grabbing it with the intake. In fact release it
+      if (grabber.haveGamepiece())
+        intake.setSpinner(2.0);
+      else
+        intake.setSpinner(-Intake.SPINNER_VOLTAGE);
     }
   }
 
@@ -320,20 +350,26 @@ public class Charm extends SubsystemBase
     final double INTAKE_IDLE_POS = 120;
     final double ARM_IDLE_POS = -90;
 
+    // In autonomous, don't move anything because 'unfolding' could interfere
+    // with driving
     SequentialCommandGroup auto = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "Auto")),
+      new SetIntakeSpinnerCommand(0),
       new StayCommand());
+    auto.setName("Auto");
 
-    // Unfold from intial setup
-    SequentialCommandGroup initial_unfold = new SequentialCommandGroup(
-      new InstantCommand(() -> SmartDashboard.putString("Mode", "Unfold")),
+    // Unfold from intial setup or substation intake where arm is behind intake
+    SequentialCommandGroup arm_behind_intake = new SequentialCommandGroup(
+      new InstantCommand(() -> SmartDashboard.putString("Mode", "ArmBehindIntake")),
+      new SetIntakeSpinnerCommand(0),
+      // Runs for initial unfold, so wait for air pressure
       new PressurizeCommand(),
       new RetractArmCommand(),
       new SetLiftCommand(0),
-      // Move arm a little up/back so intake can move
-      new SetArmCommand(-155),
+      // Move arm a little up/back
       // Move intake out to allow full arm movement
-      new SetIntakeCommand(10.0),
+      new ParallelCommandGroup(new SetArmCommand(-155),
+                               new SetIntakeCommand(10.0)),
       // Arm out
       new SetArmCommand(-10),
       // Intake back in
@@ -341,55 +377,59 @@ public class Charm extends SubsystemBase
       // Arm into idle position
       new SetArmCommand(ARM_IDLE_POS),
       new StayCommand());
+    arm_behind_intake.setName("ArmBehindIntake");
 
     // Intake is behind arm
     SequentialCommandGroup intake_behind_arm = new SequentialCommandGroup(
-      new InstantCommand(() -> SmartDashboard.putString("Mode", "Idle")),
+      new InstantCommand(() -> SmartDashboard.putString("Mode", "IntakeBehindArm")),
+      new SetIntakeSpinnerCommand(0),
       new RetractArmCommand(),
       // Intake and arm can freely move to idle position
       new ParallelCommandGroup(new SetIntakeCommand(INTAKE_IDLE_POS),
                                new SetArmCommand(ARM_IDLE_POS)),
       new SetLiftCommand(0),
       new StayCommand());
+    intake_behind_arm.setName("IntakeBehindArm");
 
     // Intake is out
     SequentialCommandGroup intake_out = new SequentialCommandGroup(
-      new InstantCommand(() -> SmartDashboard.putString("Mode", "IdleIntake")),
-      // Clear area for intake
-      new SetArmCommand(-90.0),
+      new InstantCommand(() -> SmartDashboard.putString("Mode", "IntakeOut")),
+      new SetIntakeSpinnerCommand(0),
+      // Intake is out, so can pull arm in, then lift up to get space for intake
+      // Lift first, then arm in could mean arm out & lift up -> topple
       new RetractArmCommand(),
-      new SetLiftCommand(0.5),
-      new SetIntakeCommand(INTAKE_IDLE_POS),
       new SetArmCommand(ARM_IDLE_POS),
+      new SetLiftCommand(0.5),
+      // Pull intake in
+      new SetIntakeCommand(INTAKE_IDLE_POS),
+      // Lift back down
       new SetLiftCommand(0),
       new StayCommand());
+    intake_out.setName("IntakeOut");
 
     // Unknown/unhandled state
     SequentialCommandGroup unknown = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "Idle??")),
+      new SetIntakeSpinnerCommand(0),
       new StayCommand());
+    unknown.setName("Idle??");
         
-    Map<Object, Command> options = Map.of("Auto", auto,
-                                          "Initial", initial_unfold,
-                                          "IntakeBehindArm", intake_behind_arm,
-                                          "IntakeOut", intake_out,
-                                          "Unknown", unknown);
-    Supplier<Object> decider = () ->
+    CommandBase selector = new ProxyCommand(() ->
     {
       if (DriverStation.isAutonomous())
-        return "Auto";
-      // Initial setup (also after substation intake): Arm back behind intake
+        return auto;
+      // Initial setup, also after substation intake: Arm back behind intake
       if (arm.getAngle() < -120)
-        return "Initial";
+        return arm_behind_intake;
       // Is arm out/in front of intake?
       if (intake.getAngle() > 100  &&  arm.getAngle() > -110)
-        return "IntakeBehindArm";
-      if (intake.getAngle() < 90)
-        return "IntakeOut";
+        return intake_behind_arm;
+      // Is intake 'out', not back and out of the way?
+      if (intake.getAngle() < 110)
+        return intake_out;
       // Cannot handle this scenario
-      return "Unknown";
-    };
-    SelectCommand selector = new SelectCommand(options, decider);
+      return unknown;
+    });
     selector.addRequirements(this);
 
     return selector;
@@ -430,11 +470,27 @@ public class Charm extends SubsystemBase
       new SetLiftCommand(0.05),
       new SetArmCommand(-85.0),
       new ExtendArmCommand(),
-      new InstantCommand(() -> intake.setSpinner(Intake.SPINNER_VOLTAGE)),
-      new GrabCubeCommand(grabber)
+      new SetIntakeSpinnerCommand(Intake.SPINNER_VOLTAGE),
+      // Call Grab*Commands via proxy.
+      // That way, we don't "require" the grabber and it will return to 'off' ASAP
+      new ProxyCommand(new GrabCubeCommand(grabber))
     );
     group.addRequirements(this);
     group.setName("IntakeCube");
+    group.schedule();
+  }
+
+  public void intakeCone()
+  {
+    SequentialCommandGroup group = new SequentialCommandGroup(
+      new InstantCommand(() -> SmartDashboard.putString("Mode", "IntakeCone")),
+      new SetLiftCommand(0.5),
+      new SetIntakeCommand(0.0),
+      new ParallelDeadlineGroup(new ProxyCommand(new GrabConeCommand(grabber)),
+                                new InteractiveConeIntakeCommand())
+    );
+    group.addRequirements(this);
+    group.setName("IntakeCone");
     group.schedule();
   }
 
@@ -461,5 +517,4 @@ public class Charm extends SubsystemBase
     group.setName("IntakeFromSubstation");
     group.schedule();
   }
-
 }

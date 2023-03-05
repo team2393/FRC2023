@@ -29,6 +29,10 @@ public class CharmTestRobot extends CommandBaseRobot
         // coordinator.intakeCube();
     //   else
     //     coordinator.intakeCone();
+    if (OI.joystick.getStartButtonPressed())
+      coordinator.intakeCube();
+    if (OI.joystick.getBackButtonPressed())
+      coordinator.intakeCone();
 
     if (OI.joystick.getRightBumperPressed())
       coordinator.getDefaultCommand().schedule();

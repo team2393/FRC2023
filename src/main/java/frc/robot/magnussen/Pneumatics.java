@@ -44,8 +44,8 @@ public class Pneumatics extends SubsystemBase
           sim_timer.restart();
         }
       }
-      else // Simulate pressure rising by 5 psi per second until 120
-        nt_pressure.setDouble(Math.min(120.0, 5.0*sim_timer.get()));
+      else // Simulate pressure rising by 60 psi per second until 120
+        nt_pressure.setDouble(Math.min(120.0, 60.0*sim_timer.get()));
     }
     else if (++calls > 50)
     {

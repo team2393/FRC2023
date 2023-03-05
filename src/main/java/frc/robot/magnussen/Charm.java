@@ -10,6 +10,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -68,13 +70,6 @@ public class Charm extends SubsystemBase
   private static class PressurizeCommand extends CommandBase
   {
     private static boolean pressurized = false;
-
-    @Override
-    public void initialize()
-    {
-      if (! pressurized)
-        System.out.println("Waiting for air pressure");
-    }
     
     @Override
     public boolean isFinished()
@@ -222,7 +217,6 @@ public class Charm extends SubsystemBase
     public NearCommand()
     {
       super(near_lookup);
-      setName("Near");
     }
 
     @Override
@@ -245,7 +239,6 @@ public class Charm extends SubsystemBase
     public MidCommand()
     {
       super(mid_lookup);
-      setName("Mid");
     }
 
     @Override
@@ -267,7 +260,6 @@ public class Charm extends SubsystemBase
     public FarCommand()
     {
       super(far_lookup);
-      setName("Far");
     }
 
     @Override
@@ -300,9 +292,9 @@ public class Charm extends SubsystemBase
 
     @Override
     public void execute()
-    { // Difrerent from InteractiveArmLiftExtendCommand, adjust _intake_
+    { // Contrary to InteractiveArmLiftExtendCommand, adjust _intake_
       Entry entry = cone_intake_arm_lookup.lookup(intake_setpoint + getUserInput());      
-      // .. and then move intake, armm lift, extension
+      // .. and then have arm, lift and extension follow
       intake_setpoint = entry.position;
       arm_setpoint = entry.values[0];
       lift_setpoint = entry.values[1];
@@ -320,7 +312,7 @@ public class Charm extends SubsystemBase
   public Charm()
   {
     SmartDashboard.putString("Mode", "Init...");
-    setDefaultCommand(idle());
+    setDefaultCommand(idle().andThen(new StayCommand()).withName("StayIdle"));
   }
 
   @Override
@@ -345,19 +337,16 @@ public class Charm extends SubsystemBase
     }
   }
 
+  private final static double INTAKE_IDLE_POS = 120;
+  private final static double ARM_IDLE_POS = -90;
+
   private CommandBase idle()
   {
-    final double INTAKE_IDLE_POS = 120;
-    final double ARM_IDLE_POS = -90;
-
-    // In autonomous, don't move anything because 'unfolding' could interfere
-    // with driving
+    // In autonomous, don't move anything because 'unfolding' could interfere with driving
     SequentialCommandGroup auto = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "Auto")),
-      new SetIntakeSpinnerCommand(0),
-      new StayCommand());
-    auto.setName("Auto");
-
+      new SetIntakeSpinnerCommand(0));
+   
     // Unfold from intial setup or substation intake where arm is behind intake
     SequentialCommandGroup arm_behind_intake = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "ArmBehindIntake")),
@@ -375,9 +364,7 @@ public class Charm extends SubsystemBase
       // Intake back in
       new SetIntakeCommand(INTAKE_IDLE_POS),
       // Arm into idle position
-      new SetArmCommand(ARM_IDLE_POS),
-      new StayCommand());
-    arm_behind_intake.setName("ArmBehindIntake");
+      new SetArmCommand(ARM_IDLE_POS));
 
     // Intake is behind arm
     SequentialCommandGroup intake_behind_arm = new SequentialCommandGroup(
@@ -387,9 +374,7 @@ public class Charm extends SubsystemBase
       // Intake and arm can freely move to idle position
       new ParallelCommandGroup(new SetIntakeCommand(INTAKE_IDLE_POS),
                                new SetArmCommand(ARM_IDLE_POS)),
-      new SetLiftCommand(0),
-      new StayCommand());
-    intake_behind_arm.setName("IntakeBehindArm");
+      new SetLiftCommand(0));
 
     // Intake is out
     SequentialCommandGroup intake_out = new SequentialCommandGroup(
@@ -403,16 +388,12 @@ public class Charm extends SubsystemBase
       // Pull intake in
       new SetIntakeCommand(INTAKE_IDLE_POS),
       // Lift back down
-      new SetLiftCommand(0),
-      new StayCommand());
-    intake_out.setName("IntakeOut");
+      new SetLiftCommand(0));
 
     // Unknown/unhandled state
     SequentialCommandGroup unknown = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "Idle??")),
-      new SetIntakeSpinnerCommand(0),
-      new StayCommand());
-    unknown.setName("Idle??");
+      new SetIntakeSpinnerCommand(0));
         
     CommandBase selector = new ProxyCommand(() ->
     {
@@ -435,19 +416,31 @@ public class Charm extends SubsystemBase
     return selector;
   }
 
+  private class MakeSafeCommand extends ConditionalCommand
+  {
+    /** Assert that intake is in idle position, arm in front of it.
+     *  If not, move everything to idle position
+     */
+    public MakeSafeCommand()
+    {
+      super(Commands.none(), idle(),
+           () -> intake_setpoint == INTAKE_IDLE_POS  &&  arm_setpoint > -100);
+    }
+  }
+
   public void near()
   {
-    new NearCommand().schedule();
+    new MakeSafeCommand().andThen(new NearCommand()).withName("Near").schedule();
   }
 
   public void mid()
   {
-    new MidCommand().schedule();
+    new MakeSafeCommand().andThen(new MidCommand()).withName("Mid").schedule();
   }
 
   public void far()
   {
-    new FarCommand().schedule();
+    new MakeSafeCommand().andThen(new FarCommand()).withName("Far").schedule();
   }
 
   public void eject()
@@ -465,14 +458,14 @@ public class Charm extends SubsystemBase
   {
     SequentialCommandGroup group = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "IntakeCube")),
+      new MakeSafeCommand(),
       new SetLiftCommand(0.5),
       new SetIntakeCommand(6.0),
       new SetLiftCommand(0.05),
       new SetArmCommand(-85.0),
       new ExtendArmCommand(),
       new SetIntakeSpinnerCommand(Intake.SPINNER_VOLTAGE),
-      // Call Grab*Commands via proxy.
-      // That way, we don't "require" the grabber and it will return to 'off' ASAP
+      // Call Grab*Commands via proxy, don't "require" it to allow return to 'off' ASAP
       new ProxyCommand(new GrabCubeCommand(grabber))
     );
     group.addRequirements(this);
@@ -484,6 +477,7 @@ public class Charm extends SubsystemBase
   {
     SequentialCommandGroup group = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "IntakeCone")),
+      new MakeSafeCommand(),
       new SetLiftCommand(0.5),
       new SetIntakeCommand(0.0),
       new ParallelDeadlineGroup(new ProxyCommand(new GrabConeCommand(grabber)),

@@ -39,5 +39,7 @@ public class SecondAttemptTestRobot extends CommandBaseRobot
 
     if (OI.ejectGamepiece())
       coordinator.eject();
+    if (OI.clearJam())
+      coordinator.clearJam();
   }
 }

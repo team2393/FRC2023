@@ -250,7 +250,6 @@ public class SecondAttempt extends SubsystemBase
   private class SetArmCommand extends CommandBase
   {
     private double angle;
-    
     public SetArmCommand(double angle)
     {
       this.angle = angle;
@@ -490,6 +489,19 @@ public class SecondAttempt extends SubsystemBase
     group.addRequirements(this);
     group.setName("IntakeFromSubstation");
     group.schedule();
+  }
+  
+    public void clearJam() //intended to put arm out then swing through the bottom and out.
+  {
+    new SequentialCommandGroup(
+      new SetArmCommand(-100),
+      new IntakeDownCommand(),
+      new InstantCommand(() -> arm.extend(true)),
+      new SetArmCommand(-45),
+      new InstantCommand(() -> arm.extend(false)),
+      new SetArmCommand(-120),
+      new IntakeUpCommand()).schedule();
+    
   }
 
   public void near()

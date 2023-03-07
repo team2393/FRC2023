@@ -78,4 +78,8 @@ public class OI extends SwerveOI
     return TEST ? joystick.getRawButtonPressed(5)
                 : buttons.getRawButtonPressed(10);
   }
+  public static boolean clearJam()
+  {
+    return joystick.getAButtonPressed();
+  }
 }

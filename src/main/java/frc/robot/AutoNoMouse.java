@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.swervelib.AutoBalanceCommand;
 import frc.robot.swervelib.AutoDriveUphillCommand;
 import frc.robot.swervelib.SelectAbsoluteTrajectoryCommand;
 import frc.robot.swervelib.SelectRelativeTrajectoryCommand;
@@ -287,7 +288,8 @@ public class AutoNoMouse
     { // Skeleton for another auto option
       SequentialCommandGroup auto = new SequenceWithStart("Balance", 5.19, 2.88, 180);
       auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new AutoDriveUphillCommand(drivetrain));
+      // auto.addCommands(new AutoDriveUphillCommand(drivetrain));
+      auto.addCommands(new AutoBalanceCommand(drivetrain));
       autos.add(auto);
     }
 

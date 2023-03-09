@@ -46,9 +46,10 @@ public class Arm extends SubsystemBase
   private NetworkTableEntry nt_kg_out;
   private NetworkTableEntry nt_ks;
   // PID for angle, not adjusting faster than ... deg/sec (same accel.)
+  // Goes from 0 to 180 in about a second and uses less than 10 amps.
   private ProfiledPIDController pid = new ProfiledPIDController(0.2, 0, 0,
-                                          new TrapezoidProfile.Constraints(180, 180));
-
+                                          new TrapezoidProfile.Constraints(500, 500));
+                                          
   public Arm()
   {
     motor.restoreFactoryDefaults();
@@ -71,7 +72,6 @@ public class Arm extends SubsystemBase
     nt_ks.setDefaultDouble(0.07);
     
     SmartDashboard.putData("Arm PID", pid);
-    pid.enableContinuousInput(-180.0, 180.0);
     pid.reset(getAngle());
   }
 
@@ -82,8 +82,12 @@ public class Arm extends SubsystemBase
       return simulated_angle;
     // Change 'turns' into degrees,
     // fix offset, bracked to -180..+180
-    return Math.IEEEremainder(encoder.getPosition()*360 - nt_offset.getDouble(0.0), 360);
+    double angle= Math.IEEEremainder(encoder.getPosition()*360 - nt_offset.getDouble(0.0), 360);
+    if (angle > 30)
+      angle -= 360;
+    return angle; 
   }
+  
 
   @Override
   public void periodic()
@@ -114,6 +118,10 @@ public class Arm extends SubsystemBase
 
   public void setAngle(double desired_angle)
   {
+    if (desired_angle > 20)
+       desired_angle = 20; 
+    if (desired_angle < -205)
+     desired_angle = -205;
     if (RobotBase.isSimulation())
     {
       final double adjust = 0.5;
@@ -139,7 +147,7 @@ public class Arm extends SubsystemBase
     // If arm is horizontal, cos(0) = 1 --> Apply full kg
     // If arm is down, cos(-90 deg) = 0 --> No kg
     double current_angle = getAngle();
-    double error = Math.IEEEremainder(desired_angle - current_angle, 360.0);
+    double error = desired_angle - current_angle; 
     double voltage = ks * Math.signum(error) 
                    + kg * Math.cos(Math.toRadians(current_angle))
                    + pid.calculate(current_angle, desired_angle);

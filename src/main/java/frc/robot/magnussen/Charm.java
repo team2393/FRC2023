@@ -497,9 +497,12 @@ public class Charm extends SubsystemBase
     SequentialCommandGroup group = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "IntakeCube")),
       new MakeSafeCommand(),
-      new SetLiftCommand(0.3),
+      new ParallelCommandGroup
+      (
+        new SetLiftCommand(0.05),
+        new SetArmCommand(-47)
+      ),
       new SetIntakeCommand(6.0),
-      new SetLiftCommand(0.05),
       new SetArmCommand(-85.0),
       new ExtendArmCommand(),
       new SetIntakeSpinnerCommand(Intake.SPINNER_VOLTAGE),
@@ -546,9 +549,12 @@ public class Charm extends SubsystemBase
       new SetLiftCommand(0),
       new ParallelCommandGroup(new SetIntakeCommand(80),
                                new SetArmCommand(-180)),
+      new SetIntakeCommand(100),
       new ExtendArmCommand(),
       new ProxyCommand(() -> cube ? new GrabCubeCommand(grabber) : new GrabConeCommand(grabber)),
-      new RetractArmCommand()
+      // new RetractArmCommand(),
+      new SetArmCommand(-170),
+      new StayCommand()
     );
     group.addRequirements(this);
     group.setName("IntakeFromSubstation");

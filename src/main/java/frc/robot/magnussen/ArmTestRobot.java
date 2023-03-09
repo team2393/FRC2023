@@ -4,6 +4,8 @@
 package frc.robot.magnussen;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.CommandBaseRobot;
 
@@ -51,7 +53,13 @@ public class ArmTestRobot extends CommandBaseRobot
     OI.reset();
     SmartDashboard.setDefaultNumber("Setpoint1", 0.0);
     SmartDashboard.setDefaultNumber("Setpoint2", 0.0);
+    PowerDistribution power = new PowerDistribution(1, ModuleType.kRev);
+    power.clearStickyFaults();
+    power.setSwitchableChannel(false);
+    SmartDashboard.putData(power);
+
   }
+
 
   @Override
   public void teleopPeriodic()
@@ -80,5 +88,6 @@ public class ArmTestRobot extends CommandBaseRobot
                  ? SmartDashboard.getNumber("Setpoint1", 0)
                  : SmartDashboard.getNumber("Setpoint2", 0);
     arm.setAngle(angle);
+
   }
 }

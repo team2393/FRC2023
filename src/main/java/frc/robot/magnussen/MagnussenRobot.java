@@ -30,7 +30,7 @@ public class MagnussenRobot extends CommandBaseRobot
   private final SendableChooser<Command> autos = new SendableChooser<>();
 
   // private final TheGreatCoordinator coordinator = new TheGreatCoordinator();
-  private final SecondAttempt coordinator = new SecondAttempt();
+  private final Charm coordinator = new Charm();
 
   private final Pneumatics pneumatics = new Pneumatics();
 
@@ -49,10 +49,10 @@ public class MagnussenRobot extends CommandBaseRobot
     SmartDashboard.putData("Auto Options", autos);
 
     // TODO Configure power dist. & publish power info
-    // PowerDistribution power = new PowerDistribution(1, ModuleType.kRev);
-    // power.clearStickyFaults();
-    // power.setSwitchableChannel(false);
-    // SmartDashboard.putData(power);
+    PowerDistribution power = new PowerDistribution(1, ModuleType.kRev);
+    power.clearStickyFaults();
+    power.setSwitchableChannel(false);
+    SmartDashboard.putData(power);
 
     // camera = new LimelightClient(drivetrain);
   }
@@ -85,8 +85,6 @@ public class MagnussenRobot extends CommandBaseRobot
     drivetrain.brake(true);
   
     drive_relative.schedule();
-
-    coordinator.store();
   }
 
   @Override
@@ -98,7 +96,6 @@ public class MagnussenRobot extends CommandBaseRobot
     else if (OI.selectUphillMode())
     {
       drive_uphill.schedule();
-      coordinator.store();
     }
     
     if (OI.resetOrigin())
@@ -134,8 +131,6 @@ public class MagnussenRobot extends CommandBaseRobot
 
     // Run selected auto
     autos.getSelected().schedule();
-
-    coordinator.store();
   }
 
   @Override

@@ -230,7 +230,7 @@ public class Charm extends SubsystemBase
     {
       SmartDashboard.putString("Mode", "Near");
       // TODO Preset arm, then allow interactive adjustment
-      arm_setpoint = -85.0;
+      arm_setpoint = -74.0;
     }
   }
 
@@ -252,7 +252,7 @@ public class Charm extends SubsystemBase
     {
       SmartDashboard.putString("Mode", "Mid");
       // TODO Preset arm, then allow interactive adjustment
-      arm_setpoint = -76.0;
+      arm_setpoint = -60.0;
     }
   }
 
@@ -273,7 +273,7 @@ public class Charm extends SubsystemBase
     {
       SmartDashboard.putString("Mode", "Far");
       // TODO Preset arm, then allow interactive adjustment
-      arm_setpoint = -5.0;
+      arm_setpoint = -33.0;
     }
   }
 
@@ -366,13 +366,13 @@ public class Charm extends SubsystemBase
       // Move intake out to allow full arm movement
       new ParallelCommandGroup(new SetIntakeCommand(10.0),
                               // and move arm out once intake is out of the way
-                               new WaitUntilCommand(() -> intake.getAngle() < 45)
+                               new WaitUntilCommand(() -> intake.getAngle() < 30)
                                    .andThen(new SetArmCommand(-10))
                                ),
       // Intake back in
       new ParallelCommandGroup(new SetIntakeCommand(INTAKE_IDLE_POS),
                                // Arm into idle position
-                               new WaitUntilCommand(() -> intake.getAngle() > 95)
+                               new WaitUntilCommand(() -> intake.getAngle() > 100)
                                    .andThen(new SetArmCommand(ARM_IDLE_POS)))
     );
 
@@ -394,7 +394,7 @@ public class Charm extends SubsystemBase
       // Lift first, then arm in could mean arm out & lift up -> topple
       new RetractArmCommand(),
       new SetArmCommand(ARM_IDLE_POS),
-      new SetLiftCommand(0.5),
+      new SetLiftCommand(0.33),
       // Pull intake in
       new SetIntakeCommand(INTAKE_IDLE_POS),
       // Lift back down
@@ -410,7 +410,7 @@ public class Charm extends SubsystemBase
       if (DriverStation.isAutonomous())
         return auto;
       // Initial setup, also after substation intake: Arm back behind intake
-      if (arm.getAngle() < -120)
+      if (arm.getAngle() < -120 || Math.abs(arm.getAngle()) > 170)
         return arm_behind_intake;
       // Is arm out/in front of intake?
       if (intake.getAngle() > 100  &&  arm.getAngle() > -110)
@@ -497,14 +497,18 @@ public class Charm extends SubsystemBase
     SequentialCommandGroup group = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "IntakeCube")),
       new MakeSafeCommand(),
-      new SetLiftCommand(0.5),
+      new SetLiftCommand(0.3),
       new SetIntakeCommand(6.0),
       new SetLiftCommand(0.05),
       new SetArmCommand(-85.0),
       new ExtendArmCommand(),
       new SetIntakeSpinnerCommand(Intake.SPINNER_VOLTAGE),
       // Call Grab*Commands via proxy, don't "require" it to allow return to 'off' ASAP
-      new ProxyCommand(new GrabCubeCommand(grabber))
+      new ProxyCommand(new GrabCubeCommand(grabber)),
+      new RetractArmCommand(),
+      new SetArmCommand(-47),
+      new SetIntakeCommand(INTAKE_IDLE_POS),
+      new SetArmCommand(ARM_IDLE_POS)
     );
     group.addRequirements(this);
     group.setName("IntakeCube");
@@ -535,7 +539,7 @@ public class Charm extends SubsystemBase
       new MakeSafeCommand(),
       // Lift out of the way ...
       new RetractArmCommand(),
-      new SetLiftCommand(0.5),
+      new SetLiftCommand(0.3),
       // .. for intake to move out and arm back in parallel
       new ParallelCommandGroup(new SetIntakeCommand(45),
                                new SetArmCommand(-120)),

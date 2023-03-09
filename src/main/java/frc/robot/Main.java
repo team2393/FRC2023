@@ -12,8 +12,8 @@ public final class Main
   /** Start one of the 'XXXRobot' robots */
   public static void main(String... args)
   {
-     RobotBase.startRobot(frc.robot.magnussen.MagnussenRobot::new);
-    // RobotBase.startRobot(frc.robot.magnussen.CharmTestRobot::new);
+    //  RobotBase.startRobot(frc.robot.magnussen.MagnussenRobot::new);
+    RobotBase.startRobot(frc.robot.magnussen.CharmTestRobot::new);
     // RobotBase.startRobot(frc.robot.magnussen.SecondAttemptTestRobot::new);
     // RobotBase.startRobot(frc.robot.magnussen.TheGreatCoordinatorTestRobot::new);
     // RobotBase.startRobot(frc.robot.magnussen.IntakeTestRobot::new);

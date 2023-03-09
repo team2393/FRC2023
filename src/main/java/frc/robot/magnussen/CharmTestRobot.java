@@ -24,11 +24,14 @@ public class CharmTestRobot extends CommandBaseRobot
     // //   coordinator.store();
 
     if (OI.selectIntakeMode())
-      coordinator.intakeFromSubstation(true);
-    //   if (OI.selectCubeIntake())
-        // coordinator.intakeCube();
-    //   else
-    //     coordinator.intakeCone();
+      if (OI.selectCubeIntake())
+        coordinator.intakeCube();
+      else
+        coordinator.intakeCone();
+
+    if (OI.selectSubstationIntakeMode())
+      coordinator.intakeFromSubstation(OI.selectCubeIntake());
+
     if (OI.joystick.getStartButtonPressed())
       coordinator.intakeCube();
     if (OI.joystick.getBackButtonPressed())

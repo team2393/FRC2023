@@ -44,7 +44,8 @@ public class LiftTestRobot extends CommandBaseRobot
   public void robotInit()
   {
     super.robotInit();
-    SmartDashboard.setDefaultNumber("Setpoint", 0.0);
+    SmartDashboard.setDefaultNumber("Setpoint1", 0.0);
+    SmartDashboard.setDefaultNumber("Setpoint2", 0.0);
   }
 
   @Override
@@ -61,6 +62,9 @@ public class LiftTestRobot extends CommandBaseRobot
   @Override
   public void autonomousPeriodic()
   {
-    lift.setHeight(SmartDashboard.getNumber("Setpoint", 0.0));
+    double height = (System.currentTimeMillis() / 5000) % 2 == 1
+                  ? SmartDashboard.getNumber("Setpoint1", 0)
+                  : SmartDashboard.getNumber("Setpoint2", 0);
+    lift.setHeight(height);
   }
 }

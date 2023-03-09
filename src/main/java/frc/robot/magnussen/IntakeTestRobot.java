@@ -19,7 +19,8 @@ public class IntakeTestRobot extends CommandBaseRobot
   {
     super.robotInit();
     OI.reset();
-    SmartDashboard.setDefaultNumber("Setpoint", 0.0);
+    SmartDashboard.setDefaultNumber("Setpoint1", 0.0);
+    SmartDashboard.setDefaultNumber("Setpoint2", 0.0);
   }
 
   @Override
@@ -39,8 +40,9 @@ public class IntakeTestRobot extends CommandBaseRobot
   @Override
   public void autonomousPeriodic()
   {
-    double angle = SmartDashboard.getNumber("Setpoint", 0);
-    intake.setSpinner(angle < 90 ? Intake.SPINNER_VOLTAGE : 0);
+    double angle = (System.currentTimeMillis() / 5000) % 2 == 1
+                 ? SmartDashboard.getNumber("Setpoint1", 0)
+                 : SmartDashboard.getNumber("Setpoint2", 0);
     intake.setAngle(angle);
   }
 }

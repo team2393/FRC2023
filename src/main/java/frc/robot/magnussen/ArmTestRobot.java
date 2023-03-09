@@ -5,7 +5,6 @@ package frc.robot.magnussen;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.CommandBaseRobot;
 
 /** Arm test robot
@@ -50,7 +49,8 @@ public class ArmTestRobot extends CommandBaseRobot
   {
     super.robotInit();
     OI.reset();
-    SmartDashboard.setDefaultNumber("Setpoint", 0.0);
+    SmartDashboard.setDefaultNumber("Setpoint1", 0.0);
+    SmartDashboard.setDefaultNumber("Setpoint2", 0.0);
   }
 
   @Override
@@ -76,6 +76,9 @@ public class ArmTestRobot extends CommandBaseRobot
   @Override
   public void autonomousPeriodic()
   {
-    arm.setAngle(SmartDashboard.getNumber("Setpoint", 0.0));
+    double angle = (System.currentTimeMillis() / 5000) % 2 == 1
+                 ? SmartDashboard.getNumber("Setpoint1", 0)
+                 : SmartDashboard.getNumber("Setpoint2", 0);
+    arm.setAngle(angle);
   }
 }

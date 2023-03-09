@@ -55,12 +55,6 @@ public class Charm extends SubsystemBase
   private final Grabber grabber = new Grabber();
 
   // TODO Tune basic arm, lift, intake moves to be faster
-  // TODO Check every move/transition on actual robot.
-  //      See how far arm needs to move out, lift up etc.
-  //      when swapping arm/intake locations
-  // TODO Can tables for near/mid/far be combined into one,
-  //      so near/mid/far simply change the initial arm angle
-  //      but can then move to any node level?
 
   /** Setpoints
    *  If we adjusted based on the current value from
@@ -277,13 +271,57 @@ public class Charm extends SubsystemBase
     }
   }
 
+  // TODO Can tables for near/mid/far be combined into one,
+  //      so near/mid/far simply set the initial arm angle
+  //      but can then move to any node level?
+  private static final LookupTable combined_lookup = new LookupTable(
+    new String[] { "PseudoDistance", "Arm Angle", "Lift Height", "Extend" },
+                    // Near 0..30
+                     0,               -70,           0,     1,
+                    29,                 0,           0,     1,
+                    // Mid 30..60
+                    30,               -90,           0.5,   0,
+                    39,               -62,           0.55,  0,   
+                    45,               -45,           0.56,  0,
+                    59,                 0,           0.3,   0,
+                    // Far 60..90
+                    60,               -90,           0.7,   0,
+                    69,               -70,           0.7,   0, 
+                    90,               -25,           0.7,   1);
+  private class CombinedInteractiveCommand extends InteractiveArmLiftExtendCommand
+  {
+    private double pseudo_distance;
+
+    public CombinedInteractiveCommand()
+    {
+      super(combined_lookup);
+    }
+
+    @Override
+    public void initialize()
+    {
+      pseudo_distance = 45.0;
+    }
+
+    @Override
+    public void execute()
+    {
+      Entry entry = table.lookup(pseudo_distance + getUserInput());
+      pseudo_distance = entry.position;
+      SmartDashboard.putNumber("PseudoDistance", pseudo_distance);
+      arm_setpoint = entry.values[0];
+      lift_setpoint = entry.values[1];
+      arm.extend(entry.values[2] > 0.5);
+    }
+  }   
+
   /** Move intake to capture cone and then transfer to grabber */
   private static final LookupTable cone_intake_arm_lookup = new LookupTable(
     new String[] { "Intake Angle", "Arm Angle", "Lift Height", "Extend" },
                                -2,         -88,          0.51,    0,
                                85,         -88,          0.51,    0,          
                                90,         -99,          0.25,    0); 
-  private class InteractiveConeIntakeCommand  extends InteractiveArmLiftExtendCommand
+  private class InteractiveConeIntakeCommand extends InteractiveArmLiftExtendCommand
   {
     public InteractiveConeIntakeCommand()
     {
@@ -410,7 +448,8 @@ public class Charm extends SubsystemBase
       if (DriverStation.isAutonomous())
         return auto;
       // Initial setup, also after substation intake: Arm back behind intake
-      if (arm.getAngle() < -120 || Math.abs(arm.getAngle()) > 170)
+      // Consider wraparound when arm is way back at -120..-180 or 170..180
+      if (abs(arm.getAngle()) >= 120)
         return arm_behind_intake;
       // Is arm out/in front of intake?
       if (intake.getAngle() > 100  &&  arm.getAngle() > -110)
@@ -474,6 +513,7 @@ public class Charm extends SubsystemBase
   public void mid()
   {
     new MakeSafeCommand().andThen(new MidCommand()).withName("Mid").schedule();
+    // new MakeSafeCommand().andThen(new CombinedInteractiveCommand()).withName("Mid").schedule();
   }
 
   public void far()
@@ -497,11 +537,8 @@ public class Charm extends SubsystemBase
     SequentialCommandGroup group = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "IntakeCube")),
       new MakeSafeCommand(),
-      new ParallelCommandGroup
-      (
-        new SetLiftCommand(0.05),
-        new SetArmCommand(-47)
-      ),
+      new ParallelCommandGroup(new SetLiftCommand(0.05),
+                               new SetArmCommand(-47)),
       new SetIntakeCommand(6.0),
       new SetArmCommand(-85.0),
       new ExtendArmCommand(),
@@ -510,6 +547,7 @@ public class Charm extends SubsystemBase
       new ProxyCommand(new GrabCubeCommand(grabber)),
       new RetractArmCommand(),
       new SetArmCommand(-47),
+      // TODO Next two in parallel, once speed of arm and intake have been optimized?
       new SetIntakeCommand(INTAKE_IDLE_POS),
       new SetArmCommand(ARM_IDLE_POS)
     );

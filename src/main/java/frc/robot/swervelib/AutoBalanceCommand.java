@@ -36,7 +36,13 @@ public class AutoBalanceCommand extends SequentialCommandGroup
     this.drivetrain = drivetrain;
     addCommands(new DriveUphill(),
                 new WaitCommand(2),
-                new DriveBack());
+                new DriveBack(),
+                // Keep wheels sideways, no speed, to "brake", forever
+                new TimedDriveCommand(drivetrain, 90, 0, 20000)
+                // ,
+                // new WaitCommand(2),
+                // new AutoDriveUphillCommand(drivetrain)
+                );
     addRequirements(drivetrain);
   }
 

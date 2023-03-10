@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.AutoNoMouse;
 import frc.robot.CommandBaseRobot;
 import frc.robot.SequenceWithStart;
+import frc.robot.magnussen.charm.Charm;
 import frc.robot.swervelib.DriveUphillCommand;
 import frc.robot.swervelib.RelativeSwerveCommand;
 import frc.robot.swervelib.ResetPositionCommand;
@@ -48,7 +49,7 @@ public class MagnussenRobot extends CommandBaseRobot
       autos.addOption(auto.getName(), auto);
     SmartDashboard.putData("Auto Options", autos);
 
-    // TODO Configure power dist. & publish power info
+    // Configure power dist. & publish power info
     PowerDistribution power = new PowerDistribution(1, ModuleType.kRev);
     power.clearStickyFaults();
     power.setSwitchableChannel(false);

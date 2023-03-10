@@ -45,7 +45,7 @@ public class MagnussenRobot extends CommandBaseRobot
     OI.reset();
 
     autos.setDefaultOption("Nothing", new PrintCommand("Doing nothing"));
-    for (Command auto : AutoNoMouse.createAutoCommands(drivetrain))
+    for (Command auto : AutoNoMouse.createAutoCommands(drivetrain, coordinator))
       autos.addOption(auto.getName(), auto);
     SmartDashboard.putData("Auto Options", autos);
 
@@ -108,6 +108,7 @@ public class MagnussenRobot extends CommandBaseRobot
         coordinator.intakeCube();
       else
         coordinator.intakeCone();
+    
     if (OI.selectSubstationIntakeMode()  &&  normal)
       coordinator.intakeFromSubstation(OI.selectCubeIntake());
 

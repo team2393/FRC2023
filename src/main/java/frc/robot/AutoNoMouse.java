@@ -15,9 +15,12 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.magnussen.GrabberEjectCommand;
+import frc.robot.magnussen.charm.Charm;
+import frc.robot.magnussen.charm.SetArmCommand;
 import frc.robot.swervelib.AutoBalanceCommand;
 import frc.robot.swervelib.AutoDriveUphillCommand;
 import frc.robot.swervelib.SelectAbsoluteTrajectoryCommand;
@@ -78,7 +81,7 @@ public class AutoNoMouse
   }
 
   /** Create all our auto-no-mouse commands */
-  public static List<Command> createAutoCommands(SwerveDrivetrain drivetrain)
+  public static List<Command> createAutoCommands(SwerveDrivetrain drivetrain, Charm coordinator)
   {
     final List<Command> autos = new ArrayList<>();
 
@@ -222,62 +225,23 @@ public class AutoNoMouse
 
     // ---------------------- Other -----------------------------------
 
-    {
-      SequentialCommandGroup auto = new SequenceWithStart("BMR", 1.85, 2.75, 0);
+    { // Blue, Middle node, Drop cube, out, balance
+      SequentialCommandGroup auto = new SequenceWithStart("BMD", 2.39, 2.88, 0);
+      // Drop cube into middle node
+      auto.addCommands(new SetArmCommand(coordinator, -170));
+      auto.addCommands(new GrabberEjectCommand(coordinator.grabber));
+      // Drive out over the charge station (and rotate so we'll face it)
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
-      Trajectory path = createTrajectory(true, 1.85, 2.75, 45,
-                                               2.50, 4.60, 0,
-                                               6.43, 4.60, 0);
-      auto.addCommands(drivetrain.createTrajectoryCommand(path, 0));
-      auto.addCommands(new PrintCommand("Pickup"));
-      auto.addCommands(new WaitCommand(2));
-      path = createTrajectory(true, 6.43, 4.60, 180,
-                                    3.80, 4.60, 180,
-                                    1.90, 4.45, 180);
+      Trajectory path = createTrajectory(true, 2.39, 2.88, 0,
+                                         6.50, 2.88, 0);
+      auto.addCommands(new ParallelCommandGroup(new SetArmCommand(coordinator, -155),
+                                                drivetrain.createTrajectoryCommand(path, 180)));
+      // Drive back onto the charge station (now pointing 'forward') 
+      path = createTrajectory(true, 6.5, 2.88, 180,
+                                    4.5, 2.88, 180);
       auto.addCommands(drivetrain.createTrajectoryCommand(path, 180));
-      autos.add(auto);
-    }
-
-    { // Blue Bottom Drop item then Retrieve another
-      SequentialCommandGroup auto = new SequenceWithStart("BBDR", 1.93, 0.5, 180);
-      auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new PrintCommand("Dropping..."));
-      auto.addCommands(new WaitCommand(2));
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
-      Trajectory path = createTrajectory(true, 1.93, 0.50, 0,
-                                               5.42, 0.9, 0,
-                                               6.39, 2.14, 0);
-      auto.addCommands(drivetrain.createTrajectoryCommand(path, 0));
-      autos.add(auto);
-    }
-
-    { // 'Mirrored' sequence: X   -->  WIDTH-X,   heading --> 180-heading.  Y stays.
-      SequentialCommandGroup auto = new SequenceWithStart("RBDR", WIDTH-1.93, 0.5, 180-180);
-      auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new PrintCommand("Dropping..."));
-      auto.addCommands(new WaitCommand(2));
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
-      Trajectory path = createTrajectory(true, WIDTH-1.93, 0.50, 180-0,
-                                               WIDTH-5.42, 0.9,  180-0,
-                                               WIDTH-6.39, 2.14, 180-0);
-      auto.addCommands(drivetrain.createTrajectoryCommand(path, 180-0));
-      autos.add(auto);
-    }
-
-    { // Example for using PathWeaver
-      SequentialCommandGroup auto = new SequenceWithStart("PWCircle", 1.66, 4.47, 0);
-      auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
-      auto.addCommands(followPathWeaver(drivetrain, "Circle", 0));
-      autos.add(auto);
-    }
-
-    {
-      SequentialCommandGroup auto = new SequenceWithStart("PWTest", 1.66, 4.47, 0);
-      auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
-      auto.addCommands(followPathWeaver(drivetrain, "Test", 0));
+      auto.addCommands(new AutoBalanceCommand(drivetrain));
       autos.add(auto);
     }
 

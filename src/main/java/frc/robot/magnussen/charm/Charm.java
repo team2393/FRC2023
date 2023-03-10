@@ -60,10 +60,10 @@ public class Charm extends SubsystemBase
   final static double ARM_IDLE_POS = -90;
 
   // Components that we handle
-  final Lift lift = new Lift();
-  final Arm arm = new Arm();
-  final Intake intake = new Intake();
-  final Grabber grabber = new Grabber();
+  public final Lift lift = new Lift();
+  public final Arm arm = new Arm();
+  public final Intake intake = new Intake();
+  public final Grabber grabber = new Grabber();
 
   /** Setpoints
    *  If we adjusted based on the current value from

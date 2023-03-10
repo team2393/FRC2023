@@ -50,7 +50,7 @@ public class SwerveBotRobot extends CommandBaseRobot
     }
 
     autos.setDefaultOption("Nothing", new PrintCommand("Doing nothing"));
-    for (Command auto : AutoNoMouse.createAutoCommands(drivetrain))
+    for (Command auto : AutoNoMouse.createAutoCommands(drivetrain, null))
       autos.addOption(auto.getName(), auto);
     SmartDashboard.putData("Auto Options", autos);
   }

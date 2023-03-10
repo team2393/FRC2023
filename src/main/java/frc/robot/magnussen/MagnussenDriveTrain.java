@@ -7,7 +7,6 @@ import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.swervelib.SwerveDrivetrain;
 import frc.robot.swervelib.SwerveModule;
 

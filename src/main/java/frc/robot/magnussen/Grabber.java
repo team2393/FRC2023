@@ -10,7 +10,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** Grabber */
@@ -25,7 +24,6 @@ public class Grabber extends SubsystemBase
   /** Motor controller */
   private CANSparkMax spinner = new CANSparkMax(RobotMap.GRABBER_ID, MotorType.kBrushless);
   private NetworkTableEntry nt_sensor;
-  private CommandBase off;
 
 
   public Grabber()
@@ -36,7 +34,7 @@ public class Grabber extends SubsystemBase
 
     nt_sensor = SmartDashboard.getEntry("Grabber");
 
-    setDefaultCommand(off = new GrabberOffCommand(this));
+    setDefaultCommand(new GrabberOffCommand(this));
   }
 
   /** @return Do we sense a cube or cone? */

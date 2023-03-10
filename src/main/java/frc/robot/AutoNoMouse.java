@@ -222,10 +222,6 @@ public class AutoNoMouse
 
     // ---------------------- Other -----------------------------------
 
-    // TODO: Create copies of the 'balance' routines,
-    //       but start by dropping initial game piece,
-    //       then move out, pickup another game piece and balance
-
     {
       SequentialCommandGroup auto = new SequenceWithStart("BMR", 1.85, 2.75, 0);
       auto.addCommands(new VariableWaitCommand());

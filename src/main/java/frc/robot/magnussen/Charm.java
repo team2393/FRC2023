@@ -224,7 +224,7 @@ public class Charm extends SubsystemBase
     {
       SmartDashboard.putString("Mode", "Near");
       // TODO Preset arm, then allow interactive adjustment
-      arm_setpoint = -74.0;
+      arm_setpoint = -70.0;
     }
   }
 
@@ -245,8 +245,8 @@ public class Charm extends SubsystemBase
     public void initialize()
     {
       SmartDashboard.putString("Mode", "Mid");
-      // TODO Preset arm, then allow interactive adjustment
-      arm_setpoint = -60.0;
+      //Preset arm, then allow interactive adjustment
+      arm_setpoint = -50.0;
     }
   }
 
@@ -254,7 +254,7 @@ public class Charm extends SubsystemBase
    new String[] { "Arm Angle", "Lift Height", "Extend" },
                           -90,           0.7,   0,
                           -70,           0.7,   0, 
-                          -25,           0.7,   1);
+                          -20,           0.7,   1);
   private class FarCommand extends InteractiveArmLiftExtendCommand
   {
     public FarCommand()
@@ -266,8 +266,8 @@ public class Charm extends SubsystemBase
     public void initialize()
     {
       SmartDashboard.putString("Mode", "Far");
-      // TODO Preset arm, then allow interactive adjustment
-      arm_setpoint = -33.0;
+      // Preset arm, then allow interactive adjustment
+      arm_setpoint = -23.0;
     }
   }
 
@@ -591,7 +591,7 @@ public class Charm extends SubsystemBase
       new ExtendArmCommand(),
       new ProxyCommand(() -> cube ? new GrabCubeCommand(grabber) : new GrabConeCommand(grabber)),
       // new RetractArmCommand(),
-      new SetArmCommand(-170),
+      new SetArmCommand(-200),
       new StayCommand()
     );
     group.addRequirements(this);

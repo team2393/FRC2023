@@ -6,6 +6,8 @@ package frc.robot.swervelib;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** Command for human to drive robot in absolute field coordinates
@@ -28,9 +30,18 @@ public class AbsoluteSwerveCommand extends CommandBase
   {
     // Speed vector (vx, vy) meant to be in field coordinates,
     // vx going "up" from the origin of the field along X
+    // For the blue side, this means "forward" is away from the
+    // driver station and "right" is to the right
     double vx = SwerveOI.getForwardSpeed();
     double vy = SwerveOI.getLeftSpeed();
-
+    // When at the red side of the field,
+    // rotate by 180 deg so that "forward" is again
+    // away from the driver and "right" moves to the right
+    if (DriverStation.getAlliance() == Alliance.Red)
+    {
+      vx = -vx;
+      vy = -vy;
+    }
     // If robot also points 'up', we could use (vx, vy) as given,
     // but generally we need to rotate (vx, vy) backwards from the current heading
     // of the robot to see how the robot needs to move:

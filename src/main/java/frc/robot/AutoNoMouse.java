@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.magnussen.GrabberEjectCommand;
 import frc.robot.magnussen.charm.Charm;
+import frc.robot.magnussen.charm.ExtendArmCommand;
+import frc.robot.magnussen.charm.RetractArmCommand;
 import frc.robot.magnussen.charm.SetArmCommand;
 import frc.robot.swervelib.AutoBalanceCommand;
 import frc.robot.swervelib.AutoDriveUphillCommand;
@@ -225,11 +227,13 @@ public class AutoNoMouse
 
     // ---------------------- Other -----------------------------------
 
-    { // Blue, Middle node, Drop cube, out, balance
-      SequentialCommandGroup auto = new SequenceWithStart("BMD", 2.39, 2.88, 0);
+    { // Blue, Middle node, Drop cube, Out, Balance
+      SequentialCommandGroup auto = new SequenceWithStart("BMDOB", 2.39, 2.88, 0);
       // Drop cube into middle node
-      auto.addCommands(new SetArmCommand(coordinator, -170));
+      auto.addCommands(new SetArmCommand(coordinator, -200));
+      auto.addCommands(new ExtendArmCommand(coordinator));
       auto.addCommands(new GrabberEjectCommand(coordinator.grabber));
+      auto.addCommands(new RetractArmCommand(coordinator));
       // Drive out over the charge station
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));

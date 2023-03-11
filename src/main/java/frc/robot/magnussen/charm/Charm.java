@@ -263,6 +263,7 @@ public class Charm extends SubsystemBase
       // Call Grab*Commands via proxy, don't "require" it to allow return to 'off' ASAP
       new ProxyCommand(new GrabCubeCommand(grabber)),
       new RetractArmCommand(this),
+      new SetIntakeSpinnerCommand(this, 0),
       new SetArmCommand(this, -47),
       // TODO Next two in parallel, once speed of arm and intake have been optimized?
       new SetIntakeCommand(this, INTAKE_IDLE_POS),

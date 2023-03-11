@@ -198,6 +198,15 @@ abstract public class SwerveDrivetrain extends SubsystemBase
     odometry.addVisionMeasurement(robot_position, timestamp);
   }
 
+  /** Lock modules in "diamond" pattern to prevent rolling */
+  public void lock()
+  {
+    modules[0].drive(-45, 0.0);
+    modules[1].drive(45, 0.0);
+    modules[2].drive(-45, 0.0);
+    modules[3].drive(45, 0.0);
+  }
+
   /** Drive all modules with same angle and speed
    *  @param angle Swerve module angle in degrees
    *  @param speed Swerve module speed in meters per second

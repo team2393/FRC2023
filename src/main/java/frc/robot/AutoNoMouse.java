@@ -17,7 +17,9 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.magnussen.GrabberEjectCommand;
 import frc.robot.magnussen.charm.Charm;
 import frc.robot.magnussen.charm.ExtendArmCommand;
@@ -228,22 +230,27 @@ public class AutoNoMouse
     // ---------------------- Other -----------------------------------
 
     { // Blue, Middle node, Drop cube, Out, Balance
-      SequentialCommandGroup auto = new SequenceWithStart("BMDOB", 2.39, 2.88, 0);
+      SequentialCommandGroup auto = new SequenceWithStart("BMDOB", 1.89, 2.88, 0);
       // Drop cube into middle node
       auto.addCommands(new SetArmCommand(coordinator, -200));
       auto.addCommands(new ExtendArmCommand(coordinator));
-      auto.addCommands(new GrabberEjectCommand(coordinator.grabber));
-      auto.addCommands(new RetractArmCommand(coordinator));
-      // Drive out over the charge station
-      auto.addCommands(new VariableWaitCommand());
-      auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
-      Trajectory path = createTrajectory(true, 2.39, 2.88, 0,
-                                         6.50, 2.88, 0);
-      auto.addCommands(new ParallelCommandGroup(new SetArmCommand(coordinator, -155),
-                                                drivetrain.createTrajectoryCommand(path, 0)));
-      // Drive back onto the charge station
-      path = createTrajectory(true, 6.5, 2.88, 180,
-                                    4.5, 2.88, 180);
+      auto.addCommands (new WaitCommand(1)); // wait for extension
+      
+      Trajectory path = createTrajectory(true, 1.89, 2.88, 0,
+                                               6.75, 2.88, 0);
+
+      auto.addCommands(
+        new ParallelCommandGroup(
+               new SequentialCommandGroup(new ProxyCommand(new GrabberEjectCommand(coordinator.grabber)),
+                                          new RetractArmCommand(coordinator),
+                                          new SetArmCommand(coordinator, -155)),
+               new SequentialCommandGroup(// Drive out over the charge station
+                                          new SelectAbsoluteTrajectoryCommand(drivetrain),
+                                          drivetrain.createTrajectoryCommand(path, 0))));
+
+      // // Drive back onto the charge station
+      path = createTrajectory(true, 6.75, 2.88, 180,
+                                    4.8, 2.88, 180);
       auto.addCommands(drivetrain.createTrajectoryCommand(path, 0));
       auto.addCommands(new AutoBalanceCommand(drivetrain, true));
       autos.add(auto);

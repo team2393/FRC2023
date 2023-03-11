@@ -3,11 +3,14 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.swervelib;
 
+import javax.lang.model.util.ElementScanner14;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -21,11 +24,11 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
  */
 public class AutoBalanceCommand extends SequentialCommandGroup
 {
-  /** At what pitch [deg] should we drive 1 m/s? */
-  private static final double MAX_SPEED_ANGLE = 25.0;
+  /** 'uphill' speed */
+  private static final double MAX_SPEED = 0.3;
 
   /** How far to back off [m] ? */
-  private static final double BACKOFF = 0.15;
+  private static final double BACKOFF = 0.23;
   // ^^ Path generation fails when trying to drive just 0.1m ...
   //    Would have to try TimedDriveCommand for very short distance..
 
@@ -40,14 +43,11 @@ public class AutoBalanceCommand extends SequentialCommandGroup
     this.drivetrain = drivetrain;
     this.reverse = reverse;
     addCommands(new DriveUphill(),
-                new WaitCommand(2),
+                new ParallelDeadlineGroup(new WaitCommand(0.7),
+                                          new LockCommand(drivetrain)),
                 new DriveBack(),
-                // Keep wheels sideways, no speed, to "brake", forever
-                new TimedDriveCommand(drivetrain, 90, 0, 20000)
-                // ,
-                // new WaitCommand(2),
-                // new AutoDriveUphillCommand(drivetrain)
-                );
+                new LockCommand(drivetrain)
+               );
     addRequirements(drivetrain);
   }
 
@@ -72,12 +72,19 @@ public class AutoBalanceCommand extends SequentialCommandGroup
     {
       double pitch = drivetrain.getPitch();
       // Any "nose up" angle means we need to drive forward (X)
-      double vx = pitch/MAX_SPEED_ANGLE;
+      double vx;
+
+      if (reverse && pitch < -8.0)
+        vx = -MAX_SPEED;
+      else if (pitch > 8.0)
+        vx = MAX_SPEED;
+      else
+        vx = 0.0;
       drivetrain.swerve(vx, 0, 0);
 
       if (reverse ? (pitch < max_pitch) : (pitch > max_pitch))
         max_pitch = pitch;
-      if (reverse ?  (pitch > 2.0)      : (pitch < 2.0))
+      if (vx == 0.0)
       {
         System.out.println("Uphill pitch changed from max of " + max_pitch + " to " + pitch + " deg, stopping");
         done = true;
@@ -110,7 +117,7 @@ public class AutoBalanceCommand extends SequentialCommandGroup
     {
       super(() ->
       {
-        if (Math.abs(drivetrain.getPitch()) < 2.0)
+        if (Math.abs(drivetrain.getPitch()) < 5.0)
           return Commands.none();
 
         Pose2d pose = drivetrain.getPose();

@@ -229,28 +229,28 @@ public class AutoNoMouse
 
     // ---------------------- Other -----------------------------------
 
-    { // Blue, Middle node, Drop cube, Out, Balance
-      SequentialCommandGroup auto = new SequenceWithStart("BMDOB", 1.89, 2.88, 0);
-      // Drop cube into middle node
+    { // blue or red Middle node, Drop cube, Out, Balance
+      SequentialCommandGroup auto = new SequenceWithStart("MDOB", 1.89, 2.88, 0);
+      // Prepare to drop cube into middle node
       auto.addCommands(new SetArmCommand(coordinator, -200));
       auto.addCommands(new ExtendArmCommand(coordinator));
-      auto.addCommands (new WaitCommand(1)); // wait for extension
+      // TODO Wait for extension, but shorter once piston gets more pressure
+      auto.addCommands(new WaitCommand(1));
       
       Trajectory path = createTrajectory(true, 1.89, 2.88, 0,
                                                6.75, 2.88, 0);
-
       auto.addCommands(
         new ParallelCommandGroup(
-               new SequentialCommandGroup(new ProxyCommand(new GrabberEjectCommand(coordinator.grabber)),
-                                          new RetractArmCommand(coordinator),
-                                          new SetArmCommand(coordinator, -155)),
-               new SequentialCommandGroup(// Drive out over the charge station
-                                          new SelectAbsoluteTrajectoryCommand(drivetrain),
-                                          drivetrain.createTrajectoryCommand(path, 0))));
-
-      // // Drive back onto the charge station
+          new SequentialCommandGroup(// Eject & pull arm back in
+                                     new ProxyCommand(new GrabberEjectCommand(coordinator.grabber)),
+                                     new RetractArmCommand(coordinator),
+                                     new SetArmCommand(coordinator, -155)),
+          new SequentialCommandGroup(// Drive out over the charge station
+                                     new SelectAbsoluteTrajectoryCommand(drivetrain),
+                                     drivetrain.createTrajectoryCommand(path, 0))));
+      // Drive back onto the charge station .. and balance
       path = createTrajectory(true, 6.75, 2.88, 180,
-                                    4.8, 2.88, 180);
+                                    4.8,  2.88, 180);
       auto.addCommands(drivetrain.createTrajectoryCommand(path, 0));
       auto.addCommands(new AutoBalanceCommand(drivetrain, true));
       autos.add(auto);

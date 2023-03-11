@@ -230,18 +230,18 @@ public class AutoNoMouse
       // Drop cube into middle node
       auto.addCommands(new SetArmCommand(coordinator, -170));
       auto.addCommands(new GrabberEjectCommand(coordinator.grabber));
-      // Drive out over the charge station (and rotate so we'll face it)
+      // Drive out over the charge station
       auto.addCommands(new VariableWaitCommand());
       auto.addCommands(new SelectAbsoluteTrajectoryCommand(drivetrain));
       Trajectory path = createTrajectory(true, 2.39, 2.88, 0,
                                          6.50, 2.88, 0);
       auto.addCommands(new ParallelCommandGroup(new SetArmCommand(coordinator, -155),
-                                                drivetrain.createTrajectoryCommand(path, 180)));
-      // Drive back onto the charge station (now pointing 'forward') 
+                                                drivetrain.createTrajectoryCommand(path, 0)));
+      // Drive back onto the charge station
       path = createTrajectory(true, 6.5, 2.88, 180,
                                     4.5, 2.88, 180);
-      auto.addCommands(drivetrain.createTrajectoryCommand(path, 180));
-      auto.addCommands(new AutoBalanceCommand(drivetrain));
+      auto.addCommands(drivetrain.createTrajectoryCommand(path, 0));
+      auto.addCommands(new AutoBalanceCommand(drivetrain, true));
       autos.add(auto);
     }
 
@@ -249,7 +249,7 @@ public class AutoNoMouse
       SequentialCommandGroup auto = new SequenceWithStart("Balance", 5.19, 2.88, 180);
       auto.addCommands(new VariableWaitCommand());
       // auto.addCommands(new AutoDriveUphillCommand(drivetrain));
-      auto.addCommands(new AutoBalanceCommand(drivetrain));
+      auto.addCommands(new AutoBalanceCommand(drivetrain, false));
       autos.add(auto);
     }
 

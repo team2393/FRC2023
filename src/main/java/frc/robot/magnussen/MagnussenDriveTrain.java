@@ -51,9 +51,16 @@ public class MagnussenDriveTrain extends SwerveDrivetrain
           return -30.0;
       }
 
-      // Right change station, coming from the left, headed right
       if (Math.abs(heading) < 10.0)
-      {
+      { // Left charge station, driving in reverse
+        // From the right, go 'up'
+        if (4.26 < x  &&  x < 5.2)
+          return -30.0;
+        // Then down from about center on
+        if (2.8  < x  &&   x < 4.26)
+          return 30.0;
+
+        // Right change station, coming from the left, headed right
         if (11.40 < x  &&  x < 12.4)
           return 30.0;
         if (13.0  < x  &&   x < 13.9)

@@ -30,10 +30,15 @@ public class AutoBalanceCommand extends SequentialCommandGroup
   //    Would have to try TimedDriveCommand for very short distance..
 
   private final SwerveDrivetrain drivetrain;
+  private final boolean reverse;
 
-  public AutoBalanceCommand(SwerveDrivetrain drivetrain)
+  /** @param  Swerve Drivetrain
+   *  @param reverse Drive up in reverse?
+   */
+  public AutoBalanceCommand(SwerveDrivetrain drivetrain, boolean reverse)
   {
     this.drivetrain = drivetrain;
+    this.reverse = reverse;
     addCommands(new DriveUphill(),
                 new WaitCommand(2),
                 new DriveBack(),
@@ -60,6 +65,7 @@ public class AutoBalanceCommand extends SequentialCommandGroup
       start = drivetrain.getPose().getTranslation();
       max_pitch = 0.0;
       done = false;
+      System.out.println("Starting to drive uphill " + (reverse ? " in reverse" : ""));
     }
 
     public void execute()
@@ -69,9 +75,9 @@ public class AutoBalanceCommand extends SequentialCommandGroup
       double vx = pitch/MAX_SPEED_ANGLE;
       drivetrain.swerve(vx, 0, 0);
 
-      if (pitch > max_pitch)
+      if (reverse ? (pitch < max_pitch) : (pitch > max_pitch))
         max_pitch = pitch;
-      if (pitch < 2.0)
+      if (reverse ?  (pitch > 2.0)      : (pitch < 2.0))
       {
         System.out.println("Uphill pitch changed from max of " + max_pitch + " to " + pitch + " deg, stopping");
         done = true;
@@ -109,8 +115,9 @@ public class AutoBalanceCommand extends SequentialCommandGroup
 
         Pose2d pose = drivetrain.getPose();
         Rotation2d back = pose.getRotation().rotateBy(Rotation2d.fromDegrees(180));
-        double x = pose.getX() + BACKOFF*back.getCos();
-        double y = pose.getY() + BACKOFF*back.getSin();
+        double backoff = reverse ? -BACKOFF : BACKOFF;
+        double x = pose.getX() + backoff*back.getCos();
+        double y = pose.getY() + backoff*back.getSin();
 
         System.out.println("Backing off from " + pose + " to " + x + ", " + y);
         return new SwerveToPositionCommand(drivetrain, x, y, pose.getRotation().getDegrees());

@@ -15,6 +15,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
@@ -254,6 +255,19 @@ public class AutoNoMouse
       auto.addCommands(drivetrain.createTrajectoryCommand(path, 0));
       auto.addCommands(new AutoBalanceCommand(drivetrain, true));
       autos.add(auto);
+
+      // Could write like this. Is that better?
+      // auto.addCommands(new SetArmCommand(coordinator, -200),
+      //                  new ExtendArmCommand(coordinator),
+      //                  new WaitCommand(1),
+      //                  Commands.parallel(new GrabberEjectCommand(coordinator.grabber).asProxy()
+      //                                       .andThen(new RetractArmCommand(coordinator))
+      //                                       .andThen(new SetArmCommand(coordinator, -155)),
+      //                                    new SelectAbsoluteTrajectoryCommand(drivetrain)
+      //                                        .andThen(drivetrain.createTrajectoryCommand(path1, 0))
+      //                                   ),
+      //                  drivetrain.createTrajectoryCommand(path2, 0),
+      //                  new AutoBalanceCommand(drivetrain, true));
     }
 
     { // Skeleton for another auto option

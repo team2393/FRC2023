@@ -159,6 +159,7 @@ public class AutoNoMouse
       auto.addCommands(new PrintCommand("Driving to charge station..."));
       auto.addCommands(followPathWeaver(drivetrain, "BTBalance", 180));
       auto.addCommands(new PrintCommand("Driving uphill .."));
+      // TODO Replace all AutoDriveUphillCommand(drivetrain) with AutoBalanceCommand(drivetrain, false)?
       auto.addCommands(new AutoDriveUphillCommand(drivetrain));
       auto.addCommands(new PrintCommand("Done!"));
       autos.add(auto);

@@ -8,6 +8,7 @@ import static java.lang.Math.abs;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -141,6 +142,7 @@ public class Charm extends SubsystemBase
     }
   }
 
+  /** Move to INTAKE_IDLE_POS and ARM_IDLE_POS from any(?) initial setup */
   CommandBase idle()
   {
     // In autonomous, don't move anything because 'unfolding' could interfere with driving
@@ -199,7 +201,7 @@ public class Charm extends SubsystemBase
     SequentialCommandGroup unknown = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "Idle??")),
       new SetIntakeSpinnerCommand(this, 0));
-        
+    
     CommandBase selector = new ProxyCommand(() ->
     {
       if (DriverStation.isAutonomous())
@@ -295,21 +297,32 @@ public class Charm extends SubsystemBase
     (
       new InstantCommand(() -> SmartDashboard.putString("Mode", "SubIntake")),
       new PrintCommand("Intake from substation.."),
-      new MakeSafeCommand(this),
-      // Lift out of the way ...
-      new RetractArmCommand(this),
-      new SetLiftCommand(this, 0.3),
-      // .. for intake to move out and arm back in parallel
-      new ParallelCommandGroup(new SetIntakeCommand(this, 45),
-                               new SetArmCommand(this, -120)),
-      new SetLiftCommand(this, 0),
-      new ParallelCommandGroup(new SetIntakeCommand(this, 80),
-                               new SetArmCommand(this, -180)),
-      new SetIntakeCommand(this, 100),
+      new ProxyCommand(() ->
+      { // Is arm already far enough back?
+        if (arm.getAngle() <= -115)
+          return new ParallelCommandGroup(new SetArmCommand(this, -180),
+                                          new SetIntakeCommand(this, 100));
+        else // If not, 'make safe' and start from there
+          return new SequentialCommandGroup(new MakeSafeCommand(this),
+                                            // Lift out of the way ...
+                                            new RetractArmCommand(this),
+                                            new SetLiftCommand(this, 0.3),
+                                            // .. for intake to move out and arm back in parallel
+                                            new ParallelCommandGroup(new SetIntakeCommand(this, 45),
+                                                                    new SetArmCommand(this, -120)),
+                                            // Lift down so arm can rotate out the back
+                                            new SetLiftCommand(this, 0),
+                                            new ParallelCommandGroup(new SetIntakeCommand(this, 80),
+                                                                     new SetArmCommand(this, -180)),
+                                            // With arm out back, intake can move further in
+                                            new SetIntakeCommand(this, 100));
+      }),
+      // Either way, arm is now at -180 for item pickup, and intake around 100
       new ExtendArmCommand(this),
       new ProxyCommand(() -> cube ? new GrabCubeCommand(grabber) : new GrabConeCommand(grabber)),
-      // new RetractArmCommand(),
+      // Keep arm out the back, position for dropping cube in 'mid'
       new SetArmCommand(this, -200),
+      // Stay that way until "eject", "near", "mid", "far", "xx intake" .. end this group 
       new StayCommand()
     );
     group.addRequirements(this);

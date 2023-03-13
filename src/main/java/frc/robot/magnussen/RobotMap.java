@@ -23,9 +23,6 @@ public class RobotMap
 
   // Remaining devices are on RIO
 
-  /** DIO Lift bottom position sensor */
-  public static final int LIFT_BOTTOM = 1;
-
   /** CAN ID for Lift motor */
   //skipped that number
   public static final int LIFT1_ID = 14;
@@ -52,4 +49,6 @@ public class RobotMap
   /** DIO for rev throughbore encoder */
   public static final int INTAKE_ANGLE = 4;
 
+  /** PWM port for LED strip */
+  public static final int LED = 5;
 }

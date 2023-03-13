@@ -26,4 +26,10 @@ public class LEDTestRobot extends CommandBaseRobot
     else
       new FillCommand(led, Color.kFirstBlue).schedule();
   }
+
+  @Override
+  public void autonomousInit()
+  {
+    new GreenGoldBlink(led).schedule();
+  }
 }

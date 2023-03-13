@@ -30,7 +30,7 @@ public class FillCommand extends CommandBase
   public void execute()
   {
     // active LED is white,
-    // topmod 'filled' LEDs are colored
+    // topmost 'filled' LEDs are colored
     for (int i=0; i<LED.N; ++i)
     {
       if (i == active)
@@ -40,7 +40,9 @@ public class FillCommand extends CommandBase
       else
         led.buffer.setRGB(i, 10, 10, 10);
     }
-    active += 2;
+    // Activate 'next' pixel.
+    // Stepping by more than once makes it overall go faster
+    active += 5;
     if (active >= LED.N - filled)
     { // Active pixel reached the filled top
       active = 0;

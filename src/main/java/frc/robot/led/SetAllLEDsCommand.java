@@ -3,38 +3,26 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.led;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
-public class SetAllLEDsCommand extends CommandBase
+public class SetAllLEDsCommand extends InstantCommand
 {
-  private final LED led;
-  private final int r, g, b;
-
-  public SetAllLEDsCommand(LED led, int r, int g, int b)
+  /** @param led LED
+   *  @param color Color
+   */
+  public SetAllLEDsCommand(LED led, Color color)
   {
-    this.led = led;
-    this.r = r;
-    this.g = g;
-    this.b = b;
-    addRequirements(led);
-  }
-
-  @Override
-  public void initialize()
-  {
-    for (int i=0; i<LED.N; ++i)
-      led.buffer.setRGB(i, r, g, b);
-    led.set(led.buffer);
+    super(() ->
+    {
+      for (int i=0; i<LED.N; ++i)
+        led.buffer.setLED(i, color);
+      led.set(led.buffer);
+    }, led);
   }
 
   @Override
   public boolean runsWhenDisabled()
-  {
-    return true;
-  }
-
-  @Override
-  public boolean isFinished()
   {
     return true;
   }

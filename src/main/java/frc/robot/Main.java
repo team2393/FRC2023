@@ -13,6 +13,7 @@ public final class Main
   public static void main(String... args)
   {
     RobotBase.startRobot(frc.robot.magnussen.MagnussenRobot::new);
+    // RobotBase.startRobot(frc.robot.led.LEDTestRobot::new);
     //  RobotBase.startRobot(frc.robot.magnussen.CharmTestRobot::new);
     // RobotBase.startRobot(frc.robot.magnussen.SecondAttemptTestRobot::new);
     // RobotBase.startRobot(frc.robot.magnussen.TheGreatCoordinatorTestRobot::new);

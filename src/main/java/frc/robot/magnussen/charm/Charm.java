@@ -6,9 +6,13 @@ package frc.robot.magnussen.charm;
 import static java.lang.Math.abs;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -76,6 +80,10 @@ public class Charm extends SubsystemBase
    */
   double lift_setpoint, arm_setpoint, intake_setpoint;
 
+  /** Simulation/Visualization */
+  private final Mechanism2d mechanism;
+  private final MechanismLigament2d mech_lift, mech_arm, mech_intake;
+
   /** Move intake to capture cone and then transfer to grabber */
   private static final LookupTable cone_intake_arm_lookup = new LookupTable(
     new String[] { "Intake Angle", "Arm Angle", "Lift Height", "Extend" },
@@ -118,6 +126,19 @@ public class Charm extends SubsystemBase
   {
     SmartDashboard.putString("Mode", "Init...");
     setDefaultCommand(idle().andThen(new StayCommand()).withName("StayIdle"));
+
+    // Create "Mechanism" that can be displays in sim GUI:
+    // NetworkTables -> Smart Dashboard -> Mechanism
+    mechanism = new Mechanism2d(0.6, 1.5, new Color8Bit(Color.kWhite));
+
+    MechanismRoot2d center = mechanism.getRoot("center", 0.3, 0);
+    mech_lift = center.append(new MechanismLigament2d("lift", 0.6, 60, 10, new Color8Bit(Color.kRed)));
+    mech_arm = mech_lift.append(new MechanismLigament2d("arm", 0.3, 0, 10, new Color8Bit(Color.kGreen)));
+
+    MechanismRoot2d front = mechanism.getRoot("front", 0.6, 0);
+    mech_intake = front.append(new MechanismLigament2d("intake", 0.3, 0, 10, new Color8Bit(Color.kBlue)));
+
+    SmartDashboard.putData("Mechanism", mechanism);
   }
 
   @Override
@@ -140,6 +161,11 @@ public class Charm extends SubsystemBase
       arm.setAngle(arm_setpoint);
       intake.setAngle(intake_setpoint);
     }
+
+    mech_lift.setLength(0.6 + lift.getHeight());
+    mech_arm.setAngle(arm.getAngle() - mech_lift.getAngle());
+    mech_arm.setLength(arm.isExtended() ? 0.5 : 0.3);
+    mech_intake.setAngle(intake.getAngle());
   }
 
   /** Move to INTAKE_IDLE_POS and ARM_IDLE_POS from any(?) initial setup */

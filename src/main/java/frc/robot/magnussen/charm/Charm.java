@@ -134,6 +134,8 @@ public class Charm extends SubsystemBase
     MechanismRoot2d center = mechanism.getRoot("center", 0.3, 0);
     mech_lift = center.append(new MechanismLigament2d("lift", 0.6, 60, 10, new Color8Bit(Color.kRed)));
     mech_arm = mech_lift.append(new MechanismLigament2d("arm", 0.3, 0, 10, new Color8Bit(Color.kGreen)));
+    mech_arm.append(new MechanismLigament2d("grab1", 0.15, 45, 10, new Color8Bit(Color.kBrown)));
+    mech_arm.append(new MechanismLigament2d("grab2", 0.15, -45, 10, new Color8Bit(Color.kBrown)));
 
     MechanismRoot2d front = mechanism.getRoot("front", 0.6, 0);
     mech_intake = front.append(new MechanismLigament2d("intake", 0.3, 0, 10, new Color8Bit(Color.kBlue)));

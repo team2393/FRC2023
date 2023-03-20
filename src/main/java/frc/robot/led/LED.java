@@ -10,7 +10,7 @@ import frc.robot.magnussen.RobotMap;
 
 public class LED extends SubsystemBase
 {
-  public static final int N = 60;
+  public static final int N = 145;
   private AddressableLED led = new AddressableLED(RobotMap.LED);
   AddressableLEDBuffer buffer = new AddressableLEDBuffer(LED.N);
   

@@ -30,7 +30,7 @@ public class LEDTestRobot extends CommandBaseRobot
   @Override
   public void autonomousInit()
   {
-    // new GreenGoldBlink(led).schedule();
-    new MovingColorList(led, 10, Color.kWhite, Color.kRed, Color.kBlue).schedule();
+    new GreenGoldBlink(led).schedule();
+    // new MovingColorList(led, 10, Color.kWhite, Color.kRed, Color.kBlue).schedule();
   }
 }

@@ -48,13 +48,13 @@ public class FillCommand extends CommandBase
       }
       else
       {
-        led.buffer.setRGB(i, 10, 10, 10);
-        led.buffer.setRGB(LED.N-1-i, 10, 10, 10);
+        led.buffer.setRGB(i, 0, 0, 0);
+        led.buffer.setRGB(LED.N-1-i, 0, 0, 0);
       }
     }
     // Activate 'next' pixel.
     // Stepping by more than one makes it overall go faster
-    active += 3;
+    active += 10;
     if (active >= LED.N/2 - filled)
     { // Active pixel reached the filled top
       active = 0;

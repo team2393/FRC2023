@@ -129,13 +129,13 @@ public class Charm extends SubsystemBase
 
     // Create "Mechanism" that can be displays in sim GUI:
     // NetworkTables -> Smart Dashboard -> Mechanism
-    mechanism = new Mechanism2d(0.6, 1.5, new Color8Bit(Color.kWhite));
+    mechanism = new Mechanism2d(0.8, 1.5, new Color8Bit(Color.kWhite));
 
-    MechanismRoot2d center = mechanism.getRoot("center", 0.3, 0);
-    mech_lift = center.append(new MechanismLigament2d("lift", 0.6, 60, 10, new Color8Bit(Color.kRed)));
-    mech_arm = mech_lift.append(new MechanismLigament2d("arm", 0.3, 0, 10, new Color8Bit(Color.kGreen)));
-    mech_arm.append(new MechanismLigament2d("grab1", 0.15, 45, 10, new Color8Bit(Color.kBrown)));
-    mech_arm.append(new MechanismLigament2d("grab2", 0.15, -45, 10, new Color8Bit(Color.kBrown)));
+    MechanismRoot2d center = mechanism.getRoot("center", 0.18, 0);
+    mech_lift = center.append(new MechanismLigament2d("lift", 0.9, 60, 10, new Color8Bit(Color.kRed)));
+    mech_arm = mech_lift.append(new MechanismLigament2d("arm", 0.4, 0, 10, new Color8Bit(Color.kGreen)));
+    mech_arm.append(new MechanismLigament2d("grab1", 0.2, 45, 10, new Color8Bit(Color.kBrown)));
+    mech_arm.append(new MechanismLigament2d("grab2", 0.2, -45, 10, new Color8Bit(Color.kBrown)));
 
     MechanismRoot2d front = mechanism.getRoot("front", 0.6, 0);
     mech_intake = front.append(new MechanismLigament2d("intake", 0.3, 0, 10, new Color8Bit(Color.kBlue)));
@@ -164,9 +164,9 @@ public class Charm extends SubsystemBase
       intake.setAngle(intake_setpoint);
     }
 
-    mech_lift.setLength(0.6 + lift.getHeight());
+    mech_lift.setLength(0.9 + lift.getHeight());
     mech_arm.setAngle(arm.getAngle() - mech_lift.getAngle());
-    mech_arm.setLength(arm.isExtended() ? 0.5 : 0.3);
+    mech_arm.setLength(arm.isExtended() ? (0.4+0.2) : 0.4);
     mech_intake.setAngle(intake.getAngle());
   }
 

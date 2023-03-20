@@ -78,15 +78,26 @@
       "/SmartDashboard/Auto Options": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Lift PID": "PIDController",
+      "/SmartDashboard/Mechanism": "Mechanism2d",
       "/SmartDashboard/ResetGyro": "Command",
       "/SmartDashboard/ResetPosition": "Command",
       "/SmartDashboard/Scheduler": "Scheduler"
     },
     "windows": {
+      "/SmartDashboard/Auto Options": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
         "height": 8.013679504394531,
         "image": "./docs/2023-field.png",
         "width": 16.541748046875,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Mechanism": {
         "window": {
           "visible": true
         }

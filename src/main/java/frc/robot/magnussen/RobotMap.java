@@ -50,5 +50,5 @@ public class RobotMap
   public static final int INTAKE_ANGLE = 4;
 
   /** PWM port for LED strip */
-  public static final int LED = 5;
+  public static final int LED = 0;
 }

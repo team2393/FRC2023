@@ -22,8 +22,7 @@ public class MakeSafeCommand extends CommandBase
   @Override
   public void initialize()
   {
-    if (coordinator.intake_setpoint == Charm.INTAKE_IDLE_POS  &&
-        coordinator.arm_setpoint > -100)
+    if (coordinator.arm_setpoint > -100)
       sub_command = null;
     else
     { // Only create idle commands when needed

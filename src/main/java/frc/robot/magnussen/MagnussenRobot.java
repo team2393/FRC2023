@@ -103,11 +103,6 @@ public class MagnussenRobot extends CommandBaseRobot
         reset.schedule();
 
     boolean normal = !drive_uphill.isScheduled();
-    if (OI.selectIntakeMode()  &&  normal)
-      if (OI.selectCubeIntake())
-        coordinator.intakeCube();
-      else
-        coordinator.intakeCone();
     
     if (OI.selectSubstationIntakeMode()  &&  normal)
       coordinator.intakeFromSubstation(OI.selectCubeIntake());

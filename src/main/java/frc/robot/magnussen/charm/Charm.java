@@ -35,39 +35,16 @@ import frc.robot.util.LookupTable.Entry;
 
 /** Third time attempt at Arm/lift/grabber/intake
  * 
- *  When idle, the intake is folded back and the arm hangs down.
- * 
- *  Pro:
- *  Arm is in front of intake, ready to move arm & lift to score.
- *  Should a game piece drop from the grabber into the robot,
- *  it likely falls onto the lexan plate and can be forced out
- *  by driving backwards and/or spinning.
- * 
- *  Con:
- *  Taking game pieces in via intake first requires swapping positions
- *  so intake is before arm, then swapping back for idle position.
- * 
- *  Alternative: Arm is back at least -90 degree, intake in front at ~80 deg.
- * 
- *  Pro:
- *  Can simply drop intake down to take game pieces,
- *  also move arm back for substation intake.
- * 
- *  Con:
- *  Scoring requires swapping arm and intake position to get arm in front
- *  of intake, then swap back to store.
- *  Intake likely keeps a dropped gamepiece inside the robot.
+ *  .. without intake
  */
 public class Charm extends SubsystemBase
 {
-  // Idle position of intake and arm
-  final static double INTAKE_IDLE_POS = 120;
+  // Idle position of arm
   final static double ARM_IDLE_POS = -90;
 
   // Components that we handle
   public final Lift lift = new Lift();
   public final Arm arm = new Arm();
-  public final Intake intake = new Intake();
   public final Grabber grabber = new Grabber();
 
   /** Setpoints
@@ -112,13 +89,6 @@ public class Charm extends SubsystemBase
       arm_setpoint = entry.values[0];
       lift_setpoint = entry.values[1];
       arm.extend(entry.values[2] > 0.5);
-      
-      // Grab/hold cone with intake.
-      // Once cone is in grabber, stop grabbing it with the intake. In fact release it
-      if (grabber.haveGamepiece())
-        intake.setSpinner(2.0);
-      else
-        intake.setSpinner(-Intake.SPINNER_VOLTAGE);
     }
   }
 
@@ -155,97 +125,38 @@ public class Charm extends SubsystemBase
       // Keep in range -270..90
       if (arm_setpoint > 90.0)
         arm_setpoint -= 360.0;
-      intake_setpoint = intake.getAngle();
     }
     else
     {
       lift.setHeight(lift_setpoint);
       arm.setAngle(arm_setpoint);
-      intake.setAngle(intake_setpoint);
     }
 
     mech_lift.setLength(0.9 + lift.getHeight());
     mech_arm.setAngle(arm.getAngle() - mech_lift.getAngle());
     mech_arm.setLength(arm.isExtended() ? (0.4+0.2) : 0.4);
-    mech_intake.setAngle(intake.getAngle());
   }
 
   /** Move to INTAKE_IDLE_POS and ARM_IDLE_POS from any(?) initial setup */
   CommandBase idle()
   {
-    // In autonomous, don't move anything because 'unfolding' could interfere with driving
+    // In autonomous, don't move anything
     SequentialCommandGroup auto = new SequentialCommandGroup(
-      new InstantCommand(() -> SmartDashboard.putString("Mode", "Auto")),
-      new SetIntakeSpinnerCommand(this, 0));
+      new InstantCommand(() -> SmartDashboard.putString("Mode", "Auto")));
    
-    // Unfold from intial setup or substation intake where arm is behind intake
-    SequentialCommandGroup arm_behind_intake = new SequentialCommandGroup(
-      new InstantCommand(() -> SmartDashboard.putString("Mode", "ArmBehindIntake")),
-      new SetIntakeSpinnerCommand(this, 0),
-      // This may be the initial unfold, so wait for air pressure
-      new PressurizeCommand(),
-      new RetractArmCommand(this),
-      new SetLiftCommand(this, 0),
-      // Move arm a little up/back
-      new SetArmCommand(this, -155),
-      // Move intake out to allow full arm movement
-      new ParallelCommandGroup(new SetIntakeCommand(this, 10.0),
-                              // and move arm out once intake is out of the way
-                               new WaitUntilCommand(() -> intake.getAngle() < 30)
-                                   .andThen(new SetArmCommand(this, -10))
-                               ),
-      // Intake back in
-      new ParallelCommandGroup(new SetIntakeCommand(this, INTAKE_IDLE_POS),
-                               // Arm into idle position
-                               new WaitUntilCommand(() -> intake.getAngle() > 100)
-                                   .andThen(new SetArmCommand(this, ARM_IDLE_POS)))
-    );
-
-    // Intake is behind arm
-    SequentialCommandGroup intake_behind_arm = new SequentialCommandGroup(
-      new InstantCommand(() -> SmartDashboard.putString("Mode", "IntakeBehindArm")),
-      new SetIntakeSpinnerCommand(this, 0),
-      new RetractArmCommand(this),
-      // Intake and arm can freely move to idle position
-      new ParallelCommandGroup(new SetIntakeCommand(this, INTAKE_IDLE_POS),
-                               new SetArmCommand(this, ARM_IDLE_POS)),
-      new SetLiftCommand(this, 0));
-
-    // Intake is out
-    SequentialCommandGroup intake_out = new SequentialCommandGroup(
-      new InstantCommand(() -> SmartDashboard.putString("Mode", "IntakeOut")),
-      new SetIntakeSpinnerCommand(this, 0),
-      // Intake is out, so can pull arm in, then lift up to get space for intake
-      // Lift first, then arm in could mean arm out & lift up -> topple
+    // Move all to idle posittion
+    SequentialCommandGroup make_idle = new SequentialCommandGroup(
+      new InstantCommand(() -> SmartDashboard.putString("Mode", "MakeIdle")),
       new RetractArmCommand(this),
       new SetArmCommand(this, ARM_IDLE_POS),
-      new SetLiftCommand(this, 0.33),
-      // Pull intake in
-      new SetIntakeCommand(this, INTAKE_IDLE_POS),
-      // Lift back down
       new SetLiftCommand(this, 0));
-
-    // Unknown/unhandled state
-    SequentialCommandGroup unknown = new SequentialCommandGroup(
-      new InstantCommand(() -> SmartDashboard.putString("Mode", "Idle??")),
-      new SetIntakeSpinnerCommand(this, 0));
-    
+       
     CommandBase selector = new ProxyCommand(() ->
     {
       if (DriverStation.isAutonomous())
         return auto;
-      // Initial setup, also after substation intake: Arm back behind intake
-      // Consider wraparound when arm is way back at -120..-180 or 170..180
-      if (abs(arm.getAngle()) >= 120)
-        return arm_behind_intake;
-      // Is arm out/in front of intake?
-      if (intake.getAngle() > 100  &&  arm.getAngle() > -110)
-        return intake_behind_arm;
-      // Is intake 'out', not back and out of the way?
-      if (intake.getAngle() < 110)
-        return intake_out;
-      // Cannot handle this scenario
-      return unknown;
+      else
+       return make_idle;
     });
     selector.addRequirements(this);
 
@@ -279,46 +190,6 @@ public class Charm extends SubsystemBase
     group.schedule();
   }
 
-  public void intakeCube()
-  {
-    SequentialCommandGroup group = new SequentialCommandGroup(
-      new InstantCommand(() -> SmartDashboard.putString("Mode", "IntakeCube")),
-      new MakeSafeCommand(this),
-      new ParallelCommandGroup(new SetLiftCommand(this, 0.05),
-                               new SetArmCommand(this, -47)),
-      new SetIntakeCommand(this, 6.0),
-      new SetArmCommand(this, -85.0),
-      new ExtendArmCommand(this),
-      new SetIntakeSpinnerCommand(this, Intake.SPINNER_VOLTAGE),
-      // Call Grab*Commands via proxy, don't "require" it to allow return to 'off' ASAP
-      new ProxyCommand(new GrabCubeCommand(grabber)),
-      new RetractArmCommand(this),
-      new SetIntakeSpinnerCommand(this, 0),
-      new SetArmCommand(this, -47),
-      // TODO Next two in parallel, once speed of arm and intake have been optimized?
-      new SetIntakeCommand(this, INTAKE_IDLE_POS),
-      new SetArmCommand(this, ARM_IDLE_POS)
-    );
-    group.addRequirements(this);
-    group.setName("IntakeCube");
-    group.schedule();
-  }
-
-  public void intakeCone()
-  {
-    SequentialCommandGroup group = new SequentialCommandGroup(
-      new InstantCommand(() -> SmartDashboard.putString("Mode", "IntakeCone")),
-      new MakeSafeCommand(this),
-      new SetLiftCommand(this, 0.5),
-      new SetIntakeCommand(this, 0.0),
-      new ParallelDeadlineGroup(new ProxyCommand(new GrabConeCommand(grabber)),
-                                new InteractiveConeIntakeCommand())
-    );
-    group.addRequirements(this);
-    group.setName("IntakeCone");
-    group.schedule();
-  }
-
   public void intakeFromSubstation(boolean cube)
   {
     SequentialCommandGroup group = new SequentialCommandGroup
@@ -328,24 +199,14 @@ public class Charm extends SubsystemBase
       new ProxyCommand(() ->
       { // Is arm already far enough back?
         if (arm.getAngle() <= -115)
-          return new ParallelCommandGroup(new SetArmCommand(this, -180),
-                                          new SetIntakeCommand(this, 100));
+          return new SetArmCommand(this, -180);
         else // If not, 'make safe' and start from there
           return new SequentialCommandGroup(new MakeSafeCommand(this),
-                                            // Lift out of the way ...
-                                            new RetractArmCommand(this),
-                                            new SetLiftCommand(this, 0.3),
-                                            // .. for intake to move out and arm back in parallel
-                                            new ParallelCommandGroup(new SetIntakeCommand(this, 45),
-                                                                    new SetArmCommand(this, -120)),
                                             // Lift down so arm can rotate out the back
                                             new SetLiftCommand(this, 0),
-                                            new ParallelCommandGroup(new SetIntakeCommand(this, 80),
-                                                                     new SetArmCommand(this, -180)),
-                                            // With arm out back, intake can move further in
-                                            new SetIntakeCommand(this, 100));
+                                            new SetArmCommand(this, -180));
       }),
-      // Either way, arm is now at -180 for item pickup, and intake around 100
+      // Either way, arm is now at -180 for item pickup
       new ExtendArmCommand(this),
       new ProxyCommand(() -> cube ? new GrabCubeCommand(grabber) : new GrabConeCommand(grabber)),
       // Keep arm out the back, position for dropping cube in 'mid'

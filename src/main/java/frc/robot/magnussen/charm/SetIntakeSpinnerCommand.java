@@ -4,14 +4,15 @@
 package frc.robot.magnussen.charm;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.magnussen.Intake;
 
 public class SetIntakeSpinnerCommand extends InstantCommand
 {
-  /** @param coordinator Coordinator
+  /** @param intake Intake
    *  @param voltage Desired spinner voltage
    */
-  public SetIntakeSpinnerCommand(Charm coordinator, double voltage)
+  public SetIntakeSpinnerCommand(Intake intake, double voltage)
   {
-    super(() -> coordinator.intake.setSpinner(voltage));
+    super(() -> intake.setSpinner(voltage));
   }
 }

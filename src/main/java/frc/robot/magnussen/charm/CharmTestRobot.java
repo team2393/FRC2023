@@ -22,22 +22,8 @@ public class CharmTestRobot extends CommandBaseRobot
   @Override
   public void teleopPeriodic()
   {
-    // // if (OI.joystick.getRawButtonPressed(6))
-    // //   coordinator.store();
-
-    if (OI.selectIntakeMode())
-      if (OI.selectCubeIntake())
-        coordinator.intakeCube();
-      else
-        coordinator.intakeCone();
-
     if (OI.selectSubstationIntakeMode())
       coordinator.intakeFromSubstation(OI.selectCubeIntake());
-
-    if (OI.joystick.getStartButtonPressed())
-      coordinator.intakeCube();
-    if (OI.joystick.getBackButtonPressed())
-      coordinator.intakeCone();
 
     if (OI.joystick.getRightBumperPressed())
       coordinator.getDefaultCommand().schedule();

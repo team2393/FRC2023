@@ -22,6 +22,7 @@ public class MovingColorList extends CommandBase
     this.led = led;
     this.colors = colors;
     this.cycles = cycles;
+    addRequirements(led);
   }
 
   @Override

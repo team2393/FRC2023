@@ -17,6 +17,7 @@ public class GreenGoldBlink extends RepeatCommand
                                      new SetTwoColorsCommand(led, Color.kGreen, Color.kGold, 5),
                                      new WaitCommand(0.5)
                                      ));
+    addRequirements(led);
   }
 
   @Override

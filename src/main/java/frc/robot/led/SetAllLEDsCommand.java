@@ -8,10 +8,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 public class SetAllLEDsCommand extends InstantCommand
 {
+  private final boolean forever;
+
   /** @param led LED
    *  @param color Color
    */
-  public SetAllLEDsCommand(LED led, Color color)
+  public SetAllLEDsCommand(LED led, Color color, boolean forever)
   {
     super(() ->
     {
@@ -19,11 +21,18 @@ public class SetAllLEDsCommand extends InstantCommand
         led.buffer.setLED(i, color);
       led.set(led.buffer);
     }, led);
+    this.forever = forever;
   }
 
   @Override
   public boolean runsWhenDisabled()
   {
     return true;
+  }
+
+  @Override
+  public boolean isFinished()
+  {
+    return ! forever;
   }
 }

@@ -237,7 +237,7 @@ public class AutoNoMouse
       auto.addCommands(new SetArmCommand(coordinator, -200));
       auto.addCommands(new ExtendArmCommand(coordinator));
       // TODO Wait for extension, but shorter once piston gets more pressure
-      auto.addCommands(new WaitCommand(1));
+      auto.addCommands(new WaitCommand(0.5));
       
       Trajectory path = createTrajectory(true, 1.89, 2.88, 0,
                                                6.75, 2.88, 0);

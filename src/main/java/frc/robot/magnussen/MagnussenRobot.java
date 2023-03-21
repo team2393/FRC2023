@@ -22,6 +22,7 @@ import frc.robot.led.GreenGoldBlink;
 import frc.robot.led.LED;
 import frc.robot.led.MovingColorList;
 import frc.robot.led.RainbowCommand;
+import frc.robot.led.SetAllLEDsCommand;
 import frc.robot.magnussen.charm.Charm;
 import frc.robot.swervelib.DriveUphillCommand;
 import frc.robot.swervelib.RelativeSwerveCommand;
@@ -48,7 +49,8 @@ public class MagnussenRobot extends CommandBaseRobot
   // LED and several patterns
   private LED led = new LED();
   private CommandBase auto_led = new RainbowCommand(led),
-                      normal_led, // Set in teleopInit based on alliance
+                      normal_cube = new SetAllLEDsCommand(led, Color.kPurple, true),
+                      normal_cone = new SetAllLEDsCommand(led, Color.kYellow, true),
                       loaded_led = new MovingColorList(led, 10, Color.kWhite, Color.kRed, Color.kBlue);
 
   @Override
@@ -107,9 +109,9 @@ public class MagnussenRobot extends CommandBaseRobot
     drive_relative.schedule();
 
     // Pick pattern based on alliance
-    normal_led = DriverStation.getAlliance() == Alliance.Red
-               ? new FillCommand(led, Color.kFirstRed)
-               : new FillCommand(led, Color.kFirstBlue);
+    // normal_led = DriverStation.getAlliance() == Alliance.Red
+    //            ? new FillCommand(led, Color.kFirstRed)
+    //            : new FillCommand(led, Color.kFirstBlue);
   }
 
   @Override
@@ -118,8 +120,10 @@ public class MagnussenRobot extends CommandBaseRobot
     // Pick 'loaded' or normal pattern
     if (coordinator.grabber.haveGamepiece())
       loaded_led.schedule();
+    else if (OI.selectCubeIntake())
+       normal_cube.schedule();
     else
-      normal_led.schedule();
+       normal_cone.schedule();
 
     // Activate different drive mode?
     if (OI.selectNormalDriveMode())

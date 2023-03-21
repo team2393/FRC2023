@@ -40,9 +40,20 @@ public class RelativeSwerveCommand extends CommandBase
     Translation2d axis = center == null
                        ? CENTER
                        : center.determineCenter();
-    drivetrain.swerve(SwerveOI.getForwardSpeed(),
-                      SwerveOI.getLeftSpeed(),
-                      SwerveOI.getRotationSpeed(),
-                      axis);
+
+    int pov = SwerveOI.joystick.getPOV();
+    if (pov >= 0)
+    {
+      double angle = Math.toRadians(-pov);
+      double speed = 0.15;
+      double vx = speed*Math.cos(angle);
+      double vy = speed*Math.sin(angle);
+      drivetrain.swerve(vx, vy, 0);
+    }
+    else
+      drivetrain.swerve(SwerveOI.getForwardSpeed(),
+                        SwerveOI.getLeftSpeed(),
+                        SwerveOI.getRotationSpeed(),
+                        axis);
   }
 }

@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.magnussen.Arm;
 import frc.robot.magnussen.GrabConeCommand;
@@ -216,6 +217,25 @@ public class Charm extends SubsystemBase
     );
     group.addRequirements(this);
     group.setName("IntakeFromSubstation");
+    group.schedule();
+  }
+
+  public void recoverCube()
+  {
+    SequentialCommandGroup group = new SequentialCommandGroup
+    (
+      new MakeSafeCommand(this),
+      new RetractArmCommand(this),
+      new SetArmCommand(this, -108),
+      new SetLiftCommand(this, 0.10),
+      new ParallelDeadlineGroup(new GrabCubeCommand(grabber), new ExtendArmCommand(this)),
+      new RetractArmCommand(this),
+      new WaitCommand(1.0),
+      new SetLiftCommand(this, 0),
+      new StayCommand()
+    );
+    group.addRequirements(this);
+    group.setName("RecoverCube");
     group.schedule();
   }
 }

@@ -4,16 +4,24 @@
 package frc.robot.magnussen;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.AutoNoMouse;
 import frc.robot.CommandBaseRobot;
 import frc.robot.SequenceWithStart;
+import frc.robot.led.FillCommand;
+import frc.robot.led.GreenGoldBlink;
+import frc.robot.led.LED;
+import frc.robot.led.MovingColorList;
+import frc.robot.led.RainbowCommand;
 import frc.robot.magnussen.charm.Charm;
 import frc.robot.swervelib.DriveUphillCommand;
 import frc.robot.swervelib.RelativeSwerveCommand;
@@ -37,6 +45,12 @@ public class MagnussenRobot extends CommandBaseRobot
 
   private LimelightClient camera;
 
+  // LED and several patterns
+  private LED led = new LED();
+  private CommandBase auto_led = new RainbowCommand(led),
+                      normal_led, // Set in teleopInit based on alliance
+                      loaded_led = new MovingColorList(led, 10, Color.kWhite, Color.kRed, Color.kBlue);
+
   @Override
   public void robotInit()
   {
@@ -56,6 +70,9 @@ public class MagnussenRobot extends CommandBaseRobot
     SmartDashboard.putData(power);
 
     // camera = new LimelightClient(drivetrain);
+
+    // Default command, will be (re-) activated when disabled
+    led.setDefaultCommand(new GreenGoldBlink(led));
   }
 
   @Override
@@ -63,6 +80,8 @@ public class MagnussenRobot extends CommandBaseRobot
   {
     // Make robot easier to move while disabled
     drivetrain.brake(false);
+
+    led.getDefaultCommand().schedule();
   }
 
   @Override
@@ -86,11 +105,22 @@ public class MagnussenRobot extends CommandBaseRobot
     drivetrain.brake(true);
   
     drive_relative.schedule();
+
+    // Pick pattern based on alliance
+    normal_led = DriverStation.getAlliance() == Alliance.Red
+               ? new FillCommand(led, Color.kFirstRed)
+               : new FillCommand(led, Color.kFirstBlue);
   }
 
   @Override
   public void teleopPeriodic()
   {
+    // Pick 'loaded' or normal pattern
+    if (coordinator.grabber.haveGamepiece())
+      loaded_led.schedule();
+    else
+      normal_led.schedule();
+
     // Activate different drive mode?
     if (OI.selectNormalDriveMode())
       drive_relative.schedule();
@@ -128,6 +158,8 @@ public class MagnussenRobot extends CommandBaseRobot
 
     // Run selected auto
     autos.getSelected().schedule();
+
+    auto_led.schedule();
   }
 
   @Override

@@ -32,16 +32,22 @@ public class FillCommand extends CommandBase
     // active LED is white,
     // topmost 'filled' LEDs are colored
 
-    // Assume about half of the LED strip runs 'up',
-    // then folds over to run 'down' other side of robot
+    // If LED.N is not even, that leaves the middle LED.
+    // Blink red/blue
+    led.buffer.setLED(LED.N/2,
+                      (System.currentTimeMillis() / 500) % 2 == 1
+                       ? Color.kFirstBlue : Color.kFirstRed);
+
+    // Assume about half of the LED strip runs 'down',
+    // then folds over to run 'up' other side of robot
     for (int i=0; i<LED.N/2; ++i)
     {
-      if (i == active)
+      if ((LED.N/2) - i == active)
       {
         led.buffer.setRGB(i, 255, 255, 255);
         led.buffer.setRGB(LED.N-1-i, 255, 255, 255);
       }
-      else if (i >= (LED.N/2) - filled)
+      else if (i <= filled)
       {
         led.buffer.setLED(i, color);
         led.buffer.setLED(LED.N-1-i, color);
@@ -53,8 +59,10 @@ public class FillCommand extends CommandBase
       }
     }
     // Activate 'next' pixel.
-    // Stepping by more than one makes it overall go faster
-    active += 10;
+    // Stepping by more than one makes it overall go faster.
+    // Slow down with fill.
+    active += Math.max(27-filled, 5);
+
     if (active >= LED.N/2 - filled)
     { // Active pixel reached the filled top
       active = 0;

@@ -4,9 +4,7 @@
 package frc.robot.magnussen;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,12 +15,11 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.AutoNoMouse;
 import frc.robot.CommandBaseRobot;
 import frc.robot.SequenceWithStart;
-import frc.robot.led.FillCommand;
 import frc.robot.led.GreenGoldBlink;
 import frc.robot.led.LED;
 import frc.robot.led.MovingColorList;
 import frc.robot.led.RainbowCommand;
-import frc.robot.led.SetAllLEDsCommand;
+import frc.robot.led.WarbleCommand;
 import frc.robot.magnussen.charm.Charm;
 import frc.robot.swervelib.DriveUphillCommand;
 import frc.robot.swervelib.RelativeSwerveCommand;
@@ -49,8 +46,8 @@ public class MagnussenRobot extends CommandBaseRobot
   // LED and several patterns
   private LED led = new LED();
   private CommandBase auto_led = new RainbowCommand(led),
-                      normal_cube = new SetAllLEDsCommand(led, Color.kPurple, true),
-                      normal_cone = new SetAllLEDsCommand(led, Color.kYellow, true),
+                      normal_cube = new WarbleCommand(led, Color.kPurple),
+                      normal_cone = new WarbleCommand(led, Color.kYellow),
                       loaded_led = new MovingColorList(led, 10, Color.kWhite, Color.kRed, Color.kBlue);
 
   @Override
@@ -107,11 +104,6 @@ public class MagnussenRobot extends CommandBaseRobot
     drivetrain.brake(true);
   
     drive_relative.schedule();
-
-    // Pick pattern based on alliance
-    // normal_led = DriverStation.getAlliance() == Alliance.Red
-    //            ? new FillCommand(led, Color.kFirstRed)
-    //            : new FillCommand(led, Color.kFirstBlue);
   }
 
   @Override

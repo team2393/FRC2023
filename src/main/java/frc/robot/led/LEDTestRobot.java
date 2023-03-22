@@ -21,10 +21,8 @@ public class LEDTestRobot extends CommandBaseRobot
   @Override
   public void teleopInit()
   {
-    if (DriverStation.getAlliance() == Alliance.Red)
-      new FillCommand(led, Color.kFirstRed).schedule();
-    else
-      new FillCommand(led, Color.kFirstBlue).schedule();
+    new WarbleCommand(led, Color.kPurple).schedule();
+    // new WarbleCommand(led, Color.kYellow).schedule();
   }
 
   @Override

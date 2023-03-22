@@ -246,7 +246,7 @@ public class AutoNoMouse
           new SequentialCommandGroup(// Eject & pull arm back in
                                      new ProxyCommand(new GrabberEjectCommand(coordinator.grabber)),
                                      new RetractArmCommand(coordinator),
-                                     new SetArmCommand(coordinator, -155)),
+                                     new SetArmCommand(coordinator, -110)),
           new SequentialCommandGroup(// Drive out over the charge station
                                      new SelectAbsoluteTrajectoryCommand(drivetrain),
                                      drivetrain.createTrajectoryCommand(path, 0))));

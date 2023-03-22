@@ -37,7 +37,7 @@ public class Arm extends SubsystemBase
 
   private final Solenoid extender = new Solenoid(PneumaticsModuleType.REVPH, RobotMap.ARM_EXTENDER);
 
-  private double simulated_angle = -150.0;
+  private double simulated_angle = -110.0;
   
   private NetworkTableEntry nt_angle;
   private NetworkTableEntry nt_extended;

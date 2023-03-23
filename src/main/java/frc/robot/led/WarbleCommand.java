@@ -31,7 +31,7 @@ public class WarbleCommand extends CommandBase
     for (int i=0; i<LED.N; ++i)
       led.buffer.setLED(i, variant);
     // Set random pixels to white, black, and the full color
-    for (int i=0; i<5; ++i)
+    for (int i=0; i<3; ++i)
     {
       // Math.random is [0...1[, always less than 1, so we should get 0...(LED.N-1)
       led.buffer.setLED((int)(Math.random()*LED.N), Color.kWhiteSmoke);

@@ -210,8 +210,10 @@ public class Charm extends SubsystemBase
       // Either way, arm is now at -180 for item pickup
       new ExtendArmCommand(this),
       new ProxyCommand(() -> cube ? new GrabCubeCommand(grabber) : new GrabConeCommand(grabber)),
-      // Keep arm out the back, position for dropping cube in 'mid'
-      new SetArmCommand(this, -200),
+      new RetractArmCommand(this),
+      new WaitCommand(1.5),
+      // Put arm inside robot
+      new SetArmCommand(this, -110),
       // Stay that way until "eject", "near", "mid", "far", "xx intake" .. end this group 
       new StayCommand()
     );

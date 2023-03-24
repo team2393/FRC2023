@@ -61,7 +61,7 @@ public class FillCommand extends CommandBase
     // Activate 'next' pixel.
     // Stepping by more than one makes it overall go faster.
     // Slow down with fill.
-    active += Math.max(27-filled, 5);
+    active += Math.max(22-filled/2, 5);
 
     if (active >= LED.N/2 - filled)
     { // Active pixel reached the filled top

@@ -13,9 +13,9 @@ public class GreenGoldBlink extends RepeatCommand
   public GreenGoldBlink(LED led)
   {
     super(new SequentialCommandGroup(new SetTwoColorsCommand(led, Color.kGold, Color.kGreen, 5),
-                                     new WaitCommand(0.5),
+                                     new WaitCommand(0.3),
                                      new SetTwoColorsCommand(led, Color.kGreen, Color.kGold, 5),
-                                     new WaitCommand(0.5)
+                                     new WaitCommand(0.3)
                                      ));
     addRequirements(led);
   }

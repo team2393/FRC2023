@@ -48,7 +48,8 @@ public class MagnussenRobot extends CommandBaseRobot
   private CommandBase auto_led = new RainbowCommand(led),
                       normal_cube = new WarbleCommand(led, Color.kPurple),
                       normal_cone = new WarbleCommand(led, Color.kYellow),
-                      loaded_led = new MovingColorList(led, 10, Color.kWhite, Color.kRed, Color.kBlue);
+                      loadedcube_led = new MovingColorList(led, 10, Color.kPurple, Color.kOrange, Color.kBlack),
+                      loadedcone_led = new MovingColorList(led, 10, Color.kYellow, Color.kRed, Color.kBlue);
 
   @Override
   public void robotInit()
@@ -111,7 +112,13 @@ public class MagnussenRobot extends CommandBaseRobot
   {
     // Pick 'loaded' or normal pattern
     if (coordinator.grabber.haveGamepiece())
-      loaded_led.schedule();
+    {
+      if (OI.selectCubeIntake())
+        loadedcube_led.schedule();
+      else 
+       loadedcone_led.schedule();
+
+    }
     else if (OI.selectCubeIntake())
        normal_cube.schedule();
     else

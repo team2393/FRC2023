@@ -45,11 +45,15 @@ public class MagnussenRobot extends CommandBaseRobot
 
   // LED and several patterns
   private LED led = new LED();
+
+  private Color phoenix_suns_orange = new Color(229, 95, 32);
+  // Color of the year 2023
+  private Color viva_magenta = new Color(190, 52, 85);
   private CommandBase auto_led = new RainbowCommand(led),
                       normal_cube = new WarbleCommand(led, Color.kPurple),
                       normal_cone = new WarbleCommand(led, Color.kYellow),
-                      loadedcube_led = new MovingColorList(led, 10, Color.kPurple, Color.kOrange, Color.kBlack),
-                      loadedcone_led = new MovingColorList(led, 10, Color.kYellow, Color.kRed, Color.kBlue);
+                      loadedcube_led = new MovingColorList(led, 10, Color.kPurple, phoenix_suns_orange, Color.kBlack),
+                      loadedcone_led = new MovingColorList(led, 10, Color.kYellow, viva_magenta, Color.kYellow);
 
   @Override
   public void robotInit()

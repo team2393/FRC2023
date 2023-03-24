@@ -17,7 +17,7 @@ public class FC_Rotator extends Rotator
 
   public FC_Rotator(int index, double offset)
   {
-    super(index, offset, 0.3, 0.1, 0.0, 0.0002, 3);
+    super(index, offset, 0.4, 0.15, 0.0, 0.0002, 3);
 
     motor = new WPI_TalonFX(RobotMap.ROTATOR_ID[index], RobotMap.CANIVORE);
     motor.configFactoryDefault();

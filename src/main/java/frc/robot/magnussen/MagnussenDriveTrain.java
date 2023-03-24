@@ -21,10 +21,10 @@ public class MagnussenDriveTrain extends SwerveDrivetrain
           0.54,
           new SwerveModule[]
           {
-            new SwerveModule(new FC_Rotator(0, -169.5+180), new FalconDriver(0)),
-            new SwerveModule(new FC_Rotator(1,  -93.3+180), new FalconDriver(1)),
-            new SwerveModule(new FC_Rotator(2,    8.9+180), new FalconDriver(2)),
-            new SwerveModule(new FC_Rotator(3,   58.3+180), new FalconDriver(3))
+            new SwerveModule(new FC_Rotator(0,  10), new FalconDriver(0)),
+            new SwerveModule(new FC_Rotator(1,  87), new FalconDriver(1)),
+            new SwerveModule(new FC_Rotator(2, 188), new FalconDriver(2)),
+            new SwerveModule(new FC_Rotator(3, 236), new FalconDriver(3))
           });
   }
 

@@ -230,7 +230,7 @@ public class Charm extends SubsystemBase
       new RetractArmCommand(this),
       new SetArmCommand(this, -108),
       new SetLiftCommand(this, 0.10),
-      new ParallelDeadlineGroup(new GrabCubeCommand(grabber), new ExtendArmCommand(this)),
+      new ParallelDeadlineGroup(new ProxyCommand(new GrabCubeCommand(grabber)), new ExtendArmCommand(this)),
       new RetractArmCommand(this),
       new WaitCommand(1.0),
       new SetLiftCommand(this, 0),

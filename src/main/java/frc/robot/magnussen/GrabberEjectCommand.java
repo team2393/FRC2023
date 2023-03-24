@@ -28,11 +28,13 @@ public class GrabberEjectCommand extends CommandBase
   public void execute()
   {
     grabber.setVoltage(Grabber.EJECT_VOLTAGE);
+    if (grabber.haveGamepiece())
+      timer.restart();
   }
 
   @Override
   public boolean isFinished()
   {
-    return timer.hasElapsed(1.5);
+    return timer.hasElapsed(.2);
   }
 }

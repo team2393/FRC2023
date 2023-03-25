@@ -26,11 +26,13 @@ import frc.robot.magnussen.charm.Charm;
 import frc.robot.magnussen.charm.ExtendArmCommand;
 import frc.robot.magnussen.charm.RetractArmCommand;
 import frc.robot.magnussen.charm.SetArmCommand;
+import frc.robot.magnussen.charm.SetLiftCommand;
 import frc.robot.swervelib.AutoBalanceCommand;
 import frc.robot.swervelib.AutoDriveUphillCommand;
 import frc.robot.swervelib.SelectAbsoluteTrajectoryCommand;
 import frc.robot.swervelib.SelectRelativeTrajectoryCommand;
 import frc.robot.swervelib.SwerveDrivetrain;
+import frc.robot.swervelib.SwerveToPositionCommand;
 import frc.robot.swervelib.VariableWaitCommand;
 
 /** Auto-no-mouse routines */
@@ -269,6 +271,20 @@ public class AutoNoMouse
       //                                   ),
       //                  drivetrain.createTrajectoryCommand(path2, 0),
       //                  new AutoBalanceCommand(drivetrain, true));
+    }
+
+    { // blue or red Side node, Drop cone, Out
+      SequentialCommandGroup auto = new SequenceWithStart("SDO", 1.89, 1.12, 180);
+      // Prepare to drop cone onto far node
+      auto.addCommands(new SetLiftCommand(coordinator, 0.7));
+      auto.addCommands(new SetArmCommand(coordinator, -23));
+      auto.addCommands(new ExtendArmCommand(coordinator));
+      auto.addCommands(new GrabberEjectCommand(coordinator.grabber));
+      auto.addCommands(new RetractArmCommand(coordinator));
+      auto.addCommands(new SetArmCommand(coordinator, -110));
+      auto.addCommands(new SetLiftCommand(coordinator, 0.0));
+      auto.addCommands(new SwerveToPositionCommand(drivetrain, 5.89, 1.12, 180));
+      autos.add(auto);
     }
 
     { // Skeleton for another auto option

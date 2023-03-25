@@ -279,11 +279,17 @@ public class AutoNoMouse
       auto.addCommands(new SetLiftCommand(coordinator, 0.7));
       auto.addCommands(new SetArmCommand(coordinator, -23));
       auto.addCommands(new ExtendArmCommand(coordinator));
-      auto.addCommands(new GrabberEjectCommand(coordinator.grabber));
-      auto.addCommands(new RetractArmCommand(coordinator));
-      auto.addCommands(new SetArmCommand(coordinator, -110));
-      auto.addCommands(new SetLiftCommand(coordinator, 0.0));
-      auto.addCommands(new SwerveToPositionCommand(drivetrain, 5.89, 1.12, 180));
+      auto.addCommands(new WaitCommand(0.6));
+      auto.addCommands(new ProxyCommand(new GrabberEjectCommand(coordinator.grabber)));
+      auto.addCommands(
+         new ParallelCommandGroup(
+                  new SwerveToPositionCommand(drivetrain, 5.89, 1.12, 180),
+                  new SequentialCommandGroup(new RetractArmCommand(coordinator),
+                                             new SetArmCommand(coordinator, -110),
+                                             new SetLiftCommand(coordinator, 0.0)
+                                            )
+                                   ));
+      
       autos.add(auto);
     }
 

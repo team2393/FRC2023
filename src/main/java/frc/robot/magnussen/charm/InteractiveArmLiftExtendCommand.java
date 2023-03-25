@@ -32,11 +32,24 @@ public class InteractiveArmLiftExtendCommand extends CommandBase
   @Override
   public void execute()
   {
-    // Lookup settings for adjusted arm angle
+    // Lookup settings for adjusted arm angle ..
     Entry entry = table.lookup(coordinator.arm_setpoint + getUserInput());
-    // Use resulting values for arm(!), lift, extension
+    // .. to restrict arm range
     coordinator.arm_setpoint = entry.position;
+
+    // Now determine lift and extension settings based on
+    // where the arm currently is
+    entry = table.lookup(coordinator.arm.getAngle());
     coordinator.lift_setpoint = entry.values[0];
     coordinator.arm.extend(entry.values[1] > 0.5);
+  }
+
+  @Override
+  public void end(boolean interrupted)
+  {
+    // Store everything inside robot
+    coordinator.arm.extend(false);
+    coordinator.arm_setpoint = -110;
+    coordinator.lift_setpoint = 0.0;
   }
 }

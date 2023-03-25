@@ -10,7 +10,7 @@ public class NearCommand extends InteractiveArmLiftExtendCommand
 {
   private static final LookupTable near_lookup = new LookupTable(
     new String[] { "Arm Angle", "Lift Height", "Extend" },
-                           -90,          0.3,         0,
+                           -90,          0,           0,
                            -82,          0,           0,
                            -70,          0,           1,
                              0,          0,           1);

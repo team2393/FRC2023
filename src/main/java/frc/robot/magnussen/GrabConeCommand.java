@@ -22,6 +22,12 @@ public class GrabConeCommand extends CommandBase
   }
 
   @Override
+  public void initialize()
+  {
+    timer.restart();
+  }
+
+  @Override
   public void execute()
   {
     if (! grabber.haveGamepiece())

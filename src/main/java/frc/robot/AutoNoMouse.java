@@ -17,11 +17,13 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.magnussen.GrabberEjectCommand;
+import frc.robot.magnussen.GrabberKeepCommand;
 import frc.robot.magnussen.charm.Charm;
 import frc.robot.magnussen.charm.ExtendArmCommand;
 import frc.robot.magnussen.charm.RetractArmCommand;
@@ -235,12 +237,16 @@ public class AutoNoMouse
 
     { // blue or red Middle node, Drop cube, Out, Balance
       SequentialCommandGroup auto = new SequenceWithStart("MDOB", 1.89, 2.88, 0);
-      // Prepare to drop cube into middle node
-      auto.addCommands(new SetArmCommand(coordinator, -200));
-      auto.addCommands(new ExtendArmCommand(coordinator));
-      // TODO Wait for extension, but shorter once piston gets more pressure
-      auto.addCommands(new WaitCommand(0.5));
-      
+      auto.addCommands(
+        new ParallelDeadlineGroup(
+          // Prepare to drop cube into middle node 
+          new SequentialCommandGroup(new WaitCommand(0.1),
+                                     new SetArmCommand(coordinator, -200),
+                                     new ExtendArmCommand(coordinator),
+                                     new WaitCommand(0.5)),
+          // while keeping cube in
+          new ProxyCommand(new GrabberKeepCommand(coordinator.grabber))));
+              
       Trajectory path = createTrajectory(true, 1.89, 2.88, 0,
                                                6.75, 2.88, 0);
       auto.addCommands(

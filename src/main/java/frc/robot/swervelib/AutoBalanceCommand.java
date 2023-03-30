@@ -28,7 +28,7 @@ public class AutoBalanceCommand extends SequentialCommandGroup
   private static final double MAX_SPEED = 0.3;
 
   /** How far to back off [m] ? */
-  private static final double BACKOFF = 0.23;
+  private static final double BACKOFF = 0.11;
   // ^^ Path generation fails when trying to drive just 0.1m ...
   //    Would have to try TimedDriveCommand for very short distance..
 
@@ -74,9 +74,9 @@ public class AutoBalanceCommand extends SequentialCommandGroup
       // Any "nose up" angle means we need to drive forward (X)
       double vx;
 
-      if (reverse && pitch < -8.0)
+      if (reverse && pitch < -6.0)
         vx = -MAX_SPEED;
-      else if (pitch > 8.0)
+      else if (pitch > 6.0)
         vx = MAX_SPEED;
       else
         vx = 0.0;

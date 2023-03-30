@@ -299,11 +299,19 @@ public class AutoNoMouse
       autos.add(auto);
     }
 
-    { // Skeleton for another auto option
-      SequentialCommandGroup auto = new SequenceWithStart("Balance", 5.19, 2.88, 180);
+    { // Just balance (forward)
+      SequentialCommandGroup auto = new SequenceWithStart("BalanceFwd", 5.19, 2.88, 180);
       auto.addCommands(new VariableWaitCommand());
       // auto.addCommands(new AutoDriveUphillCommand(drivetrain));
       auto.addCommands(new AutoBalanceCommand(drivetrain, false));
+      autos.add(auto);
+    }
+
+    { // Just balance (backward)
+      SequentialCommandGroup auto = new SequenceWithStart("BalanceBack", 5.19, 2.88, 180);
+      auto.addCommands(new VariableWaitCommand());
+      // auto.addCommands(new AutoDriveUphillCommand(drivetrain));
+      auto.addCommands(new AutoBalanceCommand(drivetrain, true));
       autos.add(auto);
     }
 

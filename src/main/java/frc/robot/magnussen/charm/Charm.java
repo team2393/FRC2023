@@ -96,7 +96,9 @@ public class Charm extends SubsystemBase
   public Charm()
   {
     SmartDashboard.putString("Mode", "Init...");
-    setDefaultCommand(idle().andThen(new StayCommand()).withName("StayIdle"));
+    CommandBase stay = new StayCommand();
+    stay.addRequirements(this);
+    setDefaultCommand(stay.withName("StayIdle"));
 
     // Create "Mechanism" that can be displays in sim GUI:
     // NetworkTables -> Smart Dashboard -> Mechanism
@@ -184,7 +186,8 @@ public class Charm extends SubsystemBase
   {
     SequentialCommandGroup group = new SequentialCommandGroup(
       new InstantCommand(() -> SmartDashboard.putString("Mode", "Eject")),
-      new GrabberEjectCommand(grabber)
+      new GrabberEjectCommand(grabber),
+      idle()
     );
     group.addRequirements(this);
     group.setName("Eject");

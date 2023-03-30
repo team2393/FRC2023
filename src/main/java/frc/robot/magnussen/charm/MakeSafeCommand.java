@@ -22,13 +22,13 @@ public class MakeSafeCommand extends CommandBase
   @Override
   public void initialize()
   {
-    if (coordinator.arm_setpoint > -100)
+    // if (coordinator.arm_setpoint > -100)
       sub_command = null;
-    else
-    { // Only create idle commands when needed
-      sub_command = coordinator.idle();
-      sub_command.initialize();
-    }
+    // else
+    // { // Only create idle commands when needed
+    //   sub_command = coordinator.idle();
+    //   sub_command.initialize();
+    // }
   }
 
   @Override

@@ -48,8 +48,8 @@ public class InteractiveArmLiftExtendCommand extends CommandBase
   public void end(boolean interrupted)
   {
     // Store everything inside robot
-    coordinator.arm.extend(false);
-    coordinator.arm_setpoint = -110;
-    coordinator.lift_setpoint = 0.0;
+    // coordinator.arm.extend(false);
+    // coordinator.arm_setpoint = -110;
+    // coordinator.lift_setpoint = 0.0;
   }
 }

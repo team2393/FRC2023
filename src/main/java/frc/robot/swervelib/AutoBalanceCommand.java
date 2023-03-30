@@ -28,7 +28,7 @@ public class AutoBalanceCommand extends SequentialCommandGroup
   private static final double MAX_SPEED = 0.3;
 
   /** How far to back off [m] ? */
-  private static final double BACKOFF = 0.11;
+  private static final double BACKOFF = 0.15;
   // ^^ Path generation fails when trying to drive just 0.1m ...
   //    Would have to try TimedDriveCommand for very short distance..
 

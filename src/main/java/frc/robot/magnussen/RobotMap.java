@@ -8,6 +8,7 @@ public class RobotMap
 {
   /** Name of CANivore */
   public static final String CANIVORE = "CANivore2393";
+  // "That's a bad name" - Dr. Kasemir
 
   // Following CAN devices are on CANIVORE
   // (but keep unique IDs so they can move)
